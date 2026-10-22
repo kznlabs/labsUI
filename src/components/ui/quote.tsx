@@ -1,0 +1,68 @@
+"use client";
+
+import { Quote as QuoteIcon } from "lucide-react";
+import { motion } from "motion/react";
+import type { ReactNode } from "react";
+import { useSpringConfig } from "@/lib/spring-config";
+import { cn } from "@/lib/utils";
+
+type QuoteProps = {
+	children: ReactNode;
+	author?: string;
+	/** Secondary line under the author, e.g. job title. */
+	subtitle?: string;
+	/** Avatar slot, e.g. <Avatar size="sm" alt="Jane Doe" />. */
+	avatar?: ReactNode;
+	/** "plain" text, "card" surface, or "large" display text with an accent mark. */
+	variant?: "plain" | "card" | "large";
+	className?: string;
+};
+
+const surface = {
+	plain: "gap-3",
+	card: "gap-4 rounded-xl border bg-card p-5 text-card-foreground shadow-xs",
+	large: "gap-5 py-4",
+} as const;
+
+/** Semantic quote: figure, blockquote and figcaption. Fades in on a spring when it scrolls into view. */
+export function Quote({
+	children,
+	author,
+	subtitle,
+	avatar,
+	variant = "plain",
+	className,
+}: QuoteProps) {
+	const spring = useSpringConfig();
+	const large = variant === "large";
+
+	return (
+		<motion.figure
+			initial={{ opacity: 0, y: 12 }}
+			whileInView={{ opacity: 1, y: 0 }}
+			viewport={{ once: true }}
+			transition={spring}
+			className={cn("m-0 flex flex-col", surface[variant], className)}
+		>
+			{large && <QuoteIcon aria-hidden="true" className="size-8 text-muted-foreground/60" />}
+			<blockquote
+				className={cn(
+					large
+						? "font-medium text-2xl leading-snug tracking-tight text-balance"
+						: "text-muted-foreground text-sm leading-relaxed",
+				)}
+			>
+				<p className={cn(!large && "text-foreground")}>{children}</p>
+			</blockquote>
+			{(author || avatar) && (
+				<figcaption className="flex items-center gap-3">
+					{avatar}
+					<span className="grid text-left">
+						{author && <span className="font-medium text-foreground text-sm">{author}</span>}
+						{subtitle && <span className="text-muted-foreground text-xs">{subtitle}</span>}
+					</span>
+				</figcaption>
+			)}
+		</motion.figure>
+	);
+}
