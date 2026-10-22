@@ -46,6 +46,28 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 			<head>
 				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: static pre-paint theme script */}
 				<script dangerouslySetInnerHTML={{ __html: themeScript }} />
+				<noscript>
+					<style>
+						{`
+							[data-reveal] {
+								opacity: 1 !important;
+								transform: none !important;
+							}
+							[data-count-to-animated] {
+								display: none !important;
+							}
+							[data-count-to-fallback] {
+								display: inline !important;
+							}
+							[data-typewriter-animated] {
+								display: none !important;
+							}
+							[data-typewriter-fallback] {
+								display: inline !important;
+							}
+						`}
+					</style>
+				</noscript>
 			</head>
 			<body className="min-h-dvh">
 				<MotionProvider>

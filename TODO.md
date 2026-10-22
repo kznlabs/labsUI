@@ -23,9 +23,9 @@ Components and fixes to build. Order is rough priority.
 
 ## Known gaps
 
-- [ ] `Reveal` and `CountTo` render invisible or `$0` without JS. Decide on a no-JS fallback.
+- [x] `Reveal` and `CountTo` render invisible or `$0` without JS. Added `<noscript>` and `@media (scripting: none)` fallback styles (`data-reveal`, `data-count-to-animated`, `data-count-to-fallback`).
 - [ ] Animation smoothness has only been checked in DOM and computed styles. Needs an eye pass in a real browser.
-- [ ] Run `bun run build` once the dev server is stopped, to confirm the production build.
+- [x] Run `bun run build` once the dev server is stopped, to confirm the production build. (Built successfully with Next.js Turbopack).
 
 ## Components backlog (shadcn-based, reworked for labsUI)
 
@@ -34,11 +34,17 @@ Reuse existing primitives inside new ones (AvatarGroup uses Avatar, and so on). 
 ### Navigation and layout
 
 - [ ] Sidebar
-- [ ] Breadcrumb
+- [x] Breadcrumb (`src/components/ui/breadcrumb.tsx`)
 - [ ] Menu bar
 - [ ] Pagination
-- [ ] Button group
+- [x] Button group (`src/components/ui/button-group.tsx`)
 - [ ] Collapsible
+
+### Typography and motion
+
+- [x] Typewriter (`src/components/ui/typewriter.tsx`): character-by-character typing with multi-phrase cycling, cursor, SEO, no-JS fallback.
+- [x] Text swap (`src/components/ui/text-swap.tsx`): spring-powered ticker and morphing text with direction and blur transitions.
+- [x] Quote typewriter & textSwap integration (`src/components/ui/quote.tsx`).
 
 ### Forms and inputs
 

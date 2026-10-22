@@ -12,7 +12,17 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarGroup } from "@/components/ui/avatar-group";
 import { Badge } from "@/components/ui/badge";
+import {
+	Breadcrumb,
+	BreadcrumbEllipsis,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { buttonVariants } from "@/components/ui/button-variants";
 import {
 	Card,
@@ -29,10 +39,14 @@ import { Label } from "@/components/ui/label";
 import { Quote } from "@/components/ui/quote";
 import { Reveal } from "@/components/ui/reveal";
 import { Switch } from "@/components/ui/switch";
+import { TextSwap } from "@/components/ui/text-swap";
 import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { toast } from "@/components/ui/toast";
+import { Typewriter } from "@/components/ui/typewriter";
+import { useSetDynamicCode } from "@/lib/showcase-context";
 import { useSpringConfig } from "@/lib/spring-config";
+import { cn } from "@/lib/utils";
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -156,27 +170,65 @@ export function ButtonDemo() {
 }
 
 export function BadgeDemo() {
+	const [shape, setShape] = useState<"badge" | "pill">("pill");
+	const [dot, setDot] = useState(true);
+	const [pulse, setPulse] = useState(true);
+
+	const shapeProp = shape === "pill" ? ' shape="pill"' : "";
+	const dotProp = dot ? " dot" : "";
+	const pulseProp = pulse ? " pulse" : "";
+
+	useSetDynamicCode(
+		`import { Badge } from "@/components/ui/badge";\n\nexport function StatusBadges() {\n  return (\n    <div className="flex gap-2">\n      <Badge variant="default"${shapeProp}${dotProp}${pulseProp}>Default</Badge>\n      <Badge variant="secondary"${shapeProp}${dotProp}${pulseProp}>Secondary</Badge>\n      <Badge variant="outline"${shapeProp}${dotProp}${pulseProp}>Draft</Badge>\n      <Badge variant="success"${shapeProp}${dotProp}${pulseProp}>Live</Badge>\n      <Badge variant="destructive"${shapeProp}${dotProp}${pulseProp}>Failed</Badge>\n    </div>\n  );\n}`,
+	);
+
 	return (
-		<div className="flex flex-col items-center gap-3">
-			<div className="flex flex-wrap justify-center gap-2">
-				<Badge>Default</Badge>
-				<Badge variant="secondary">Secondary</Badge>
-				<Badge variant="outline">Outline</Badge>
-				<Badge variant="destructive">Failed</Badge>
-				<Badge variant="success">Passed</Badge>
+		<div className="flex flex-col items-center gap-6">
+			<div className="flex flex-wrap items-center justify-center gap-4 text-xs">
+				<label className="flex items-center gap-1.5 cursor-pointer">
+					<input
+						type="checkbox"
+						checked={shape === "pill"}
+						onChange={(e) => setShape(e.target.checked ? "pill" : "badge")}
+						className="accent-primary"
+					/>
+					<span className="text-muted-foreground">Pill shape</span>
+				</label>
+				<label className="flex items-center gap-1.5 cursor-pointer">
+					<input
+						type="checkbox"
+						checked={dot}
+						onChange={(e) => setDot(e.target.checked)}
+						className="accent-primary"
+					/>
+					<span className="text-muted-foreground">Status dot</span>
+				</label>
+				<label className="flex items-center gap-1.5 cursor-pointer">
+					<input
+						type="checkbox"
+						checked={pulse}
+						onChange={(e) => setPulse(e.target.checked)}
+						className="accent-primary"
+					/>
+					<span className="text-muted-foreground">Pulse animation</span>
+				</label>
 			</div>
-			<div className="flex flex-wrap justify-center gap-2">
-				<Badge shape="pill" variant="success" dot pulse>
-					Live
+
+			<div className="flex flex-wrap justify-center gap-3">
+				<Badge shape={shape} variant="default" dot={dot} pulse={pulse}>
+					Default
 				</Badge>
-				<Badge shape="pill" variant="outline" dot>
+				<Badge shape={shape} variant="secondary" dot={dot} pulse={pulse}>
+					Secondary
+				</Badge>
+				<Badge shape={shape} variant="outline" dot={dot} pulse={pulse}>
 					Draft
 				</Badge>
-				<Badge shape="pill" variant="secondary">
-					v1.0.0
+				<Badge shape={shape} variant="success" dot={dot} pulse={pulse}>
+					Live
 				</Badge>
-				<Badge shape="pill" variant="destructive" dot>
-					Down
+				<Badge shape={shape} variant="destructive" dot={dot} pulse={pulse}>
+					Failed
 				</Badge>
 			</div>
 		</div>
@@ -437,10 +489,50 @@ const team = [
 ];
 
 export function AvatarGroupDemo() {
+	const [max, setMax] = useState(4);
+	const [size, setSize] = useState<"sm" | "default" | "lg">("lg");
+
+	useSetDynamicCode(
+		`import { AvatarGroup } from "@/components/ui/avatar-group";\n\nexport function TeamRoster({ users }) {\n  return <AvatarGroup users={users} max={${max}} size="${size}" />;\n}`,
+	);
+
 	return (
 		<div className="flex flex-col items-center gap-6">
-			<AvatarGroup users={team} max={4} size="lg" />
-			<AvatarGroup users={team.slice(0, 5)} max={3} size="sm" />
+			<div className="flex flex-wrap items-center justify-center gap-5 text-xs">
+				<label className="flex items-center gap-2">
+					<span className="text-muted-foreground">Max visible:</span>
+					<input
+						type="range"
+						min={2}
+						max={6}
+						step={1}
+						value={max}
+						onChange={(e) => setMax(Number(e.target.value))}
+						className="accent-primary w-20"
+					/>
+					<span className="font-mono tabular-nums">{max}</span>
+				</label>
+				<div className="flex items-center gap-1.5">
+					<span className="mr-0.5 text-muted-foreground">Size:</span>
+					{(["sm", "default", "lg"] as const).map((s) => (
+						<button
+							key={s}
+							type="button"
+							onClick={() => setSize(s)}
+							className={cn(
+								"rounded px-2 py-0.5 text-xs capitalize transition-colors",
+								size === s
+									? "bg-primary font-medium text-primary-foreground"
+									: "bg-muted text-muted-foreground hover:text-foreground",
+							)}
+						>
+							{s}
+						</button>
+					))}
+				</div>
+			</div>
+
+			<AvatarGroup users={team} max={max} size={size} />
 		</div>
 	);
 }
@@ -448,7 +540,12 @@ export function AvatarGroupDemo() {
 export function QuoteDemo() {
 	return (
 		<div className="grid w-full max-w-3xl gap-6 sm:grid-cols-2">
-			<Quote author="Jane Doe" subtitle="Design lead" avatar={<Avatar size="sm" alt="Jane Doe" />}>
+			<Quote
+				typewriter
+				author="Jane Doe"
+				subtitle="Design lead"
+				avatar={<Avatar size="sm" alt="Jane Doe" />}
+			>
 				Motion that respects the user feels native.
 			</Quote>
 			<Quote
@@ -460,9 +557,247 @@ export function QuoteDemo() {
 				Ship the small component, then the next one.
 			</Quote>
 			<div className="sm:col-span-2">
-				<Quote variant="large" author="Sam Lee" subtitle="Product">
-					Good defaults beat configuration. Every spring here is the same spring.
+				<Quote
+					variant="large"
+					author="Sam Lee"
+					subtitle="Product"
+					textSwap={[
+						"Good defaults beat configuration. Every spring here is the same spring.",
+						"Simplicity is about subtracting the obvious and adding the meaningful.",
+						"Details are not just details; they make the product.",
+					]}
+				>
+					Good defaults beat configuration.
 				</Quote>
+			</div>
+		</div>
+	);
+}
+
+export function BreadcrumbDemo() {
+	return (
+		<div className="flex flex-col gap-5">
+			<Breadcrumb>
+				<BreadcrumbList>
+					<BreadcrumbItem>
+						<BreadcrumbLink href="#breadcrumb">Home</BreadcrumbLink>
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbLink href="#breadcrumb">Components</BreadcrumbLink>
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+					</BreadcrumbItem>
+				</BreadcrumbList>
+			</Breadcrumb>
+
+			<Breadcrumb>
+				<BreadcrumbList>
+					<BreadcrumbItem>
+						<BreadcrumbLink href="#breadcrumb">Projects</BreadcrumbLink>
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbEllipsis />
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbLink href="#breadcrumb">Design System</BreadcrumbLink>
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbPage>Mac UI</BreadcrumbPage>
+					</BreadcrumbItem>
+				</BreadcrumbList>
+			</Breadcrumb>
+		</div>
+	);
+}
+
+export function ButtonGroupDemo() {
+	const [orientation, setOrientation] = useState<"horizontal" | "vertical">("horizontal");
+	const [attached, setAttached] = useState(true);
+
+	const orientProp = orientation === "vertical" ? ' orientation="vertical"' : "";
+	const attachProp = !attached ? " attached={false}" : "";
+
+	useSetDynamicCode(
+		`import { Button } from "@/components/ui/button";\nimport { ButtonGroup } from "@/components/ui/button-group";\n\nexport function SegmentedActions() {\n  return (\n    <ButtonGroup${orientProp}${attachProp}>\n      <Button variant="outline" size="sm">Years</Button>\n      <Button variant="outline" size="sm">Months</Button>\n      <Button variant="default" size="sm">Days</Button>\n    </ButtonGroup>\n  );\n}`,
+	);
+
+	return (
+		<div className="flex flex-col items-center gap-6">
+			<div className="flex flex-wrap items-center justify-center gap-4 text-xs">
+				<label className="flex cursor-pointer items-center gap-1.5">
+					<input
+						type="checkbox"
+						checked={orientation === "vertical"}
+						onChange={(e) => setOrientation(e.target.checked ? "vertical" : "horizontal")}
+						className="accent-primary"
+					/>
+					<span className="text-muted-foreground">Vertical layout</span>
+				</label>
+				<label className="flex cursor-pointer items-center gap-1.5">
+					<input
+						type="checkbox"
+						checked={attached}
+						onChange={(e) => setAttached(e.target.checked)}
+						className="accent-primary"
+					/>
+					<span className="text-muted-foreground">Fused borders (attached)</span>
+				</label>
+			</div>
+
+			<ButtonGroup orientation={orientation} attached={attached}>
+				<Button variant="outline" size="sm">
+					Years
+				</Button>
+				<Button variant="outline" size="sm">
+					Months
+				</Button>
+				<Button variant="default" size="sm">
+					Days
+				</Button>
+			</ButtonGroup>
+		</div>
+	);
+}
+
+export function TypewriterDemo() {
+	const [speed, setSpeed] = useState(36);
+	const [pauseDuration, setPauseDuration] = useState(1800);
+	const [cursor, setCursor] = useState(true);
+
+	const cursorProp = cursor ? "" : " cursor={false}";
+
+	useSetDynamicCode(
+		`import { Typewriter } from "@/components/ui/typewriter";\n\nexport function Headline() {\n  return (\n    <h2>\n      Design for{" "}\n      <Typewriter\n        text={[\n          "clean macOS precision.",\n          "accessible keyboard navigation.",\n          "delightful micro-interactions.",\n        ]}\n        speed={${speed}}\n        pauseDuration={${pauseDuration}}${cursorProp}\n      />\n    </h2>\n  );\n}`,
+	);
+
+	return (
+		<div className="flex flex-col items-center gap-6 text-center">
+			<div className="flex flex-wrap items-center justify-center gap-5 text-xs">
+				<label className="flex items-center gap-2">
+					<span className="text-muted-foreground">Speed:</span>
+					<input
+						type="range"
+						min={15}
+						max={80}
+						step={5}
+						value={speed}
+						onChange={(e) => setSpeed(Number(e.target.value))}
+						className="accent-primary w-20"
+					/>
+					<span className="font-mono tabular-nums">{speed}ms</span>
+				</label>
+				<label className="flex items-center gap-2">
+					<span className="text-muted-foreground">Pause:</span>
+					<input
+						type="range"
+						min={800}
+						max={3500}
+						step={200}
+						value={pauseDuration}
+						onChange={(e) => setPauseDuration(Number(e.target.value))}
+						className="accent-primary w-20"
+					/>
+					<span className="font-mono tabular-nums">{pauseDuration}ms</span>
+				</label>
+				<label className="flex cursor-pointer items-center gap-1.5">
+					<input
+						type="checkbox"
+						checked={cursor}
+						onChange={(e) => setCursor(e.target.checked)}
+						className="accent-primary"
+					/>
+					<span className="text-muted-foreground">Cursor</span>
+				</label>
+			</div>
+
+			<p className="min-h-9 font-medium text-base sm:text-lg">
+				Design for{" "}
+				<span className="font-semibold text-primary underline decoration-accent decoration-2 underline-offset-4">
+					<Typewriter
+						key={`${speed}-${pauseDuration}-${cursor}`}
+						text={[
+							"clean macOS precision.",
+							"accessible keyboard navigation.",
+							"delightful micro-interactions.",
+							"subtle physics-based springs.",
+						]}
+						speed={speed}
+						deleteSpeed={20}
+						pauseDuration={pauseDuration}
+						cursor={cursor}
+					/>
+				</span>
+			</p>
+		</div>
+	);
+}
+
+export function TextSwapDemo() {
+	const [direction, setDirection] = useState<"up" | "down" | "fade">("up");
+	const [interval, setIntervalTime] = useState(2600);
+
+	useSetDynamicCode(
+		`import { TextSwap } from "@/components/ui/text-swap";\n\nexport function DynamicTag() {\n  return (\n    <span>\n      Crafted with{" "}\n      <TextSwap\n        items={[\n          "Next.js 16 App Router",\n          "Tailwind CSS 4",\n          "Motion 14 springs",\n          "shadcn design tokens",\n        ]}\n        direction="${direction}"\n        interval={${interval}}\n      />\n    </span>\n  );\n}`,
+	);
+
+	return (
+		<div className="flex flex-col items-center gap-6 text-center">
+			<div className="flex flex-wrap items-center justify-center gap-5 text-xs">
+				<div className="flex items-center gap-1.5">
+					<span className="mr-0.5 text-muted-foreground">Direction:</span>
+					{(["up", "down", "fade"] as const).map((d) => (
+						<button
+							key={d}
+							type="button"
+							onClick={() => setDirection(d)}
+							className={cn(
+								"rounded px-2 py-0.5 capitalize transition-colors",
+								direction === d
+									? "bg-primary font-medium text-primary-foreground"
+									: "bg-muted text-muted-foreground hover:text-foreground",
+							)}
+						>
+							{d}
+						</button>
+					))}
+				</div>
+				<label className="flex items-center gap-2">
+					<span className="text-muted-foreground">Interval:</span>
+					<input
+						type="range"
+						min={1500}
+						max={4500}
+						step={200}
+						value={interval}
+						onChange={(e) => setIntervalTime(Number(e.target.value))}
+						className="accent-primary w-20"
+					/>
+					<span className="font-mono tabular-nums">{interval}ms</span>
+				</label>
+			</div>
+
+			<div className="flex items-center gap-2 font-medium text-base sm:text-lg">
+				<span className="text-muted-foreground">Crafted with</span>
+				<span className="rounded-md border bg-accent/40 px-2.5 py-1 text-foreground">
+					<TextSwap
+						key={`${direction}-${interval}`}
+						items={[
+							"Next.js 16 App Router",
+							"Tailwind CSS 4",
+							"Motion 14 springs",
+							"shadcn design tokens",
+							"Refined macOS details",
+						]}
+						interval={interval}
+						direction={direction}
+					/>
+				</span>
 			</div>
 		</div>
 	);

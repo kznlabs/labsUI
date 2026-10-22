@@ -5,6 +5,8 @@ import { motion } from "motion/react";
 import type { ReactNode } from "react";
 import { useSpringConfig } from "@/lib/spring-config";
 import { cn } from "@/lib/utils";
+import { TextSwap } from "./text-swap";
+import { Typewriter } from "./typewriter";
 
 type QuoteProps = {
 	children: ReactNode;
@@ -15,6 +17,16 @@ type QuoteProps = {
 	avatar?: ReactNode;
 	/** "plain" text, "card" surface, or "large" display text with an accent mark. */
 	variant?: "plain" | "card" | "large";
+	/** Enables typewriter effect for string children, or pass custom speed/delay options. */
+	typewriter?: boolean | { speed?: number; delay?: number; cursor?: boolean };
+	/** Cycles through an array of quotes with spring text swap transitions. */
+	textSwap?:
+		| readonly string[]
+		| {
+				items: readonly string[];
+				interval?: number;
+				direction?: "up" | "down" | "fade";
+		  };
 	className?: string;
 };
 
@@ -24,13 +36,15 @@ const surface = {
 	large: "gap-5 py-4",
 } as const;
 
-/** Semantic quote: figure, blockquote and figcaption. Fades in on a spring when it scrolls into view. */
+/** Semantic quote: figure, blockquote and figcaption. Fades in on a spring when it scrolls into view. Supports typewriter and textSwap. */
 export function Quote({
 	children,
 	author,
 	subtitle,
 	avatar,
 	variant = "plain",
+	typewriter,
+	textSwap,
 	className,
 }: QuoteProps) {
 	const spring = useSpringConfig();
@@ -52,7 +66,37 @@ export function Quote({
 						: "text-muted-foreground text-sm leading-relaxed",
 				)}
 			>
-				<p className={cn(!large && "text-foreground")}>{children}</p>
+				<div className={cn(!large && "text-foreground")}>
+					{typewriter && typeof children === "string" ? (
+						<Typewriter
+							text={children}
+							loop={false}
+							{...(typeof typewriter === "object" ? typewriter : {})}
+						/>
+					) : textSwap ? (
+						<TextSwap
+							items={
+								Array.isArray(textSwap)
+									? textSwap
+									: "items" in textSwap
+										? textSwap.items
+										: undefined
+							}
+							interval={
+								typeof textSwap === "object" && "interval" in textSwap
+									? textSwap.interval
+									: undefined
+							}
+							direction={
+								typeof textSwap === "object" && "direction" in textSwap
+									? textSwap.direction
+									: undefined
+							}
+						/>
+					) : (
+						children
+					)}
+				</div>
 			</blockquote>
 			{(author || avatar) && (
 				<figcaption className="flex items-center gap-3">

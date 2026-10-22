@@ -97,7 +97,31 @@ export const snippets: Record<string, { name: string; code: string }[]> = {
 	quote: [
 		{
 			name: "testimonial.tsx",
-			code: 'import { Avatar } from "@/components/ui/avatar";\nimport { Quote } from "@/components/ui/quote";\nexport function Testimonial() {\n  return (\n    <Quote\n      variant="card"\n      author="Jane Doe"\n      subtitle="Design lead"\n      avatar={<Avatar size="sm" alt="Jane Doe" />}\n    >\n      Motion that respects the user feels native.\n    </Quote>\n  );\n}',
+			code: 'import { Avatar } from "@/components/ui/avatar";\nimport { Quote } from "@/components/ui/quote";\nexport function Testimonial() {\n  return (\n    <Quote\n      variant="card"\n      author="Jane Doe"\n      subtitle="Design lead"\n      avatar={<Avatar size="sm" alt="Jane Doe" />}\n      typewriter\n    >\n      Motion that respects the user feels native.\n    </Quote>\n  );\n}',
+		},
+	],
+	breadcrumb: [
+		{
+			name: "nav-trail.tsx",
+			code: 'import {\n  Breadcrumb,\n  BreadcrumbList,\n  BreadcrumbItem,\n  BreadcrumbLink,\n  BreadcrumbSeparator,\n  BreadcrumbPage,\n} from "@/components/ui/breadcrumb";\n\nexport function NavTrail() {\n  return (\n    <Breadcrumb>\n      <BreadcrumbList>\n        <BreadcrumbItem>\n          <BreadcrumbLink href="/">Home</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbPage>Components</BreadcrumbPage>\n        </BreadcrumbItem>\n      </BreadcrumbList>\n    </Breadcrumb>\n  );\n}',
+		},
+	],
+	"button-group": [
+		{
+			name: "segmented-actions.tsx",
+			code: 'import { Button } from "@/components/ui/button";\nimport { ButtonGroup } from "@/components/ui/button-group";\n\nexport function SegmentedActions() {\n  return (\n    <ButtonGroup>\n      <Button variant="outline" size="sm">Years</Button>\n      <Button variant="outline" size="sm">Months</Button>\n      <Button variant="default" size="sm">Days</Button>\n    </ButtonGroup>\n  );\n}',
+		},
+	],
+	typewriter: [
+		{
+			name: "headline.tsx",
+			code: 'import { Typewriter } from "@/components/ui/typewriter";\n\nexport function Headline() {\n  return (\n    <h2>\n      Built for{" "}\n      <Typewriter\n        text={["macOS polish.", "accessible navigation.", "delightful springs."]}\n        speed={40}\n      />\n    </h2>\n  );\n}',
+		},
+	],
+	"text-swap": [
+		{
+			name: "dynamic-tag.tsx",
+			code: 'import { TextSwap } from "@/components/ui/text-swap";\n\nexport function DynamicTag() {\n  return (\n    <span className="font-medium">\n      Crafted with{" "}\n      <TextSwap items={["Next.js 16", "Tailwind CSS 4", "motion 14"]} direction="up" />\n    </span>\n  );\n}',
 		},
 	],
 };

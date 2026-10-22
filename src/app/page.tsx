@@ -6,20 +6,34 @@ import {
 	AvatarDemo,
 	AvatarGroupDemo,
 	BadgeDemo,
+	BreadcrumbDemo,
 	ButtonDemo,
+	ButtonGroupDemo,
 	CardDemo,
 	CountToDemo,
 	CursorDemo,
 	FormDemo,
 	QuoteDemo,
 	RevealDemo,
+	TextSwapDemo,
 	ThemeDemo,
+	TypewriterDemo,
 } from "@/components/showcase/demos";
 import { DialogDemo, ToastDemo } from "@/components/showcase/overlay-demos";
 import { ShowcaseSection } from "@/components/showcase/section";
 import { WindowDemo } from "@/components/showcase/window-demo";
 import { Badge } from "@/components/ui/badge";
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { buttonVariants } from "@/components/ui/button-variants";
+import { TextSwap } from "@/components/ui/text-swap";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { registry } from "@/lib/registry";
 import { site } from "@/lib/site";
@@ -44,6 +58,10 @@ const demos: Record<Id, { node: ReactNode; preview?: string }> = {
 	"avatar-group": { node: <AvatarGroupDemo /> },
 	quote: { node: <QuoteDemo /> },
 	reveal: { node: <RevealDemo /> },
+	breadcrumb: { node: <BreadcrumbDemo /> },
+	"button-group": { node: <ButtonGroupDemo /> },
+	typewriter: { node: <TypewriterDemo /> },
+	"text-swap": { node: <TextSwapDemo /> },
 };
 
 export default function Home() {
@@ -67,10 +85,12 @@ export default function Home() {
 					<Badge variant="secondary" shape="pill" className="hidden sm:inline-flex">
 						v0.1
 					</Badge>
-					<div className="ml-auto flex items-center gap-1">
-						<a href="/llms.txt" className={buttonVariants({ variant: "ghost", size: "sm" })}>
-							llms.txt
-						</a>
+					<div className="ml-auto flex items-center gap-2">
+						<ButtonGroup attached>
+							<a href="/llms.txt" className={buttonVariants({ variant: "outline", size: "sm" })}>
+								llms.txt
+							</a>
+						</ButtonGroup>
 						<ThemeToggle />
 					</div>
 				</nav>
@@ -97,10 +117,41 @@ export default function Home() {
 
 				<main className="flex min-w-0 flex-col gap-16">
 					<header className="flex flex-col gap-4">
+						<Breadcrumb>
+							<BreadcrumbList>
+								<BreadcrumbItem>
+									<BreadcrumbLink href="/">Home</BreadcrumbLink>
+								</BreadcrumbItem>
+								<BreadcrumbSeparator />
+								<BreadcrumbItem>
+									<BreadcrumbLink href="#breadcrumb">Design System</BreadcrumbLink>
+								</BreadcrumbItem>
+								<BreadcrumbSeparator />
+								<BreadcrumbItem>
+									<BreadcrumbPage>Components</BreadcrumbPage>
+								</BreadcrumbItem>
+							</BreadcrumbList>
+						</Breadcrumb>
 						<h1 className="font-semibold text-3xl tracking-tight sm:text-4xl">{site.name}</h1>
 						<p className="max-w-2xl text-lg text-muted-foreground leading-relaxed">
 							{site.description}
 						</p>
+						<div className="flex items-center gap-2 font-medium text-muted-foreground text-sm">
+							<span>Featuring</span>
+							<span className="font-semibold text-foreground">
+								<TextSwap
+									items={[
+										"one spring physics system",
+										"macOS window chrome with glassmorphism",
+										"Shiki dual-theme syntax highlighting",
+										"typewriter and spring text swap effects",
+										"shadcn-style modular primitives",
+									]}
+									interval={3200}
+									direction="up"
+								/>
+							</span>
+						</div>
 						<ul className="flex flex-wrap gap-2" aria-label="Tech stack">
 							{["Next.js 16", "React 19", "Tailwind CSS 4", "motion 14", "lucide-react", "Bun"].map(
 								(t) => (

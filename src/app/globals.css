@@ -161,3 +161,29 @@
 		animation: none;
 	}
 }
+
+/* No-JS fallback for animated components (Reveal, CountTo). */
+@media (scripting: none) {
+	[data-reveal] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override motion inline style */
+		opacity: 1 !important;
+		/* biome-ignore lint/complexity/noImportantStyles: must override motion inline style */
+		transform: none !important;
+	}
+	[data-count-to-animated] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override initial animated display */
+		display: none !important;
+	}
+	[data-count-to-fallback] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override hidden utility */
+		display: inline !important;
+	}
+	[data-typewriter-animated] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override initial animated display */
+		display: none !important;
+	}
+	[data-typewriter-fallback] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override hidden utility */
+		display: inline !important;
+	}
+}

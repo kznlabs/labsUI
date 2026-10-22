@@ -38,6 +38,7 @@ export function CountTo({
 	const ref = useRef<HTMLSpanElement>(null);
 	const [started, setStarted] = useState(false);
 	const [display, setDisplay] = useState(() => format(from, { prefix, suffix, decimals, locale }));
+	const targetDisplay = format(to, { prefix, suffix, decimals, locale });
 
 	useEffect(() => {
 		const el = ref.current;
@@ -66,8 +67,13 @@ export function CountTo({
 
 	return (
 		<span ref={ref} className={className}>
-			<span className="sr-only">{format(to, { prefix, suffix, decimals, locale })}</span>
-			<span aria-hidden="true">{display}</span>
+			<span className="sr-only">{targetDisplay}</span>
+			<span aria-hidden="true" data-count-to-animated="">
+				{display}
+			</span>
+			<span aria-hidden="true" data-count-to-fallback="" className="hidden">
+				{targetDisplay}
+			</span>
 		</span>
 	);
 }

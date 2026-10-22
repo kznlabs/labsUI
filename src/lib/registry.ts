@@ -124,7 +124,39 @@ export const registry = [
 		name: "Quote",
 		file: "quote.tsx",
 		description:
-			"Semantic figure, blockquote and figcaption. Plain, card and large variants, with author, subtitle and avatar.",
+			"Semantic figure, blockquote and figcaption. Plain, card and large variants, with author, subtitle, avatar, typewriter and textSwap.",
 		usage: `<Quote variant="card" author="Jane Doe" subtitle="Design lead" avatar={<Avatar … />}>…</Quote>`,
+	},
+	{
+		id: "breadcrumb",
+		name: "Breadcrumb",
+		file: "breadcrumb.tsx",
+		description:
+			"Semantic navigation trail with items, links, separators, collapsed ellipsis and current page status.",
+		usage: `<Breadcrumb><BreadcrumbList><BreadcrumbItem><BreadcrumbLink href="/">Home</BreadcrumbLink></BreadcrumbItem><BreadcrumbSeparator /><BreadcrumbItem><BreadcrumbPage>Components</BreadcrumbPage></BreadcrumbItem></BreadcrumbList></Breadcrumb>`,
+	},
+	{
+		id: "button-group",
+		name: "Button Group",
+		file: "button-group.tsx",
+		description:
+			"Fuses multiple buttons into a seamless connected strip, sharing borders, corners and active states. Horizontal or vertical.",
+		usage: `<ButtonGroup><Button variant="outline">Years</Button><Button variant="default">Months</Button></ButtonGroup>`,
+	},
+	{
+		id: "typewriter",
+		name: "Typewriter",
+		file: "typewriter.tsx",
+		description:
+			"Types out text character-by-character with optional phrase cycling and pulsing cursor. Full copy stays in the DOM for SEO.",
+		usage: `<Typewriter text={["macOS precision.", "Delightful springs."]} speed={40} />`,
+	},
+	{
+		id: "text-swap",
+		name: "TextSwap",
+		file: "text-swap.tsx",
+		description:
+			"Spring-powered text morphing and ticker. Auto-cycles phrases or animates whenever children change with blur and slide transitions.",
+		usage: `<TextSwap items={["Next.js 16", "Tailwind CSS 4", "motion 14"]} direction="up" />`,
 	},
 ] as const;

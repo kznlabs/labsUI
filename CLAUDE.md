@@ -43,6 +43,10 @@ toast("Title", { description, action: { label, onClick }, duration }); toast.suc
 <CountTo to={48290} prefix="$" />                       // springs up once in view
 <Reveal delay={0.1}><Card>…</Card></Reveal>               // fades + rises on scroll
 <AvatarGroup users={team} max={4} size="lg" />               // overlapping, +N chip, hover spring
-<Quote variant="card" author="Jane Doe" subtitle="Design lead" avatar={<Avatar … />}>…</Quote>
+<Quote variant="card" author="Jane Doe" subtitle="Design lead" avatar={<Avatar … />} typewriter textSwap={[…]}>…</Quote>
+<Breadcrumb><BreadcrumbList><BreadcrumbItem><BreadcrumbLink href="/">Home</BreadcrumbLink></BreadcrumbItem><BreadcrumbSeparator /><BreadcrumbItem><BreadcrumbPage>Page</BreadcrumbPage></BreadcrumbItem></BreadcrumbList></Breadcrumb>
+<ButtonGroup orientation="horizontal|vertical" attached><Button>A</Button><Button>B</Button></ButtonGroup>
+<Typewriter text={["Hello", "World"]} speed={40} deleteSpeed={24} loop cursor />
+<TextSwap items={["Phrase 1", "Phrase 2"]} interval={3000} direction="up|down|fade" />
 <StructuredData />                                         // @/components/seo/structured-data
 ```
