@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "motion/react";
-import { type ComponentProps, useState } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
-import { cn } from "@/lib/utils";
+import type { ComponentProps } from "react";
+import { useFieldControl } from "@/components/ui/field";
+import { useControllableState } from "@/lib/use-controllable-state";
+import { cn, spring } from "@/lib/utils";
 
 type SwitchProps = Omit<
 	ComponentProps<"input">,
@@ -20,11 +21,10 @@ export function Switch({
 	defaultChecked = false,
 	onCheckedChange,
 	className,
-	...props
+	...rest
 }: SwitchProps) {
-	const spring = useSpringConfig();
-	const [inner, setInner] = useState(defaultChecked);
-	const on = checked ?? inner;
+	const props = useFieldControl(rest);
+	const [on, setOn] = useControllableState(checked, defaultChecked, onCheckedChange);
 	return (
 		<span className={cn("relative inline-flex h-5 w-9 shrink-0", className)}>
 			<input
@@ -32,10 +32,7 @@ export function Switch({
 				role="switch"
 				aria-checked={on}
 				checked={on}
-				onChange={(e) => {
-					if (checked === undefined) setInner(e.target.checked);
-					onCheckedChange?.(e.target.checked);
-				}}
+				onChange={(e) => setOn(e.target.checked)}
 				className="peer absolute inset-0 z-10 cursor-pointer appearance-none rounded-full outline-none disabled:cursor-not-allowed"
 				{...props}
 			/>
@@ -47,7 +44,7 @@ export function Switch({
 				)}
 			>
 				<motion.span
-					className="size-4 rounded-full bg-background shadow-sm dark:bg-foreground"
+					className="size-4 rounded-full bg-white shadow-sm ring-[0.5px] ring-black/5"
 					animate={{ x: on ? 16 : 0 }}
 					transition={spring}
 					initial={false}

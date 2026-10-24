@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useState } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
+import { useMediaQuery } from "@/lib/platform";
+import { spring } from "@/lib/utils";
 
 const INTERACTIVE =
 	"a, button, input, select, textarea, label, summary, [role='button'], [data-cursor='hover']";
@@ -13,8 +14,7 @@ const QUERY = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: n
  * Mount once. Renders nothing on touch/coarse pointers or with reduced motion.
  */
 export function CustomCursor() {
-	const spring = useSpringConfig();
-	const [enabled, setEnabled] = useState(false);
+	const enabled = useMediaQuery(QUERY);
 	const [visible, setVisible] = useState(false);
 	const [hovering, setHovering] = useState(false);
 	const [pressed, setPressed] = useState(false);
@@ -25,26 +25,25 @@ export function CustomCursor() {
 	const ry = useSpring(y, { stiffness: 400, damping: 30, mass: 0.5 });
 
 	useEffect(() => {
-		const mq = matchMedia(QUERY);
-		const update = () => setEnabled(mq.matches);
-		update();
-		mq.addEventListener("change", update);
-		return () => mq.removeEventListener("change", update);
-	}, []);
-
-	useEffect(() => {
 		if (!enabled) return;
 		const root = document.documentElement;
 		root.classList.add("has-custom-cursor");
+		let shown = false;
 		const move = (e: PointerEvent) => {
 			if (e.pointerType !== "mouse") return;
 			x.set(e.clientX);
 			y.set(e.clientY);
+			// Once, not per move: pointermove fires at display rate.
+			if (shown) return;
+			shown = true;
 			setVisible(true);
 		};
 		const over = (e: PointerEvent) =>
 			setHovering(!!(e.target as Element | null)?.closest?.(INTERACTIVE));
-		const leave = () => setVisible(false);
+		const leave = () => {
+			shown = false;
+			setVisible(false);
+		};
 		const down = () => setPressed(true);
 		const up = () => setPressed(false);
 		window.addEventListener("pointermove", move, { passive: true });
@@ -77,12 +76,11 @@ export function CustomCursor() {
 					transition={spring}
 				>
 					<motion.div
-						className="absolute top-0 left-0 rounded-full border border-foreground/25"
+						// Fixed 40px, scaled: transforms stay on the compositor, width/height would relayout.
+						className="absolute top-0 left-0 size-10 rounded-full border border-foreground/25"
 						style={{ x: rx, y: ry, translateX: "-50%", translateY: "-50%" }}
 						animate={{
-							width: hovering ? 40 : 28,
-							height: hovering ? 40 : 28,
-							scale: pressed ? 0.85 : 1,
+							scale: (hovering ? 1 : 0.7) * (pressed ? 0.85 : 1),
 							backgroundColor: hovering
 								? "color-mix(in oklch, var(--foreground) 6%, transparent)"
 								: "color-mix(in oklch, var(--foreground) 0%, transparent)",

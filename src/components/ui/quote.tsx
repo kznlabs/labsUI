@@ -3,14 +3,15 @@
 import { Quote as QuoteIcon } from "lucide-react";
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
-import { cn } from "@/lib/utils";
+import { cn, spring } from "@/lib/utils";
 import { TextSwap } from "./text-swap";
 import { Typewriter } from "./typewriter";
 
 type QuoteProps = {
 	children: ReactNode;
 	author?: string;
+	/** Language of the quoted text, e.g. "pl": correct screen-reader pronunciation and SEO. */
+	lang?: string;
 	/** Secondary line under the author, e.g. job title. */
 	subtitle?: string;
 	/** Avatar slot, e.g. <Avatar size="sm" alt="Jane Doe" />. */
@@ -42,16 +43,17 @@ export function Quote({
 	author,
 	subtitle,
 	avatar,
+	lang,
 	variant = "plain",
 	typewriter,
 	textSwap,
 	className,
 }: QuoteProps) {
-	const spring = useSpringConfig();
 	const large = variant === "large";
 
 	return (
 		<motion.figure
+			data-reveal=""
 			initial={{ opacity: 0, y: 12 }}
 			whileInView={{ opacity: 1, y: 0 }}
 			viewport={{ once: true }}
@@ -60,6 +62,7 @@ export function Quote({
 		>
 			{large && <QuoteIcon aria-hidden="true" className="size-8 text-muted-foreground/60" />}
 			<blockquote
+				lang={lang}
 				className={cn(
 					large
 						? "font-medium text-2xl leading-snug tracking-tight text-balance"

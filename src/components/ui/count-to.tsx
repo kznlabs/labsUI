@@ -1,8 +1,8 @@
 "use client";
 
-import { animate } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
+import { animate, useInView, useReducedMotion } from "motion/react";
+import { useEffect, useMemo, useRef } from "react";
+import { spring } from "@/lib/utils";
 
 type CountToProps = {
 	to: number;
@@ -14,16 +14,6 @@ type CountToProps = {
 	className?: string;
 };
 
-function format(
-	n: number,
-	{ prefix, suffix, decimals, locale }: Required<Omit<CountToProps, "to" | "from" | "className">>,
-) {
-	return `${prefix}${n.toLocaleString(locale, {
-		minimumFractionDigits: decimals,
-		maximumFractionDigits: decimals,
-	})}${suffix}`;
-}
-
 /** Springs a number from `from` to `to` once it scrolls into view. Final value stays in the DOM for SEO. */
 export function CountTo({
 	to,
@@ -34,45 +24,46 @@ export function CountTo({
 	locale = "en-US",
 	className,
 }: CountToProps) {
-	const spring = useSpringConfig();
+	const reduce = useReducedMotion();
 	const ref = useRef<HTMLSpanElement>(null);
-	const [started, setStarted] = useState(false);
-	const [display, setDisplay] = useState(() => format(from, { prefix, suffix, decimals, locale }));
-	const targetDisplay = format(to, { prefix, suffix, decimals, locale });
+	const out = useRef<HTMLSpanElement>(null);
+	const inView = useInView(ref, { once: true, margin: "0px 0px -10% 0px" });
+	// One formatter: building it per frame (what toLocaleString does) is the expensive part.
+	const nf = useMemo(
+		() =>
+			new Intl.NumberFormat(locale, {
+				minimumFractionDigits: decimals,
+				maximumFractionDigits: decimals,
+			}),
+		[locale, decimals],
+	);
+	const text = (n: number) => `${prefix}${nf.format(n)}${suffix}`;
+	const target = text(to);
 
 	useEffect(() => {
-		const el = ref.current;
-		if (!el) return;
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				if (entry?.isIntersecting) {
-					setStarted(true);
-					observer.disconnect();
-				}
-			},
-			{ rootMargin: "0px 0px -10% 0px" },
-		);
-		observer.observe(el);
-		return () => observer.disconnect();
-	}, []);
-
-	useEffect(() => {
-		if (!started) return;
+		const el = out.current;
+		if (!inView || !el) return;
+		const show = (n: number) => {
+			el.textContent = `${prefix}${nf.format(n)}${suffix}`;
+		};
+		if (reduce) return show(to);
+		// Straight to the DOM each frame: no React render per tick.
 		const controls = animate(from, to, {
 			...spring,
-			onUpdate: (v) => setDisplay(format(v, { prefix, suffix, decimals, locale })),
+			// The spring overshoots; a counter must never show past its target (no "100.4%" uptime).
+			onUpdate: (v) => show(to >= from ? Math.min(v, to) : Math.max(v, to)),
 		});
 		return () => controls.stop();
-	}, [started, from, to, prefix, suffix, decimals, locale, spring]);
+	}, [inView, from, to, prefix, suffix, nf, reduce]);
 
 	return (
 		<span ref={ref} className={className}>
-			<span className="sr-only">{targetDisplay}</span>
-			<span aria-hidden="true" data-count-to-animated="">
-				{display}
+			<span className="sr-only">{target}</span>
+			<span ref={out} aria-hidden="true" data-count-to-animated="">
+				{text(from)}
 			</span>
 			<span aria-hidden="true" data-count-to-fallback="" className="hidden">
-				{targetDisplay}
+				{target}
 			</span>
 		</span>
 	);

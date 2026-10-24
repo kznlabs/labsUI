@@ -2,8 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
-import { cn } from "@/lib/utils";
+import { cn, spring } from "@/lib/utils";
 
 type TextSwapProps = {
 	/** Array of items to cycle through, or pass a single changing child. */
@@ -29,7 +28,6 @@ export function TextSwap({
 	className,
 	children,
 }: TextSwapProps) {
-	const spring = useSpringConfig();
 	const list = items ?? (children ? [children] : []);
 	const isControlled = controlledIndex !== undefined;
 
@@ -55,10 +53,18 @@ export function TextSwap({
 		<span
 			onMouseEnter={pauseOnHover ? () => setIsPaused(true) : undefined}
 			onMouseLeave={pauseOnHover ? () => setIsPaused(false) : undefined}
-			className={cn("relative inline-flex items-baseline overflow-hidden", className)}
-			aria-live="polite"
+			// Grid: every item sits invisibly in one cell, so the box is always the longest item's size
+			// and swapping never reflows the surrounding layout (e.g. a two-line quote).
+			className={cn("relative inline-grid overflow-hidden", className)}
+			// Announce only externally driven swaps; an auto-rotating ticker would talk every few seconds.
+			aria-live={isControlled ? "polite" : undefined}
 		>
 			<span className="sr-only">{currentItem}</span>
+			{list.map((item) => (
+				<span key={item} aria-hidden="true" className="invisible [grid-area:1/1]">
+					{item}
+				</span>
+			))}
 			<AnimatePresence mode="popLayout" initial={false}>
 				<motion.span
 					key={`${activeIndex}-${currentItem}`}
@@ -74,7 +80,7 @@ export function TextSwap({
 							: { opacity: 0, y: exitY, filter: "blur(2px)" }
 					}
 					transition={spring}
-					className="inline-block"
+					className="[grid-area:1/1]"
 					aria-hidden="true"
 				>
 					{currentItem}

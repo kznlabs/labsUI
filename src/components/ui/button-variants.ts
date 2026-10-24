@@ -3,10 +3,12 @@ import { cn } from "@/lib/utils";
 /* Server-safe (no "use client"): callable from Server Components. */
 
 const variants = {
-	default: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+	// Top inner highlight, like an AppKit push button.
+	default:
+		"bg-primary text-primary-foreground shadow-xs shadow-[inset_0_1px_0_rgb(255_255_255/0.18)] hover:bg-primary/90",
 	secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
 	outline:
-		"border border-border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+		"border border-border bg-card shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
 	ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
 	destructive:
 		"bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/30",
@@ -32,7 +34,7 @@ export function buttonVariants({
 	className,
 }: VariantProps = {}) {
 	return cn(
-		"inline-flex shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap font-medium outline-none transition-[color,background-color,border-color,box-shadow,opacity] duration-400 ease-in-out focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+		"inline-flex shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap font-medium outline-none transition-[color,background-color,border-color,box-shadow,opacity] duration-400 ease-in-out focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-disabled:cursor-default aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
 		variants[variant],
 		sizes[size],
 		className,

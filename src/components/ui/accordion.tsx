@@ -2,9 +2,9 @@
 
 import { ChevronDown } from "lucide-react";
 import { motion } from "motion/react";
-import { createContext, type ReactNode, use, useCallback, useId, useState } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
-import { cn } from "@/lib/utils";
+import { createContext, type ReactNode, use, useId } from "react";
+import { useControllableState } from "@/lib/use-controllable-state";
+import { cn, spring } from "@/lib/utils";
 
 type AccordionCtx = { open: string[]; toggle: (value: string) => void };
 type ItemCtx = { value: string; open: boolean; id: string };
@@ -19,32 +19,49 @@ function useItem() {
 }
 
 type AccordionProps = {
-	/** "single": one panel at a time. "multiple": independent panels. */
-	type?: "single" | "multiple";
 	/** single only: allow closing the open panel. */
 	collapsible?: boolean;
-	defaultValue?: string | string[];
 	className?: string;
 	children: ReactNode;
-};
+} & (
+	| {
+			/** "single": one panel at a time. "multiple": independent panels. */
+			type?: "single";
+			/** Controlled open item ("" = none). */
+			value?: string;
+			defaultValue?: string;
+			onValueChange?: (value: string) => void;
+	  }
+	| {
+			type: "multiple";
+			value?: string[];
+			defaultValue?: string[];
+			onValueChange?: (value: string[]) => void;
+	  }
+);
 
-export function Accordion({
-	type = "single",
-	collapsible = true,
-	defaultValue,
-	className,
-	children,
-}: AccordionProps) {
-	const [open, setOpen] = useState<string[]>(defaultValue ? [defaultValue].flat() : []);
-	const toggle = useCallback(
-		(v: string) =>
-			setOpen((prev) => {
-				if (prev.includes(v))
-					return type === "single" && !collapsible ? prev : prev.filter((x) => x !== v);
-				return type === "single" ? [v] : [...prev, v];
-			}),
-		[type, collapsible],
+const toList = (v: string | string[] | undefined) =>
+	v === undefined ? [] : [v].flat().filter(Boolean);
+
+/** Controlled (`value` + `onValueChange`) or uncontrolled (`defaultValue`). */
+export function Accordion(props: AccordionProps) {
+	const { type = "single", collapsible = true, className, children } = props;
+	const [raw, setRaw] = useControllableState<string | string[] | undefined>(
+		props.value,
+		props.defaultValue,
+		props.onValueChange as ((v: string | string[] | undefined) => void) | undefined,
 	);
+	const open = toList(raw);
+	const toggle = (v: string) => {
+		const next = open.includes(v)
+			? type === "single" && !collapsible
+				? open
+				: open.filter((x) => x !== v)
+			: type === "single"
+				? [v]
+				: [...open, v];
+		setRaw(type === "multiple" ? next : (next[0] ?? ""));
+	};
 	return (
 		<AccordionContext value={{ open, toggle }}>
 			<div className={cn("w-full", className)}>{children}</div>
@@ -78,17 +95,19 @@ export function AccordionItem({
 }
 
 export function AccordionTrigger({
+	as: Heading = "h3",
 	className,
 	children,
 }: {
+	/** Wrapping heading level; match the page outline (default h3). */
+	as?: "h2" | "h3" | "h4" | "h5" | "h6";
 	className?: string;
 	children: ReactNode;
 }) {
-	const spring = useSpringConfig();
 	const toggle = use(AccordionContext)?.toggle;
 	const { value, open, id } = useItem();
 	return (
-		<h3 className="flex">
+		<Heading className="flex">
 			<button
 				type="button"
 				id={`${id}-trigger`}
@@ -109,7 +128,7 @@ export function AccordionTrigger({
 					<ChevronDown className="size-4" aria-hidden="true" />
 				</motion.span>
 			</button>
-		</h3>
+		</Heading>
 	);
 }
 
@@ -121,7 +140,6 @@ export function AccordionContent({
 	className?: string;
 	children: ReactNode;
 }) {
-	const spring = useSpringConfig();
 	const { open, id } = useItem();
 	return (
 		<motion.section

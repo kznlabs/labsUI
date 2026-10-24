@@ -1,7 +1,7 @@
 "use client";
 
 import { type HTMLMotionProps, motion } from "motion/react";
-import { useSpringConfig } from "@/lib/spring-config";
+import { spring } from "@/lib/utils";
 
 type RevealProps = HTMLMotionProps<"div"> & {
 	/** Seconds to wait after entering view. */
@@ -12,7 +12,6 @@ type RevealProps = HTMLMotionProps<"div"> & {
 
 /** Fades and rises in on a spring the first time it scrolls into view. Stays visible after. */
 export function Reveal({ delay = 0, y = 24, children, ...props }: RevealProps) {
-	const spring = useSpringConfig();
 	return (
 		<motion.div
 			data-reveal=""

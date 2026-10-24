@@ -10,7 +10,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
+import { spring } from "@/lib/utils";
 import { buttonVariants, type VariantProps } from "./button-variants";
 
 type ButtonStatus = "idle" | "loading" | "success";
@@ -88,7 +88,6 @@ export function Button({
 	onKeyDown,
 	...props
 }: ButtonProps) {
-	const spring = useSpringConfig();
 	const [armed, setArmed] = useState(false);
 	/** True while an async `onClick` is pending, so the button shows loading until it settles. */
 	const [pending, setPending] = useState(false);
@@ -113,7 +112,7 @@ export function Button({
 	};
 
 	const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-		if (done) return e.preventDefault();
+		if (done || busy) return e.preventDefault();
 		if (confirmLabel === undefined) return run(e);
 		if (!armed) {
 			armedAt.current = Date.now();
@@ -132,10 +131,11 @@ export function Button({
 	return (
 		<motion.button
 			type={type}
-			layout
-			whileTap={{ scale: 0.97 }}
+			whileTap={busy ? undefined : { scale: 0.97 }}
 			transition={spring}
-			disabled={disabled || busy}
+			disabled={disabled}
+			// aria-disabled, not disabled, while busy: a disabled button drops keyboard focus.
+			aria-disabled={busy || undefined}
 			aria-busy={busy || undefined}
 			data-state={phase}
 			className={buttonVariants({ variant, size, className })}

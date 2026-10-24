@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useLayoutEffect, useRef, useState } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
-import { cn } from "@/lib/utils";
+import { useRef } from "react";
+import { useIndicator } from "@/lib/use-indicator";
+import { cn, spring } from "@/lib/utils";
 
 type SegmentedTabsProps = {
 	/** Accessible name for the tab list. */
@@ -16,14 +16,8 @@ type SegmentedTabsProps = {
 
 /** Segmented tabs. One indicator slides under the active item on a spring, always behind the labels. */
 export function SegmentedTabs({ label, items, value, onChange, className }: SegmentedTabsProps) {
-	const spring = useSpringConfig();
 	const buttons = useRef(new Map<string, HTMLButtonElement>());
-	const [indicator, setIndicator] = useState({ x: 0, width: 0 });
-
-	useLayoutEffect(() => {
-		const el = buttons.current.get(value);
-		if (el) setIndicator({ x: el.offsetLeft, width: el.offsetWidth });
-	}, [value]);
+	const indicator = useIndicator(buttons.current, value);
 
 	return (
 		<nav
@@ -35,7 +29,7 @@ export function SegmentedTabs({ label, items, value, onChange, className }: Segm
 				initial={false}
 				animate={{ x: indicator.x, width: indicator.width }}
 				transition={spring}
-				className="-z-10 absolute inset-y-0 left-0 rounded-md bg-background shadow-xs ring-1 ring-border"
+				className="-z-10 absolute inset-y-0 left-0 rounded-md bg-card shadow-sm ring-[0.5px] ring-black/5 dark:bg-white/20 dark:ring-white/10"
 			/>
 			{items.map((item) => (
 				<button

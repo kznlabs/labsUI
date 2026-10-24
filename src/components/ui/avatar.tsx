@@ -10,10 +10,10 @@ const sizes = {
 } as const;
 
 const statuses = {
-	online: "bg-emerald-500",
-	away: "bg-amber-400",
-	busy: "bg-red-500",
-	offline: "bg-zinc-400",
+	online: "bg-success",
+	away: "bg-mac-yellow",
+	busy: "bg-destructive",
+	offline: "bg-muted-foreground",
 } as const;
 
 type AvatarProps = {
@@ -52,8 +52,14 @@ export function Avatar({ src, alt, fallback, status, size = "default", className
 				{showImg && (
 					// biome-ignore lint/performance/noImgElement: arbitrary remote avatars; no next/image loader config
 					<img
+						// An image that loaded before hydration never fires onLoad; catch it here.
+						ref={(img) => {
+							if (img?.complete && img.naturalWidth > 0) setLoaded(src);
+						}}
 						src={src}
 						alt=""
+						loading="lazy"
+						decoding="async"
 						onLoad={() => setLoaded(src)}
 						onError={() => setFailed(src)}
 						className={cn(

@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, CircleCheck, Info, X } from "lucide-react";
+import { CircleAlert, CircleCheck, Info, Loader2, X } from "lucide-react";
 import { AnimatePresence, animate, motion, type PanInfo, useMotionValue } from "motion/react";
 import {
 	type ReactNode,
@@ -10,12 +10,11 @@ import {
 	useState,
 	useSyncExternalStore,
 } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
-import { cn } from "@/lib/utils";
+import { cn, material, spring } from "@/lib/utils";
 
 /* ---------- store (module-level, no provider needed) ---------- */
 
-type Variant = "default" | "success" | "error" | "info";
+type Variant = "default" | "success" | "error" | "info" | "loading";
 type ToastData = {
 	id: number;
 	title: ReactNode;
@@ -41,11 +40,41 @@ const subscribe = (l: () => void) => {
 	};
 };
 
+/** Oldest toasts past this are dropped; only the front few are visible anyway. */
+const MAX = 6;
+
 function create(title: ReactNode, opts: ToastOptions = {}) {
 	const id = ++nextId;
-	toasts = [{ id, title, variant: "default", duration: 4000, ...opts }, ...toasts];
+	const next: ToastData = { id, title, variant: "default", duration: 4000, ...opts };
+	toasts = [next, ...toasts].slice(0, MAX);
 	emit();
 	return id;
+}
+
+function update(id: number, patch: Partial<Omit<ToastData, "id">>) {
+	toasts = toasts.map((t) => (t.id === id ? { ...t, ...patch } : t));
+	emit();
+}
+
+type Resolve<T> = ReactNode | ((value: T) => ReactNode);
+const resolve = <T,>(r: Resolve<T>, v: T) => (typeof r === "function" ? r(v) : r);
+
+/** One toast that spins while `promise` is pending, then turns into success or error in place. */
+function promise<T>(
+	p: Promise<T>,
+	msgs: { loading: ReactNode; success: Resolve<T>; error: Resolve<unknown> },
+	opts?: Omit<ToastOptions, "variant" | "duration">,
+) {
+	const id = create(msgs.loading, {
+		...opts,
+		variant: "loading",
+		duration: Number.POSITIVE_INFINITY,
+	});
+	p.then(
+		(v) => update(id, { title: resolve(msgs.success, v), variant: "success", duration: 4000 }),
+		(e) => update(id, { title: resolve(msgs.error, e), variant: "error", duration: 6000 }),
+	);
+	return p;
 }
 
 function dismiss(id?: number) {
@@ -53,11 +82,15 @@ function dismiss(id?: number) {
 	emit();
 }
 
-/** `toast("Saved")`, `toast.success(title, { description, action, duration })`, `toast.dismiss(id?)`. */
+/** `toast("Saved")`, `toast.success(title, { description, action, duration })`, `toast.loading(title)`, `toast.promise(p, { loading, success, error })`, `toast.dismiss(id?)`. */
 export const toast = Object.assign(create, {
 	success: (title: ReactNode, o?: ToastOptions) => create(title, { ...o, variant: "success" }),
 	error: (title: ReactNode, o?: ToastOptions) => create(title, { ...o, variant: "error" }),
 	info: (title: ReactNode, o?: ToastOptions) => create(title, { ...o, variant: "info" }),
+	/** Sticky until dismissed or updated by `toast.promise`. */
+	loading: (title: ReactNode, o?: ToastOptions) =>
+		create(title, { duration: Number.POSITIVE_INFINITY, ...o, variant: "loading" }),
+	promise,
 	dismiss,
 });
 
@@ -65,13 +98,20 @@ export const toast = Object.assign(create, {
 
 const GAP = 12;
 const PEEK = 14;
+
+const onVisibility = (cb: () => void) => {
+	document.addEventListener("visibilitychange", cb);
+	return () => document.removeEventListener("visibilitychange", cb);
+};
+const isVisible = () => document.visibilityState === "visible";
 const VISIBLE = 3;
 
 const icons = {
 	default: null,
-	success: <CircleCheck className="size-4 text-success" aria-hidden="true" />,
-	error: <CircleAlert className="size-4 text-destructive" aria-hidden="true" />,
+	success: <CircleCheck className="size-4 text-success-ink" aria-hidden="true" />,
+	error: <CircleAlert className="size-4 text-destructive-ink" aria-hidden="true" />,
 	info: <Info className="size-4 text-foreground" aria-hidden="true" />,
+	loading: <Loader2 className="size-4 animate-spin text-muted-foreground" aria-hidden="true" />,
 };
 
 /** Mount once (root layout). Sonner-style stack: hover/focus expands, swipe dismisses. */
@@ -106,7 +146,8 @@ export function Toaster({ className }: { className?: string }) {
 				if (!e.currentTarget.contains(e.relatedTarget)) setExpanded(false);
 			}}
 		>
-			<ol className="relative" style={{ height: frontH }}>
+			{/* Persistent live region: content added to it is announced, unlike a freshly mounted one. */}
+			<ol aria-live="polite" className="relative" style={{ height: frontH }}>
 				<AnimatePresence initial={false}>
 					{items.map((t, i) => {
 						const y = expanded ? -offset : -i * PEEK;
@@ -141,14 +182,15 @@ type ItemProps = {
 };
 
 function ToastItem({ toast: t, index, y, expanded, frontHeight, total, onHeight }: ItemProps) {
-	const spring = useSpringConfig();
 	const inner = useRef<HTMLDivElement>(null);
 	const [height, setHeight] = useState(0);
 	const x = useMotionValue(0);
 	const front = index === 0;
 	const hidden = index >= VISIBLE;
-	const paused = expanded;
-	const remaining = useRef(t.duration);
+	// Paused while you read the stack, and while the tab is in the background (nobody sees it go).
+	const visible = useSyncExternalStore(onVisibility, isVisible, () => true);
+	const paused = expanded || !visible;
+	const remaining = useRef({ duration: t.duration, left: t.duration });
 
 	useEffect(() => {
 		const el = inner.current;
@@ -163,12 +205,15 @@ function ToastItem({ toast: t, index, y, expanded, frontHeight, total, onHeight 
 
 	// Auto-dismiss; pauses while the stack is expanded (hover/focus).
 	useEffect(() => {
+		// Time left restarts when the duration changes (a promise toast settling).
+		if (remaining.current.duration !== t.duration)
+			remaining.current = { duration: t.duration, left: t.duration };
 		if (paused || !Number.isFinite(t.duration)) return;
 		const start = Date.now();
-		const timer = setTimeout(() => dismiss(t.id), remaining.current);
+		const timer = setTimeout(() => dismiss(t.id), remaining.current.left);
 		return () => {
 			clearTimeout(timer);
-			remaining.current -= Date.now() - start;
+			remaining.current.left -= Date.now() - start;
 		};
 	}, [paused, t.id, t.duration]);
 
@@ -198,9 +243,10 @@ function ToastItem({ toast: t, index, y, expanded, frontHeight, total, onHeight 
 			drag={front || expanded ? "x" : false}
 			dragMomentum={false}
 			onDragEnd={onDragEnd}
-			aria-hidden={hidden || undefined}
+			inert={hidden}
 			className={cn(
-				"group absolute inset-x-0 bottom-0 touch-pan-y rounded-xl border bg-popover text-popover-foreground shadow-lg",
+				"group absolute inset-x-0 bottom-0 touch-pan-y rounded-2xl border text-popover-foreground shadow-lg",
+				material,
 				// Fill the gap between expanded toasts so hover doesn't flicker.
 				"after:absolute after:inset-x-0 after:top-full after:h-3",
 				hidden && "pointer-events-none",
@@ -215,7 +261,7 @@ function ToastItem({ toast: t, index, y, expanded, frontHeight, total, onHeight 
 				{icons[t.variant] && <span className="mt-0.5">{icons[t.variant]}</span>}
 				<div
 					className="flex min-w-0 flex-1 flex-col gap-0.5"
-					role={t.variant === "error" ? "alert" : "status"}
+					role={t.variant === "error" ? "alert" : undefined}
 				>
 					<p className="font-medium text-sm">{t.title}</p>
 					{t.description && <p className="text-muted-foreground text-sm">{t.description}</p>}

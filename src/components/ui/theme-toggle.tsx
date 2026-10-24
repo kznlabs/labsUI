@@ -3,14 +3,12 @@
 import { Moon, Sun } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSyncExternalStore } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
 import { isDark, setTheme, subscribeTheme } from "@/lib/theme";
-import { cn } from "@/lib/utils";
+import { cn, spring } from "@/lib/utils";
 import { Button } from "./button";
 
 /** Icon button: sun/moon rotate-swap on a spring. Follows OS until first click. */
 export function ThemeToggle({ className }: { className?: string }) {
-	const spring = useSpringConfig();
 	const dark = useSyncExternalStore(subscribeTheme, isDark, () => false);
 	return (
 		<Button

@@ -23,8 +23,13 @@ export function CardHeader({ className, ...props }: ComponentProps<"div">) {
 	return <div className={cn("flex flex-col gap-1.5 px-6", className)} {...props} />;
 }
 
-export function CardTitle({ className, ...props }: ComponentProps<"h3">) {
-	return <h3 className={cn("font-semibold leading-none tracking-tight", className)} {...props} />;
+/** Heading level follows the page outline: `as="h2"` directly under the page's h1. Default h3. */
+export function CardTitle({
+	as: Tag = "h3",
+	className,
+	...props
+}: ComponentProps<"h3"> & { as?: "h2" | "h3" | "h4" | "h5" | "h6" | "p" }) {
+	return <Tag className={cn("font-semibold leading-none tracking-tight", className)} {...props} />;
 }
 
 export function CardDescription({ className, ...props }: ComponentProps<"p">) {

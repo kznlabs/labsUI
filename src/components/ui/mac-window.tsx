@@ -48,13 +48,13 @@ export function MacWindow({
 				<div className="group/dots flex items-center gap-2">
 					{dots.map(({ label, color, Icon, on }) => {
 						const cls = cn(
-							"grid size-3 cursor-pointer place-items-center rounded-full ring-[0.5px] ring-black/10 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+							"relative grid size-3 cursor-pointer place-items-center rounded-full after:absolute after:-inset-x-1 after:-inset-y-1.5 after:content-[''] ring-[0.5px] ring-black/10 outline-none focus-visible:ring-2 focus-visible:ring-ring",
 							color,
 						);
 						const icon = (
 							<Icon
 								key="icon"
-								className="size-2 text-black/60 opacity-0 transition-opacity group-hover/dots:opacity-100"
+								className="size-2 text-black/60 opacity-0 transition-opacity group-focus-within/dots:opacity-100 group-hover/dots:opacity-100"
 								strokeWidth={3}
 								aria-hidden="true"
 							/>

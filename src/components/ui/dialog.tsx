@@ -7,22 +7,21 @@ import {
 	createContext,
 	type ReactNode,
 	use,
-	useCallback,
 	useEffect,
+	useEffectEvent,
 	useId,
 	useRef,
-	useState,
-	useSyncExternalStore,
 } from "react";
 import { createPortal } from "react-dom";
-import { useSpringConfig } from "@/lib/spring-config";
-import { cn } from "@/lib/utils";
+import { useMounted } from "@/lib/platform";
+import { useControllableState } from "@/lib/use-controllable-state";
+import { cn, spring } from "@/lib/utils";
 import { Button } from "./button";
 
 type Ctx = { open: boolean; setOpen: (open: boolean) => void; titleId: string; descId: string };
 const DialogContext = createContext<Ctx | null>(null);
 
-function useDialog() {
+export function useDialog() {
 	const ctx = use(DialogContext);
 	if (!ctx) throw new Error("Dialog parts must be used inside <Dialog>");
 	return ctx;
@@ -42,15 +41,7 @@ export function Dialog({
 	onOpenChange,
 	children,
 }: DialogProps) {
-	const [inner, setInner] = useState(defaultOpen);
-	const open = controlled ?? inner;
-	const setOpen = useCallback(
-		(o: boolean) => {
-			if (controlled === undefined) setInner(o);
-			onOpenChange?.(o);
-		},
-		[controlled, onOpenChange],
-	);
+	const [open, setOpen] = useControllableState(controlled, defaultOpen, onOpenChange);
 	const id = useId();
 	return (
 		<DialogContext value={{ open, setOpen, titleId: `${id}-title`, descId: `${id}-desc` }}>
@@ -90,32 +81,27 @@ export function DialogClose({ onClick, variant = "outline", ...props }: ButtonPr
 	);
 }
 
+/** Open dialogs, innermost last: only the top one answers Esc and Tab. */
+const stack: HTMLElement[] = [];
+
 const FOCUSABLE =
 	'a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
-const noop = () => () => {};
 
-/** Portal + blurred backdrop + spring scale-in. Esc/backdrop close, focus trap, scroll lock. */
-export function DialogContent({
-	className,
-	children,
-	showClose = true,
-}: {
-	className?: string;
-	children: ReactNode;
-	showClose?: boolean;
-}) {
-	const spring = useSpringConfig();
-	const { open, setOpen, titleId, descId } = useDialog();
-	const mounted = useSyncExternalStore(
-		noop,
-		() => true,
-		() => false,
-	);
+/**
+ * Modal behavior shared by Dialog and Drawer: focus first field, trap Tab, restore focus,
+ * lock page scroll, close on Esc (topmost modal only). Attach the returned ref to the panel.
+ */
+export function useModal() {
+	const { open, setOpen } = useDialog();
 	const ref = useRef<HTMLDivElement>(null);
+	// An effect event, not a dependency: an inline onOpenChange would otherwise restore and
+	// re-grab focus on every parent render.
+	const close = useEffectEvent(() => setOpen(false));
 
 	useEffect(() => {
 		if (!open) return;
 		const node = ref.current;
+		if (node) stack.push(node);
 		const prev = document.activeElement as HTMLElement | null;
 		const html = document.documentElement;
 		const overflow = html.style.overflow;
@@ -124,7 +110,9 @@ export function DialogContent({
 		(focusables()[0] ?? node)?.focus();
 
 		const onKey = (e: KeyboardEvent) => {
-			if (e.key === "Escape") return setOpen(false);
+			if (stack.at(-1) !== node) return;
+			// A field that already used Esc (e.g. clearing a search) keeps the dialog open.
+			if (e.key === "Escape") return e.defaultPrevented || close();
 			if (e.key !== "Tab") return;
 			const f = focusables();
 			const first = f[0];
@@ -141,10 +129,30 @@ export function DialogContent({
 		document.addEventListener("keydown", onKey);
 		return () => {
 			document.removeEventListener("keydown", onKey);
+			if (node) stack.splice(stack.indexOf(node), 1);
 			html.style.overflow = overflow;
 			prev?.focus();
 		};
-	}, [open, setOpen]);
+	}, [open]);
+	return ref;
+}
+
+/** Portal + blurred backdrop + spring scale-in. Esc/backdrop close, focus trap, scroll lock. */
+export function DialogContent({
+	className,
+	children,
+	alert = false,
+	showClose = !alert,
+}: {
+	className?: string;
+	children: ReactNode;
+	/** Confirm-a-destructive-action mode: role="alertdialog", backdrop click does not close. */
+	alert?: boolean;
+	showClose?: boolean;
+}) {
+	const { open, setOpen, titleId, descId } = useDialog();
+	const mounted = useMounted();
+	const ref = useModal();
 
 	if (!mounted) return null;
 
@@ -158,11 +166,11 @@ export function DialogContent({
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={spring}
-						onClick={() => setOpen(false)}
+						onClick={alert ? undefined : () => setOpen(false)}
 					/>
 					<motion.div
 						ref={ref}
-						role="dialog"
+						role={alert ? "alertdialog" : "dialog"}
 						aria-modal="true"
 						aria-labelledby={titleId}
 						aria-describedby={descId}

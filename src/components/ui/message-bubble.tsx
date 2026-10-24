@@ -2,8 +2,7 @@
 
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
-import { useSpringConfig } from "@/lib/spring-config";
-import { cn } from "@/lib/utils";
+import { cn, spring } from "@/lib/utils";
 
 type MessageBubbleProps = {
 	from: "user" | "assistant";
@@ -27,7 +26,6 @@ export function MessageBubble({
 	className,
 	children,
 }: MessageBubbleProps) {
-	const spring = useSpringConfig();
 	const user = from === "user";
 	return (
 		<motion.article

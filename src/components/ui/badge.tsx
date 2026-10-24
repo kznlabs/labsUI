@@ -1,15 +1,14 @@
-"use client";
-
-import { motion } from "motion/react";
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
+
+/* Server-safe (no "use client"): the pulse is CSS, the one allowed infinite tween. */
 
 const variants = {
 	default: "border-transparent bg-primary text-primary-foreground",
 	secondary: "border-transparent bg-secondary text-secondary-foreground",
 	outline: "border-border text-foreground",
-	destructive: "border-transparent bg-destructive/10 text-destructive",
-	success: "border-transparent bg-success/12 text-success",
+	destructive: "border-transparent bg-destructive/10 text-destructive-ink",
+	success: "border-transparent bg-success/12 text-success-ink",
 } as const;
 
 type BadgeProps = ComponentProps<"span"> & {
@@ -44,12 +43,7 @@ export function Badge({
 			{dot && (
 				<span className="relative flex size-1.5" aria-hidden="true">
 					{pulse && (
-						<motion.span
-							className="absolute inset-0 rounded-full bg-current"
-							initial={{ scale: 1, opacity: 0.6 }}
-							animate={{ scale: 3, opacity: 0 }}
-							transition={{ duration: 1.6, ease: "easeOut", repeat: Number.POSITIVE_INFINITY }}
-						/>
+						<span className="absolute inset-0 animate-ping rounded-full bg-current opacity-60 [animation-duration:1.6s] motion-reduce:hidden" />
 					)}
 					<span className="relative size-1.5 rounded-full bg-current" />
 				</span>

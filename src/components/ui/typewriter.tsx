@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useReducedMotion } from "motion/react";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type TypewriterProps = {
@@ -45,6 +46,10 @@ export function Typewriter({
 	const [subIndex, setSubIndex] = useState(0);
 	const [isDeleting, setIsDeleting] = useState(false);
 
+	const reduce = useReducedMotion();
+	// Effect event, so an inline onComplete can't restart the effect (and fire again) on every render.
+	const complete = useEffectEvent(() => onComplete?.());
+
 	const fullText = phrases.join(" ");
 	const currentPhrase = phrases[phraseIndex] ?? "";
 
@@ -62,7 +67,7 @@ export function Typewriter({
 		// Completed typing the current phrase
 		if (!isDeleting && subIndex === currentPhrase.length) {
 			if (phrases.length === 1 && !loop) {
-				onComplete?.();
+				complete();
 				return;
 			}
 			const timer = setTimeout(() => {
@@ -76,7 +81,7 @@ export function Typewriter({
 			setIsDeleting(false);
 			const next = (phraseIndex + 1) % phrases.length;
 			if (next === 0 && !loop) {
-				onComplete?.();
+				complete();
 				return;
 			}
 			setPhraseIndex(next);
@@ -101,10 +106,10 @@ export function Typewriter({
 		pauseDuration,
 		speed,
 		deleteSpeed,
-		onComplete,
 	]);
 
-	const displayed = currentPhrase.slice(0, subIndex);
+	// Reduced motion: no typing, just the first phrase.
+	const displayed = reduce ? (phrases[0] ?? "") : currentPhrase.slice(0, subIndex);
 
 	return (
 		<span className={cn("inline-flex items-baseline", className)}>
