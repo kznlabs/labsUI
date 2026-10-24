@@ -2,3 +2,5 @@ node_modules
 .next
 *.tsbuildinfo
 next-env.d.ts
+# Playwright MCP screenshots and logs
+.playwright-mcp/
