@@ -43,5 +43,34 @@ export function subscribeTheme(cb: () => void) {
 	};
 }
 
-/** Inline pre-paint script for <head>: prevents a light/dark flash. */
-export const themeScript = `(function(){try{var t=localStorage.getItem("${KEY}");var d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d)}catch(e){}})()`;
+/** macOS accent colors, in System Settings order. "blue" is the default (no attribute). */
+export const accents = [
+	"blue",
+	"purple",
+	"pink",
+	"red",
+	"orange",
+	"yellow",
+	"green",
+	"graphite",
+] as const;
+export type Accent = (typeof accents)[number];
+
+const ACCENT_KEY = "accent";
+
+export const getAccent = (): Accent =>
+	(document.documentElement.dataset.accent as Accent | undefined) ?? "blue";
+
+/** Retints primary, focus rings, selection and switches app-wide. Persists like the theme. */
+export function setAccent(accent: Accent) {
+	try {
+		localStorage.setItem(ACCENT_KEY, accent);
+	} catch {}
+	const root = document.documentElement;
+	if (accent === "blue") delete root.dataset.accent;
+	else root.dataset.accent = accent;
+	window.dispatchEvent(new Event(EVENT));
+}
+
+/** Inline pre-paint script for <head>: prevents a light/dark (and accent) flash. */
+export const themeScript = `(function(){try{var t=localStorage.getItem("${KEY}");var d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);var a=localStorage.getItem("${ACCENT_KEY}");if(a&&a!=="blue")document.documentElement.dataset.accent=a}catch(e){}})()`;
