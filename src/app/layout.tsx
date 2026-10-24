@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { MotionProvider } from "@/components/motion-provider";
+import { Confirmer } from "@/components/ui/confirm";
 import { Toaster } from "@/components/ui/toast";
 import { site } from "@/lib/site";
 import { themeScript } from "@/lib/theme";
@@ -34,8 +35,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
 	themeColor: [
-		{ media: "(prefers-color-scheme: light)", color: "#ffffff" },
-		{ media: "(prefers-color-scheme: dark)", color: "#09090b" },
+		{ media: "(prefers-color-scheme: light)", color: "#f7f7f7" },
+		{ media: "(prefers-color-scheme: dark)", color: "#141415" },
 	],
 	colorScheme: "light dark",
 };
@@ -65,6 +66,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 							[data-typewriter-fallback] {
 								display: inline !important;
 							}
+							[data-marker] {
+								background-size: 100% 100% !important;
+							}
 						`}
 					</style>
 				</noscript>
@@ -73,6 +77,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 				<MotionProvider>
 					{children}
 					<Toaster />
+					<Confirmer />
 				</MotionProvider>
 			</body>
 		</html>
