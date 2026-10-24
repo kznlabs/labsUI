@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { confirm } from "@/components/ui/confirm";
 import {
 	Dialog,
 	DialogClose,
@@ -15,12 +15,43 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/toast";
+import { useDisclosure } from "@/lib/use-disclosure";
+
+export function ConfirmDemo() {
+	return (
+		<div className="flex flex-wrap justify-center gap-3">
+			<Button
+				variant="destructive"
+				onClick={async () => {
+					const ok = await confirm({
+						title: "Delete “Summer clips”?",
+						description: "All 48 clips in this project are removed. This cannot be undone.",
+						destructive: true,
+					});
+					if (ok) toast.success("Project deleted");
+					else toast("Kept the project");
+				}}
+			>
+				Delete project
+			</Button>
+			<Button
+				variant="outline"
+				onClick={async () => {
+					if (await confirm({ title: "Publish to everyone?", confirmLabel: "Publish" }))
+						toast.success("Published");
+				}}
+			>
+				Publish
+			</Button>
+		</div>
+	);
+}
 
 export function DialogDemo() {
-	const [open, setOpen] = useState(false);
+	const profile = useDisclosure();
 	return (
 		<>
-			<Dialog open={open} onOpenChange={setOpen}>
+			<Dialog {...profile.props}>
 				<DialogTrigger variant="outline">Edit profile</DialogTrigger>
 				<DialogContent>
 					<DialogHeader>
@@ -34,7 +65,7 @@ export function DialogDemo() {
 						className="grid gap-4"
 						onSubmit={(e) => {
 							e.preventDefault();
-							setOpen(false);
+							profile.hide();
 							toast.success("Profile updated");
 						}}
 					>
@@ -58,7 +89,7 @@ export function DialogDemo() {
 
 			<Dialog>
 				<DialogTrigger variant="destructive">Delete project</DialogTrigger>
-				<DialogContent className="max-w-md">
+				<DialogContent alert className="max-w-md">
 					<DialogHeader>
 						<DialogTitle>Delete “Atlas”?</DialogTitle>
 						<DialogDescription>
@@ -119,6 +150,18 @@ export function ToastDemo() {
 					}
 				>
 					With action
+				</Button>
+				<Button
+					variant="outline"
+					onClick={() =>
+						toast.promise(new Promise((r) => setTimeout(r, 1600)), {
+							loading: "Deploying…",
+							success: "Deployed to production",
+							error: "Deploy failed",
+						})
+					}
+				>
+					Promise
 				</Button>
 				<Button
 					onClick={() => {

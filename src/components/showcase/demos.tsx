@@ -2,7 +2,7 @@
 
 import { AlertTriangle, ArrowUpRight, Bell, Mail, Plus, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
-import { type FormEvent, type ReactNode, useState } from "react";
+import { type FormEvent, type MouseEvent, type ReactNode, useState } from "react";
 import {
 	Accordion,
 	AccordionContent,
@@ -32,10 +32,21 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { CountTo } from "@/components/ui/count-to";
 import { CustomCursor } from "@/components/ui/custom-cursor";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+	Pagination,
+	PaginationContent,
+	PaginationEllipsis,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+	pageRange,
+} from "@/components/ui/pagination";
 import { Quote } from "@/components/ui/quote";
 import { Reveal } from "@/components/ui/reveal";
 import { Switch } from "@/components/ui/switch";
@@ -45,8 +56,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { toast } from "@/components/ui/toast";
 import { Typewriter } from "@/components/ui/typewriter";
 import { useSetDynamicCode } from "@/lib/showcase-context";
-import { useSpringConfig } from "@/lib/spring-config";
-import { cn } from "@/lib/utils";
+import { cn, spring } from "@/lib/utils";
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -60,34 +70,48 @@ function DemoGroup({ label, children }: { label: string; children: ReactNode }) 
 }
 
 export function ButtonDemo() {
-	const spring = useSpringConfig();
 	const [loading, setLoading] = useState(false);
 	const [deleted, setDeleted] = useState(false);
 	const [swap, setSwap] = useState<"left" | "right" | "up" | "down">("up");
 	return (
 		<div className="grid w-full max-w-2xl gap-8">
 			<DemoGroup label="Variants">
-				<Button>Default</Button>
-				<Button variant="secondary">Secondary</Button>
-				<Button variant="outline">Outline</Button>
-				<Button variant="ghost">Ghost</Button>
-				<Button variant="destructive">Destructive</Button>
+				<Button onClick={() => toast.success("Saved")}>Default</Button>
+				<Button variant="secondary" onClick={() => toast("Draft kept")}>
+					Secondary
+				</Button>
+				<Button variant="outline" onClick={() => toast("Exported as CSV")}>
+					Outline
+				</Button>
+				<Button variant="ghost" onClick={() => toast("Dismissed")}>
+					Ghost
+				</Button>
+				<Button variant="destructive" onClick={() => toast.error("Demo mode: nothing was deleted")}>
+					Destructive
+				</Button>
 			</DemoGroup>
 			<DemoGroup label="Sizes">
-				<Button size="sm" variant="outline">
+				<Button size="sm" variant="outline" onClick={() => toast("Small button")}>
 					Small
 				</Button>
-				<Button>Default</Button>
-				<Button size="lg">Large</Button>
-				<Button size="icon" variant="outline" aria-label="Add">
+				<Button onClick={() => toast("Default button")}>Default</Button>
+				<Button size="lg" onClick={() => toast("Large button")}>
+					Large
+				</Button>
+				<Button
+					size="icon"
+					variant="outline"
+					aria-label="Add"
+					onClick={() => toast.success("Item added")}
+				>
 					<Plus />
 				</Button>
 			</DemoGroup>
 			<DemoGroup label="With icons">
-				<Button variant="outline">
+				<Button variant="outline" onClick={() => toast("Demo mode: no email was sent")}>
 					<Mail /> Email
 				</Button>
-				<Button variant="secondary">
+				<Button variant="secondary" onClick={() => toast.success("We'll let you know")}>
 					<Bell /> Notify me
 				</Button>
 				<a href="#toast" className={buttonVariants({ variant: "ghost" })}>
@@ -279,7 +303,7 @@ export function FormDemo() {
 							aria-describedby={invalid ? "f-email-err" : undefined}
 						/>
 						{invalid && (
-							<p id="f-email-err" className="text-destructive text-xs">
+							<p id="f-email-err" className="text-destructive-ink text-xs">
 								Please enter a valid email address.
 							</p>
 						)}
@@ -287,12 +311,12 @@ export function FormDemo() {
 					<div className="grid gap-2">
 						<div className="flex items-center justify-between">
 							<Label htmlFor="f-bio">Bio</Label>
-							<span className="text-muted-foreground text-xs tabular-nums">{bio.length}/160</span>
 						</div>
 						<Textarea
 							id="f-bio"
 							placeholder="Grows as you type…"
 							maxLength={160}
+							showCount
 							value={bio}
 							onChange={(e) => setBio(e.target.value)}
 							className="max-h-40"
@@ -422,7 +446,11 @@ export function CursorDemo() {
 				<Label htmlFor="cursor">Enable custom cursor</Label>
 			</div>
 			<div className="flex gap-2">
-				<Button variant="outline" size="sm">
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => toast("Clicked. Turn the cursor on and hover to see it react.")}
+				>
 					Hover me
 				</Button>
 				<a
@@ -540,39 +568,48 @@ export function AvatarGroupDemo() {
 export function QuoteDemo() {
 	return (
 		<div className="grid w-full max-w-3xl gap-6 sm:grid-cols-2">
+			{/* Pan Tadeusz, tr. George Rapall Noyes (1917): public domain (Project Gutenberg #28240). */}
 			<Quote
 				typewriter
-				author="Jane Doe"
-				subtitle="Design lead"
-				avatar={<Avatar size="sm" alt="Jane Doe" />}
+				author="Adam Mickiewicz"
+				subtitle="Pan Tadeusz, Book I · tr. G. R. Noyes"
+				avatar={<Avatar size="sm" alt="Adam Mickiewicz" />}
 			>
-				Motion that respects the user feels native.
+				Lithuania, my country, thou art like health; how much thou shouldst be prized only he can
+				learn who has lost thee.
 			</Quote>
 			<Quote
 				variant="card"
-				author="Alex Kim"
-				subtitle="Engineer"
-				avatar={<Avatar size="sm" alt="Alex Kim" />}
+				author="Adam Mickiewicz"
+				subtitle="Pan Tadeusz, Book XI · tr. G. R. Noyes"
+				avatar={<Avatar size="sm" alt="Adam Mickiewicz" />}
 			>
-				Ship the small component, then the next one.
+				Born in slavery and chained in my swaddling bands, I have had but one such spring in my
+				whole life.
 			</Quote>
 			<div className="sm:col-span-2">
 				<Quote
 					variant="large"
-					author="Sam Lee"
-					subtitle="Product"
+					author="Adam Mickiewicz"
+					subtitle="Pan Tadeusz · tr. G. R. Noyes, 1917"
 					textSwap={[
-						"Good defaults beat configuration. Every spring here is the same spring.",
-						"Simplicity is about subtracting the obvious and adding the meaningful.",
-						"Details are not just details; they make the product.",
+						"O spring! Happy is he who beheld thee then in our country!",
+						"To-day thy beauty in all its splendour I see and describe, for I yearn for thee.",
+						"Memorable spring of war, spring of harvest!",
 					]}
 				>
-					Good defaults beat configuration.
+					O spring! Happy is he who beheld thee then in our country!
 				</Quote>
 			</div>
 		</div>
 	);
 }
+
+/** Demo crumbs point at this section; say where a real app would go instead of jumping nowhere. */
+const crumb = (to: string) => (e: MouseEvent<HTMLAnchorElement>) => {
+	e.preventDefault();
+	toast(`Demo mode: would open “${to}”`);
+};
 
 export function BreadcrumbDemo() {
 	return (
@@ -580,11 +617,15 @@ export function BreadcrumbDemo() {
 			<Breadcrumb>
 				<BreadcrumbList>
 					<BreadcrumbItem>
-						<BreadcrumbLink href="#breadcrumb">Home</BreadcrumbLink>
+						<BreadcrumbLink href="#breadcrumb" onClick={crumb("Home")}>
+							Home
+						</BreadcrumbLink>
 					</BreadcrumbItem>
 					<BreadcrumbSeparator />
 					<BreadcrumbItem>
-						<BreadcrumbLink href="#breadcrumb">Components</BreadcrumbLink>
+						<BreadcrumbLink href="#breadcrumb" onClick={crumb("Components")}>
+							Components
+						</BreadcrumbLink>
 					</BreadcrumbItem>
 					<BreadcrumbSeparator />
 					<BreadcrumbItem>
@@ -596,7 +637,9 @@ export function BreadcrumbDemo() {
 			<Breadcrumb>
 				<BreadcrumbList>
 					<BreadcrumbItem>
-						<BreadcrumbLink href="#breadcrumb">Projects</BreadcrumbLink>
+						<BreadcrumbLink href="#breadcrumb" onClick={crumb("Projects")}>
+							Projects
+						</BreadcrumbLink>
 					</BreadcrumbItem>
 					<BreadcrumbSeparator />
 					<BreadcrumbItem>
@@ -604,7 +647,9 @@ export function BreadcrumbDemo() {
 					</BreadcrumbItem>
 					<BreadcrumbSeparator />
 					<BreadcrumbItem>
-						<BreadcrumbLink href="#breadcrumb">Design System</BreadcrumbLink>
+						<BreadcrumbLink href="#breadcrumb" onClick={crumb("Design System")}>
+							Design System
+						</BreadcrumbLink>
 					</BreadcrumbItem>
 					<BreadcrumbSeparator />
 					<BreadcrumbItem>
@@ -619,6 +664,7 @@ export function BreadcrumbDemo() {
 export function ButtonGroupDemo() {
 	const [orientation, setOrientation] = useState<"horizontal" | "vertical">("horizontal");
 	const [attached, setAttached] = useState(true);
+	const [range, setRange] = useState("Days");
 
 	const orientProp = orientation === "vertical" ? ' orientation="vertical"' : "";
 	const attachProp = !attached ? " attached={false}" : "";
@@ -651,15 +697,17 @@ export function ButtonGroupDemo() {
 			</div>
 
 			<ButtonGroup orientation={orientation} attached={attached}>
-				<Button variant="outline" size="sm">
-					Years
-				</Button>
-				<Button variant="outline" size="sm">
-					Months
-				</Button>
-				<Button variant="default" size="sm">
-					Days
-				</Button>
+				{["Years", "Months", "Days"].map((r) => (
+					<Button
+						key={r}
+						variant={range === r ? "default" : "outline"}
+						size="sm"
+						aria-pressed={range === r}
+						onClick={() => setRange(r)}
+					>
+						{r}
+					</Button>
+				))}
 			</ButtonGroup>
 		</div>
 	);
@@ -718,7 +766,7 @@ export function TypewriterDemo() {
 
 			<p className="min-h-9 font-medium text-base sm:text-lg">
 				Design for{" "}
-				<span className="font-semibold text-primary underline decoration-accent decoration-2 underline-offset-4">
+				<span className="font-semibold text-primary-ink underline decoration-accent decoration-2 underline-offset-4">
 					<Typewriter
 						key={`${speed}-${pauseDuration}-${cursor}`}
 						text={[
@@ -799,6 +847,76 @@ export function TextSwapDemo() {
 					/>
 				</span>
 			</div>
+		</div>
+	);
+}
+
+const starred = ["labsui/primitives", "motiondivision/motion", "shadcn-ui/ui"];
+
+export function CollapsibleDemo() {
+	const [open, setOpen] = useState(false);
+	return (
+		<Collapsible open={open} onOpenChange={setOpen} className="grid w-full max-w-sm gap-2">
+			<CollapsibleTrigger className="w-full justify-between rounded-lg px-3 py-2 hover:bg-accent">
+				<span>
+					<span className="font-semibold">@labsui</span>{" "}
+					<span className="text-muted-foreground">starred {starred.length} repositories</span>
+				</span>
+			</CollapsibleTrigger>
+			<div className="rounded-lg border px-4 py-2.5 font-mono text-sm">{starred[0]}</div>
+			<CollapsibleContent className="grid gap-2">
+				{starred.slice(1).map((repo) => (
+					<div key={repo} className="rounded-lg border px-4 py-2.5 font-mono text-sm">
+						{repo}
+					</div>
+				))}
+			</CollapsibleContent>
+		</Collapsible>
+	);
+}
+
+export function PaginationDemo() {
+	const [page, setPage] = useState(6);
+	const total = 12;
+	const go = (p: number) => (e: MouseEvent) => {
+		e.preventDefault();
+		setPage(Math.min(total, Math.max(1, p)));
+	};
+	return (
+		<div className="flex flex-col items-center gap-3">
+			<Pagination>
+				<PaginationContent>
+					<PaginationItem>
+						<PaginationPrevious
+							href={`?page=${page - 1}`}
+							onClick={go(page - 1)}
+							disabled={page === 1}
+						/>
+					</PaginationItem>
+					{pageRange(page, total).map((p, i) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: slots stay mounted so numbers swipe
+						<PaginationItem key={`slot-${i}`}>
+							{p === "…" ? (
+								<PaginationEllipsis />
+							) : (
+								<PaginationLink href={`?page=${p}`} isActive={p === page} onClick={go(p)}>
+									{p}
+								</PaginationLink>
+							)}
+						</PaginationItem>
+					))}
+					<PaginationItem>
+						<PaginationNext
+							href={`?page=${page + 1}`}
+							onClick={go(page + 1)}
+							disabled={page === total}
+						/>
+					</PaginationItem>
+				</PaginationContent>
+			</Pagination>
+			<p className="text-muted-foreground text-xs tabular-nums">
+				Page {page} of {total}
+			</p>
 		</div>
 	);
 }

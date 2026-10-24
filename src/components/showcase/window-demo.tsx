@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { MacWindow } from "@/components/ui/mac-window";
 import { SegmentedTabs } from "@/components/ui/segmented-tabs";
 import { toast } from "@/components/ui/toast";
-import { useSpringConfig } from "@/lib/spring-config";
+import { spring } from "@/lib/utils";
 
 const tabs = ["Overview", "Activity", "Settings"] as const;
 
@@ -21,7 +21,6 @@ const rows = [
 ];
 
 export function WindowDemo() {
-	const spring = useSpringConfig();
 	const [open, setOpen] = useState(true);
 	const [tab, setTab] = useState<(typeof tabs)[number]>("Overview");
 
@@ -63,7 +62,12 @@ export function WindowDemo() {
 										className="pl-9"
 									/>
 								</div>
-								<Button variant="outline">Filter</Button>
+								<Button
+									variant="outline"
+									onClick={() => toast("Demo mode: filters aren't wired up")}
+								>
+									Filter
+								</Button>
 							</div>
 							<ul className="divide-y rounded-lg border">
 								{rows.map((r) => (
