@@ -136,7 +136,7 @@ export function DataTable<T>({
 	};
 
 	return (
-		<div className={cn("grid w-full gap-3", className)}>
+		<div className={cn("grid w-full grid-cols-1 gap-3", className)}>
 			{(searchable || toolbar) && (
 				<div className="flex flex-wrap items-center justify-between gap-2">
 					{searchable && (

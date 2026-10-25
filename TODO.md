@@ -106,6 +106,9 @@ Reuse existing primitives inside new ones (AvatarGroup uses Avatar, and so on). 
 - [x] Chart: y-axis ticks use as many decimals as they need (0.25% read "0.3%").
 - [x] Resizable: panels register through the DOM instead of `child.type` checks (broke under Fast Refresh and Server Component parents); float slack on collapse.
 - [x] Drawer: layer is `overflow-clip`; focusing into a panel mid-slide scrolled the `overflow-hidden` layer sideways (right drawers opened half off-screen).
+- [x] Responsive sweep (320 / 360 / 768 px, no page or preview overflow): header search collapses to an icon on phones; OTP slots, DataTable, Pagination (tighter gaps, `pageRange(…, 0)` on phones) and the demo grids shrink instead of overflowing; NavigationMenu centers a panel wider than its clipping area and skips responsively hidden items.
+- [x] Chart: the svg is out of flow, so the chart shrinks again when its container narrows (it only ever grew).
+- [x] `.gitattributes` `eol=lf`: Windows checkouts no longer fail Biome's LF format check.
 
 ## Build order by use case
 

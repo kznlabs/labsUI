@@ -356,11 +356,13 @@ export function Chart({
 						style={{ height }}
 					>
 						{width > 0 && (
+							// Out of flow: a fixed-width svg would hold the box at its old width, so the
+							// chart could grow with its container but never shrink back.
 							<svg
 								width={width}
 								height={height}
 								aria-hidden="true"
-								className="block overflow-visible"
+								className="absolute inset-0 block overflow-visible"
 							>
 								{ticks.map((t) => (
 									<g key={t}>

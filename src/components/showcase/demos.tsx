@@ -55,6 +55,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { toast } from "@/components/ui/toast";
 import { Typewriter } from "@/components/ui/typewriter";
+import { useMediaQuery } from "@/lib/platform";
 import { useSetDynamicCode } from "@/lib/showcase-context";
 import { cn, spring } from "@/lib/utils";
 
@@ -878,6 +879,8 @@ export function CollapsibleDemo() {
 export function PaginationDemo() {
 	const [page, setPage] = useState(6);
 	const total = 12;
+	// Phones get one page either side of the current one fewer, so the row fits.
+	const wide = useMediaQuery("(min-width: 640px)");
 	const go = (p: number) => (e: MouseEvent) => {
 		e.preventDefault();
 		setPage(Math.min(total, Math.max(1, p)));
@@ -893,7 +896,7 @@ export function PaginationDemo() {
 							disabled={page === 1}
 						/>
 					</PaginationItem>
-					{pageRange(page, total).map((p, i) => (
+					{pageRange(page, total, wide ? 1 : 0).map((p, i) => (
 						// biome-ignore lint/suspicious/noArrayIndexKey: slots stay mounted so numbers swipe
 						<PaginationItem key={`slot-${i}`}>
 							{p === "…" ? (

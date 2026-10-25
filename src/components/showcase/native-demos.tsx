@@ -131,7 +131,7 @@ export function RelativeTimeDemo() {
 	useEffect(() => setNow(Date.now()), []);
 	if (now === null) return <div className="h-40 w-full max-w-sm" />;
 	return (
-		<ul className="grid w-full max-w-sm gap-1">
+		<ul className="grid w-full max-w-sm grid-cols-1 gap-1">
 			{log.map((e) => (
 				<li
 					key={e.text}

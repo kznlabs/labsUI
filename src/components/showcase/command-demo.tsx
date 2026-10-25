@@ -40,11 +40,11 @@ export function SiteCommand() {
 				size="sm"
 				onClick={() => setOpen(true)}
 				aria-keyshortcuts={mac ? "Meta+K" : "Control+K"}
-				className="w-32 justify-between font-normal text-muted-foreground sm:w-56"
+				className="size-9 justify-center px-0 font-normal text-muted-foreground sm:h-8 sm:w-56 sm:justify-between sm:px-3"
 			>
 				<span className="inline-flex items-center gap-2">
 					<Search aria-hidden="true" />
-					Search…
+					<span className="max-sm:sr-only">Search…</span>
 				</span>
 				<KbdGroup keys={mac ? ["⌘", "K"] : ["Ctrl", "K"]} className="hidden sm:inline-flex" />
 			</Button>

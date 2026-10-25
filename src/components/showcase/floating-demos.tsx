@@ -92,7 +92,7 @@ export function TooltipDemo() {
 	const [on, setOn] = useState<string[]>([]);
 	return (
 		<div className="flex flex-col items-center gap-3">
-			<ButtonGroup aria-label="Formatting" attached={false}>
+			<ButtonGroup aria-label="Formatting" attached={false} className="flex-wrap justify-center">
 				{tools.map((t) => (
 					<Tooltip
 						key={t.label}

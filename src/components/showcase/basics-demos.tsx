@@ -27,7 +27,7 @@ const stats = [
 
 export function TabsDemo() {
 	return (
-		<div className="grid w-full max-w-md gap-10">
+		<div className="grid w-full max-w-md grid-cols-1 gap-10">
 			<Tabs defaultValue="overview">
 				<TabsList aria-label="Dashboard">
 					<TabsTrigger value="overview">Overview</TabsTrigger>
@@ -228,7 +228,7 @@ export function AccentPickerDemo() {
 				<ThemeToggle />
 			</div>
 			<Separator />
-			<div className="flex items-center justify-between gap-4 px-4 py-3">
+			<div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
 				<span className="text-sm">Accent color</span>
 				<AccentPicker />
 			</div>

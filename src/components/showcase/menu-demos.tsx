@@ -396,7 +396,7 @@ export function NavigationMenuDemo() {
 					<NavigationMenuItem>
 						<NavigationMenuTrigger>Products</NavigationMenuTrigger>
 						<NavigationMenuContent>
-							<ul className="grid w-[32rem] grid-cols-2 gap-0.5">
+							<ul className="grid w-[min(32rem,calc(100vw-5rem))] gap-0.5 sm:grid-cols-2">
 								{products.map((p) => (
 									<li key={p.href}>
 										<NavigationMenuLink {...p} active={page === p.href} onClick={go(p.href)} />
@@ -408,7 +408,7 @@ export function NavigationMenuDemo() {
 					<NavigationMenuItem>
 						<NavigationMenuTrigger>Resources</NavigationMenuTrigger>
 						<NavigationMenuContent>
-							<div className="grid w-[30rem] grid-cols-[11rem_1fr] gap-2">
+							<div className="grid w-[min(30rem,calc(100vw-5rem))] gap-2 sm:grid-cols-[11rem_1fr]">
 								<NavigationMenuLink
 									href="#release"
 									active={page === "#release"}
@@ -430,7 +430,7 @@ export function NavigationMenuDemo() {
 							</div>
 						</NavigationMenuContent>
 					</NavigationMenuItem>
-					<NavigationMenuItem>
+					<NavigationMenuItem className="max-sm:hidden">
 						<NavigationMenuLink href="#blog" active={page === "#blog"} onClick={go("#blog")}>
 							Blog
 						</NavigationMenuLink>

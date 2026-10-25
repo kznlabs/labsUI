@@ -22,7 +22,7 @@ export function Pagination({ className, ...props }: ComponentProps<"nav">) {
 
 export function PaginationContent({ className, children, ...props }: ComponentProps<"ul">) {
 	return (
-		<ul className={cn("isolate flex flex-row items-center gap-1", className)} {...props}>
+		<ul className={cn("isolate flex flex-row items-center gap-0.5 sm:gap-1", className)} {...props}>
 			<PaginationMotion>{children}</PaginationMotion>
 		</ul>
 	);

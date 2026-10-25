@@ -87,9 +87,10 @@ function clipBounds(el: HTMLElement | null) {
 
 /** Top-level values in document order, for the slide direction and ← →. */
 const order = (list: HTMLElement | null) =>
-	[...(list?.querySelectorAll<HTMLElement>("[data-nav-item]") ?? [])].map(
-		(el) => el.dataset.navItem ?? "",
-	);
+	[...(list?.querySelectorAll<HTMLElement>("[data-nav-item]") ?? [])]
+		// Items hidden by a responsive class drop out of the slide order and ← →.
+		.filter((el) => el.offsetParent !== null)
+		.map((el) => el.dataset.navItem ?? "");
 
 /**
  * Top navigation for a website: links and hover/click panels. Hover opens after a beat, then
@@ -177,11 +178,16 @@ export function NavigationMenu({
 			if (!trigger || !nav) return;
 			const t = trigger.getBoundingClientRect();
 			const bounds = clipBounds(root.current);
-			// Centered under its trigger, kept inside the screen and any scroller that clips it.
-			const left = Math.min(
-				Math.max(t.left + t.width / 2 - size.w / 2, bounds.left + MARGIN),
-				bounds.right - size.w - MARGIN,
-			);
+			// Centered under its trigger, kept inside the screen and any scroller that clips it;
+			// a panel wider than that room is centered in it instead.
+			const room = bounds.right - bounds.left;
+			const left =
+				size.w > room - 2 * MARGIN
+					? bounds.left + (room - size.w) / 2
+					: Math.min(
+							Math.max(t.left + t.width / 2 - size.w / 2, bounds.left + MARGIN),
+							bounds.right - size.w - MARGIN,
+						);
 			const to = { x: left - nav.left, width: size.w, height: size.h };
 			for (const [mv, v] of [
 				[x, to.x],

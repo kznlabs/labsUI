@@ -36,7 +36,7 @@ export function Playground({
 			<div
 				className={cn(
 					// safe center: a demo taller than the stage scrolls from its top instead of being cut off.
-					"flex min-h-56 flex-wrap justify-center gap-4 overflow-auto overscroll-contain bg-[radial-gradient(var(--border)_1px,transparent_1px)] bg-size-[16px_16px] px-6 py-12 [align-content:safe_center] [align-items:safe_center] sm:px-10 sm:py-16",
+					"flex min-h-56 flex-wrap justify-center gap-4 overflow-auto overscroll-contain *:min-w-0 *:*:min-w-0 bg-[radial-gradient(var(--border)_1px,transparent_1px)] bg-size-[16px_16px] px-3 py-12 [align-content:safe_center] [align-items:safe_center] sm:px-10 sm:py-16",
 					previewClassName,
 				)}
 			>

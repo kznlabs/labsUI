@@ -287,7 +287,7 @@ export function ChartDemo() {
 	const [type, setType] = useState("line");
 	const [stacked, setStacked] = useState(true);
 	return (
-		<div className="grid w-full max-w-2xl gap-4">
+		<div className="grid w-full max-w-2xl grid-cols-1 gap-4">
 			<div className="flex flex-wrap items-center gap-4">
 				<ToggleGroup size="sm" aria-label="Chart type" value={type} onValueChange={setType}>
 					<ToggleGroupItem value="line">Line</ToggleGroupItem>
@@ -345,7 +345,7 @@ export function InputOTPDemo() {
 	const [code, setCode] = useState("");
 	const [error, setError] = useState<string>();
 	return (
-		<div className="grid gap-8">
+		<div className="grid w-full max-w-sm grid-cols-1 gap-8">
 			<Field
 				label="Verification code"
 				description="We sent a 6-digit code to jane@example.com. Try 424242."

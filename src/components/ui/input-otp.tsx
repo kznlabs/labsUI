@@ -62,14 +62,16 @@ export function InputOTP({
 	return (
 		<div
 			className={cn(
-				"group/otp relative inline-flex items-center gap-2 has-disabled:cursor-not-allowed has-disabled:opacity-50",
+				"group/otp relative inline-flex min-w-0 max-w-full items-center gap-2 has-disabled:cursor-not-allowed has-disabled:opacity-50",
 				className,
 			)}
 		>
 			{sizes.map((count, g) => (
 				<Fragment key={starts[g]}>
-					{g > 0 && <span aria-hidden="true" className="h-px w-2.5 bg-muted-foreground/50" />}
-					<div className="flex gap-1.5" aria-hidden="true">
+					{g > 0 && (
+						<span aria-hidden="true" className="h-px w-2.5 shrink-0 bg-muted-foreground/50" />
+					)}
+					<div className="flex min-w-0 gap-1.5" aria-hidden="true">
 						{Array.from({ length: count }, (_, k) => {
 							const i = starts[g] + k;
 							const char = value[i];
@@ -78,7 +80,7 @@ export function InputOTP({
 								<div
 									key={i}
 									className={cn(
-										"relative grid h-10 w-9 place-items-center overflow-hidden rounded-lg border border-input font-medium text-base shadow-xs transition-[border-color,box-shadow] duration-200 dark:bg-input/30",
+										"relative grid h-10 w-9 min-w-0 shrink place-items-center overflow-hidden rounded-lg border border-input font-medium text-base shadow-xs transition-[border-color,box-shadow] duration-200 dark:bg-input/30",
 										"group-has-[[aria-invalid=true]]/otp:border-destructive group-has-[:user-invalid]/otp:border-destructive",
 										isActive && "border-ring ring-[3px] ring-ring/50",
 									)}
