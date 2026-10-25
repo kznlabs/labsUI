@@ -8,3 +8,4 @@ next-env.d.ts
 # Generated install registry (bun run registry)
 /public/r/
 packages/cli/dist/
+packages/cli/src/registry.json

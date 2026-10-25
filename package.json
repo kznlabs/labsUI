@@ -10,9 +10,9 @@
 		"lint": "biome check .",
 		"format": "biome check --write .",
 		"check-dead-code": "knip",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "bun run registry && tsc --noEmit",
 		"registry": "bun scripts/build-registry.ts",
-		"cli:build": "cd packages/cli && bun run build"
+		"cli:build": "bun run registry && cd packages/cli && bun run build"
 	},
 	"dependencies": {
 		"clsx": "^2.1.1",

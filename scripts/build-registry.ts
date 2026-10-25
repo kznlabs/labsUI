@@ -15,6 +15,7 @@ import { site } from "../src/lib/site";
 const ROOT = join(import.meta.dirname, "..");
 const SRC = join(ROOT, "src");
 const OUT = join(ROOT, "public", "r");
+const CLI_BUNDLE = join(ROOT, "packages", "cli", "src", "registry.json");
 const BASE = `${(process.env.NEXT_PUBLIC_SITE_URL ?? site.url).replace(/\/$/, "")}/r`;
 
 /** Supplied by the host app, never installed by the CLI. */
@@ -136,6 +137,7 @@ const index: {
 	description?: string;
 	registryDependencies: string[];
 }[] = [];
+const bundle: Record<string, unknown> = {};
 for (const it of [...items.values()].sort((a, b) => a.name.localeCompare(b.name))) {
 	const content = readFileSync(join(SRC, it.file), "utf8");
 	const deps = new Set<string>();
@@ -174,6 +176,7 @@ for (const it of [...items.values()].sort((a, b) => a.name.localeCompare(b.name)
 		],
 	};
 	writeFileSync(join(OUT, `${it.name}.json`), `${JSON.stringify(json, null, "\t")}\n`);
+	bundle[it.name] = json;
 	index.push({
 		name: it.name,
 		type: it.type,
@@ -187,4 +190,10 @@ writeFileSync(
 	join(OUT, "index.json"),
 	`${JSON.stringify({ name: "labsui", homepage: site.url, items: index }, null, "\t")}\n`,
 );
-console.log(`registry: ${index.length} items → ${relative(ROOT, OUT)} (${BASE})`);
+// The CLI ships the whole registry, so `npx labsui add` needs no server and each CLI version
+// pins the components it installs.
+writeFileSync(CLI_BUNDLE, `${JSON.stringify({ items: bundle, index })}\n`);
+
+console.log(
+	`registry: ${index.length} items → ${relative(ROOT, OUT)} (${BASE}) + ${relative(ROOT, CLI_BUNDLE)}`,
+);

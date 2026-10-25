@@ -14,7 +14,7 @@
 	},
 	"scripts": {
 		"build": "bun build src/index.ts --target node --outfile dist/index.js",
-		"prepublishOnly": "bun run build"
+		"prepublishOnly": "cd ../.. && bun run cli:build"
 	},
 	"keywords": [
 		"react",

@@ -7,19 +7,23 @@
  *   npx labsui list             what can be added
  *
  * Files land at their registry path under your `@/*` alias root (src/ or the project root), so
- * `@/components/ui/button` imports keep working. Zero dependencies: Node 18+ fetch and fs.
+ * `@/components/ui/button` imports keep working. The registry ships inside the package (built
+ * by scripts/build-registry.ts), so it works offline and each version pins its components;
+ * `--registry <url>` reads a hosted one instead. Zero dependencies: Node 18+ fetch and fs.
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
+import manifest from "../jsr.json" with { type: "json" };
+import bundled from "./registry.json" with { type: "json" };
 
-const VERSION = "0.1.0";
-/** The deployed labsUI site; override per project in labsui.json or with --registry. */
-const DEFAULT_REGISTRY = process.env.LABSUI_REGISTRY ?? "https://labsui.kznlabs.com/r";
+const VERSION = manifest.version;
 const CONFIG = "labsui.json";
 
-type Config = { registry: string; alias: string; root: string; css?: string };
+/** A hosted registry base URL, or undefined for the one bundled with this version. */
+type Source = string | undefined;
+type Config = { registry?: string; alias: string; root: string; css?: string };
 type RegistryFile = { path: string; type: string; target?: string; content: string };
 type RegistryItem = {
 	name: string;
@@ -52,7 +56,7 @@ ${bold("Usage")}
 
 ${bold("Options")}
   --cwd <dir>        project directory (default: current)
-  --registry <url>   registry base URL (default: labsui.json, then ${DEFAULT_REGISTRY})
+  --registry <url>   read a hosted registry (default: the one bundled with labsui)
   --overwrite        replace files that already exist
   --dry-run          show what would change, write nothing
   --no-install       skip installing npm dependencies
@@ -79,6 +83,7 @@ async function main() {
 	if (values.help || !command) return console.log(HELP);
 
 	const cwd = resolve(values.cwd ?? process.cwd());
+	const registry = values.registry ?? process.env.LABSUI_REGISTRY;
 	const opts = {
 		overwrite: values.overwrite,
 		dryRun: values["dry-run"],
@@ -87,9 +92,9 @@ async function main() {
 
 	switch (command) {
 		case "init":
-			return init(cwd, values.registry, opts);
+			return init(cwd, registry, opts);
 		case "add": {
-			const config = loadConfig(cwd, values.registry);
+			const config = loadConfig(cwd, registry);
 			let wanted = names;
 			if (values.all) {
 				const index = await fetchIndex(config.registry);
@@ -101,8 +106,7 @@ async function main() {
 			return add(cwd, config, wanted, opts);
 		}
 		case "list": {
-			const registry = values.registry ?? readConfig(cwd)?.registry ?? DEFAULT_REGISTRY;
-			return list(await fetchIndex(registry));
+			return list(await fetchIndex(registry ?? readConfig(cwd)?.registry));
 		}
 		default:
 			throw new CliError(`Unknown command "${command}". Run labsui --help.`);
@@ -243,26 +247,55 @@ async function fetchJson<T>(url: string): Promise<T> {
 	return (await res.json()) as T;
 }
 
-async function fetchIndex(registry: string) {
-	return (await fetchJson<{ items: IndexItem[] }>(`${trimSlash(registry)}/index.json`)).items;
+async function fetchIndex(source: Source): Promise<IndexItem[]> {
+	if (!source) return bundled.index;
+	return (await fetchJson<{ items: IndexItem[] }>(`${trimSlash(source)}/index.json`)).items;
 }
 
-/** `https://…/r/button.json`, `button.json` or `button` → `button`. */
-const itemName = (ref: string) =>
-	ref
-		.split("/")
-		.pop()
-		?.replace(/\.json$/, "") ?? ref;
+async function fetchItem(source: Source, name: string): Promise<RegistryItem> {
+	if (source) return fetchJson<RegistryItem>(`${trimSlash(source)}/${name}.json`);
+	const item = (bundled.items as Record<string, RegistryItem>)[name];
+	if (!item) throw new CliError(`Not found: ${name}`);
+	return item;
+}
 
-/** The items and everything they depend on, dependencies first. */
-async function resolveItems(registry: string, names: string[]) {
-	const seen = new Map<string, RegistryItem>();
+/** `https://…/r/button.json`, `button.json` or `button` → `button`. Anything else is refused. */
+function itemName(ref: string) {
+	const name =
+		ref
+			.split("/")
+			.pop()
+			?.replace(/\.json$/, "") ?? "";
+	if (!/^[a-z0-9][a-z0-9-]*$/.test(name)) throw new CliError(`Invalid component name "${ref}"`);
+	return name;
+}
+
+/**
+ * npm package specs as the registry writes them (`motion@14.6.0`, `@scope/pkg@^1.2.0`). The
+ * registry is remote, so anything else (flags, spaces, shell characters) is refused.
+ */
+const PACKAGE_SPEC = /^(@[a-z0-9][\w.-]*\/)?[a-z0-9][\w.-]*(@[\w.^~*+-]+)?$/i;
+
+/** Where a registry file goes: inside the alias folder, or the install is refused. */
+function safeTarget(base: string, path: string) {
+	const target = resolve(base, path);
+	const rel = relative(base, target);
+	if (isAbsolute(path) || !rel || rel.startsWith("..") || isAbsolute(rel))
+		throw new CliError(`Refusing to write outside ${base}: ${path}`);
+	return target;
+}
+
+/** The items and everything they depend on, each once. */
+async function resolveItems(source: Source, names: string[]) {
+	// Marked before the fetch: siblings resolve in parallel and often share dependencies.
+	const seen = new Set<string>();
 	const order: RegistryItem[] = [];
 	const visit = async (name: string, from?: string) => {
 		if (seen.has(name)) return;
+		seen.add(name);
 		let item: RegistryItem;
 		try {
-			item = await fetchJson<RegistryItem>(`${trimSlash(registry)}/${name}.json`);
+			item = await fetchItem(source, name);
 		} catch (err) {
 			if (err instanceof CliError && err.message.startsWith("Not found"))
 				throw new CliError(
@@ -272,7 +305,6 @@ async function resolveItems(registry: string, names: string[]) {
 				);
 			throw err;
 		}
-		seen.set(name, item);
 		await Promise.all((item.registryDependencies ?? []).map((d) => visit(itemName(d), name)));
 		order.push(item);
 	};
@@ -292,6 +324,9 @@ function rewriteAlias(content: string, alias: string) {
 }
 
 async function add(cwd: string, config: Config, names: string[], opts: Opts) {
+	const base = resolve(cwd, config.root);
+	if (base !== cwd && !base.startsWith(cwd + sep))
+		throw new CliError(`"root" in ${CONFIG} must be inside the project: ${config.root}`);
 	const items = await resolveItems(config.registry, names);
 	const pkg = readPackage(cwd);
 	const installed = { ...pkg.dependencies, ...pkg.devDependencies };
@@ -301,11 +336,12 @@ async function add(cwd: string, config: Config, names: string[], opts: Opts) {
 	const deps = new Set<string>();
 	for (const item of items) {
 		for (const dep of item.dependencies ?? []) {
+			if (!PACKAGE_SPEC.test(dep)) throw new CliError(`${item.name}: invalid dependency "${dep}"`);
 			const name = dep.replace(/(?<=.)@[^@]*$/, "");
 			if (!installed[name]) deps.add(dep);
 		}
 		for (const file of item.files) {
-			const target = join(cwd, config.root, file.target ?? file.path);
+			const target = safeTarget(base, file.target ?? file.path);
 			const shown = relative(cwd, target).replaceAll("\\", "/");
 			if (existsSync(target) && !opts.overwrite) {
 				skipped.push(shown);
@@ -341,7 +377,14 @@ function installDeps(cwd: string, deps: string[], opts: Opts) {
 		return;
 	}
 	console.log(dim(`$ ${pm} ${args.join(" ")}`));
-	const run = spawnSync(pm, args, { cwd, stdio: "inherit", shell: process.platform === "win32" });
+	// Windows runs npm/pnpm/yarn through .cmd shims, which need a shell. Every arg passed
+	// PACKAGE_SPEC (no quotes or shell characters), and quoting keeps cmd.exe from eating `^`.
+	const win = process.platform === "win32";
+	const run = spawnSync(pm, win ? args.map((a) => `"${a}"`) : args, {
+		cwd,
+		stdio: "inherit",
+		shell: win,
+	});
 	if (run.status !== 0)
 		throw new CliError(`${pm} failed. Install manually: ${pm} ${args.join(" ")}`);
 	console.log(`${green("✓")} Installed ${deps.length} package(s)`);
@@ -359,11 +402,9 @@ async function init(cwd: string, registryFlag: string | undefined, opts: Opts) {
 
 	const { alias, root } = detectAlias(cwd);
 	const existing = readConfig(cwd);
-	const config: Config = {
-		registry: registryFlag ?? existing?.registry ?? DEFAULT_REGISTRY,
-		alias,
-		root,
-	};
+	// Only a hosted registry is recorded; without one, the bundled registry is used.
+	const registry = registryFlag ?? existing?.registry;
+	const config: Config = { ...(registry && { registry }), alias, root };
 
 	await add(cwd, config, ["styles", "utils", "theme", "motion-provider"], opts);
 

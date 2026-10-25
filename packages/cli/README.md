@@ -13,7 +13,9 @@ npx labsui add --all           # every component and block
 npx labsui list                # what you can add
 ```
 
-Works with `bunx`, `pnpm dlx` and `yarn dlx` too. The CLI installs npm dependencies with whatever package manager your lockfile shows.
+Any runner works: `bunx labsui add button`, `pnpm dlx labsui …`, `yarn dlx labsui …`, or from JSR with `deno run -A jsr:@kznlabs/labsui add button`. npm dependencies install with whatever package manager your lockfile shows.
+
+The component registry ships inside the package: no network needed beyond installing npm dependencies, and each labsui version installs the same component code. `npx labsui@latest add …` gets the newest components.
 
 ### `init`
 

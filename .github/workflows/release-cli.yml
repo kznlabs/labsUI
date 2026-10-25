@@ -1,0 +1,50 @@
+# Publishes the labsui CLI to npm and JSR when a tag like cli-v0.1.0 is pushed.
+# One-time setup:
+#   npm: add an automation token as the NPM_TOKEN repository secret.
+#   JSR: create the @kznlabs scope and the labsui package on jsr.io, then link it to this
+#        repository (package settings → GitHub repository); publishing then uses OIDC, no token.
+name: Release CLI
+
+on:
+  push:
+    tags: ["cli-v*"]
+
+permissions:
+  contents: read
+  id-token: write # JSR OIDC
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Check versions match the tag
+        run: |
+          tag="${GITHUB_REF_NAME#cli-v}"
+          npm_v=$(bun -e 'console.log(require("./packages/cli/package.json").version)')
+          jsr_v=$(bun -e 'console.log(require("./packages/cli/jsr.json").version)')
+          echo "tag $tag · package.json $npm_v · jsr.json $jsr_v"
+          test "$tag" = "$npm_v" && test "$tag" = "$jsr_v"
+
+      - run: bun install --frozen-lockfile
+      - run: bun run lint && bun run typecheck
+      - run: bun run cli:build
+      - name: Smoke test
+        working-directory: packages/cli
+        run: node dist/index.js --version && node dist/index.js list | head -3
+
+      - name: Publish to npm
+        working-directory: packages/cli
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to JSR
+        working-directory: packages/cli
+        run: bunx jsr publish
