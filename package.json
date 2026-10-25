@@ -4,13 +4,15 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "next dev",
-		"build": "next build",
+		"dev": "bun run registry && next dev",
+		"build": "bun run registry && next build",
 		"start": "next start",
 		"lint": "biome check .",
 		"format": "biome check --write .",
 		"check-dead-code": "knip",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"registry": "bun scripts/build-registry.ts",
+		"cli:build": "cd packages/cli && bun run build"
 	},
 	"dependencies": {
 		"clsx": "^2.1.1",

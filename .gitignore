@@ -4,3 +4,7 @@ node_modules
 next-env.d.ts
 # Playwright MCP screenshots and logs
 .playwright-mcp/
+
+# Generated install registry (bun run registry)
+/public/r/
+packages/cli/dist/

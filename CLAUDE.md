@@ -7,6 +7,8 @@ labsUI: shadcn-style primitives + macOS polish. Next 16 App Router · React 19 �
 - `bun dev` · `bun run build` · `bun run typecheck`
 - `bun run lint` (Biome) · `bun run format` (Biome autofix)
 - `bun run check-dead-code` (Knip). lint + typecheck + knip must pass.
+- `bun run registry` builds `public/r/*.json` (install registry, generated, gitignored; `dev`/`build` run it). Deps come from each file's imports: `@/components/*` and `@/lib/*` → registry deps, bare imports → npm deps (must be in `dependencies`), react/react-dom/next are peers. Library CSS lives in `src/styles/labsui.css` (shipped as-is); `globals.css` only imports it.
+- CLI: `packages/cli` (`npx labsui init|add|list`), zero deps, `bun run cli:build`. Installable files must only import ui/blocks/lib/motion-provider, never showcase code.
 
 ## Rules
 

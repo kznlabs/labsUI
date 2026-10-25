@@ -4,7 +4,7 @@ import { SearchX } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
 import { Playground } from "@/components/showcase/playground";
 import { Button } from "@/components/ui/button";
-import { CodePanel } from "@/components/ui/code";
+import { Code, CodePanel } from "@/components/ui/code";
 import { Empty } from "@/components/ui/empty";
 import { Reveal } from "@/components/ui/reveal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +15,8 @@ type ShowcaseSectionProps = {
 	name: string;
 	description: string;
 	files: { name: string; code: string }[];
+	/** CLI command that installs this component, e.g. `npx labsui add button`. */
+	install: string;
 	previewClassName?: string;
 	/** Corner Replay button; only for demos whose point is a first impression. */
 	replay?: boolean;
@@ -30,6 +32,7 @@ function ShowcaseSectionInner({
 	name,
 	description,
 	files,
+	install,
 	previewClassName,
 	replay,
 	layout = "stacked",
@@ -49,6 +52,7 @@ function ShowcaseSectionInner({
 				{name}
 			</h2>
 			<p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
+			<Code code={install} language="bash" variant="inline" className="mt-2 w-fit max-w-full" />
 		</div>
 	);
 	const preview = (

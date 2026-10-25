@@ -109,6 +109,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Code } from "@/components/ui/code";
 import { TextSwap } from "@/components/ui/text-swap";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { groups, registry } from "@/lib/registry";
@@ -227,6 +228,18 @@ const groupIcons: Record<(typeof groups)[number], ReactNode> = {
 	Blocks: null,
 };
 
+/** `button.tsx · blocks/pricing.tsx` → `npx labsui add button pricing`. */
+const installCommand = (file: string) =>
+	`npx labsui add ${file
+		.split("·")
+		.map((f) =>
+			f
+				.trim()
+				.replace(/^blocks\//, "")
+				.replace(/\.tsx?$/, ""),
+		)
+		.join(" ")}`;
+
 /** Header nav: component groups jump to their first section, blocks get a panel of their own. */
 const headerNav = [
 	{
@@ -328,6 +341,15 @@ export default function Home() {
 									/>
 								</span>
 							</div>
+							<div className="flex flex-wrap items-center gap-2">
+								<Code code="npx labsui init" language="bash" variant="inline" />
+								<a
+									href="#button"
+									className="rounded-md text-muted-foreground text-sm underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
+								>
+									then add any component below
+								</a>
+							</div>
 							<ul className="flex flex-wrap gap-2" aria-label="Tech stack">
 								{[
 									"Next.js 16",
@@ -351,6 +373,7 @@ export default function Home() {
 								key={c.id}
 								{...c}
 								files={snippets[c.id] ?? [{ name: c.file, code: c.usage }]}
+								install={installCommand(c.file)}
 								previewClassName={demos[c.id].preview}
 								replay={demos[c.id].replay}
 								layout={demos[c.id].tabs ? "tabs" : "stacked"}

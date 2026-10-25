@@ -1,0 +1,390 @@
+/*
+ * labsUI styles: tokens, accent presets, animations and component CSS.
+ * Import once, right after Tailwind: @import "tailwindcss"; @import "./labsui.css";
+ * `npx labsui init` installs this file; re-run `npx labsui add styles --overwrite` to update it.
+ */
+
+/* Class-based dark mode: `.dark` on <html>, set pre-paint by the theme script. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * macOS palette. Window-gray page, white content surfaces, hairline borders, and one accent
+ * (System Settings > Appearance) that drives primary, focus rings, selection and switches.
+ * Retint with --accent-hue / --accent-chroma / --accent-l, or a preset: <html data-accent="purple">.
+ *
+ * WCAG AA (4.5:1) by construction. Fills (`primary`, `destructive`) are deep enough for white
+ * text in both themes. Text and icons on surfaces or tints use the `*-ink` twin of each color:
+ * darker in light mode, lighter in dark mode. Values solved per hue; re-check if you retune one.
+ */
+:root {
+	--accent-hue: 255;
+	--accent-chroma: 0.21;
+	--accent-l: 0.56;
+	--accent-ink-light: 0.53;
+	--accent-ink-dark: 0.73;
+	--accent-contrast: oklch(1 0 0);
+
+	--radius: 0.75rem;
+	--background: oklch(0.975 0.001 286);
+	--foreground: oklch(0.21 0.004 286);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.21 0.004 286);
+	--popover: oklch(0.995 0 0);
+	--popover-foreground: oklch(0.21 0.004 286);
+	--primary: oklch(var(--accent-l) var(--accent-chroma) var(--accent-hue));
+	--primary-foreground: var(--accent-contrast);
+	--primary-ink: oklch(var(--accent-ink-light) var(--accent-chroma) var(--accent-hue));
+	--secondary: oklch(0.945 0.002 286);
+	--secondary-foreground: oklch(0.21 0.004 286);
+	--muted: oklch(0.955 0.002 286);
+	--muted-foreground: oklch(0.52 0.008 286);
+	--accent: oklch(0 0 0 / 5%);
+	--accent-foreground: oklch(0.21 0.004 286);
+	--destructive: oklch(0.58 0.22 28);
+	--success: oklch(0.68 0.17 150);
+	--warning: oklch(0.72 0.16 60);
+	--destructive-ink: oklch(0.55 0.22 28);
+	--success-ink: oklch(0.5 0.17 150);
+	--warning-ink: oklch(0.54 0.16 60);
+	--border: oklch(0 0 0 / 10%);
+	--input: oklch(0 0 0 / 14%);
+	--ring: var(--primary);
+	/* Categorical series, fixed order (dataviz palette, validated against white card) */
+	--chart-1: #2a78d6;
+	--chart-2: #eb6834;
+	--chart-3: #1baf7a;
+	--chart-4: #eda100;
+	--chart-5: #e87ba4;
+	--chart-6: #008300;
+	--chart-7: #6250d6;
+	--chart-8: #e34948;
+	color-scheme: light;
+}
+
+.dark {
+	--primary-ink: oklch(var(--accent-ink-dark) var(--accent-chroma) var(--accent-hue));
+	--background: oklch(0.19 0.003 286);
+	--foreground: oklch(0.96 0 0);
+	--card: oklch(0.235 0.003 286);
+	--card-foreground: oklch(0.96 0 0);
+	--popover: oklch(0.255 0.003 286);
+	--popover-foreground: oklch(0.96 0 0);
+	--secondary: oklch(0.3 0.003 286);
+	--secondary-foreground: oklch(0.96 0 0);
+	--muted: oklch(0.27 0.003 286);
+	--muted-foreground: oklch(0.72 0.006 286);
+	--accent: oklch(1 0 0 / 8%);
+	--accent-foreground: oklch(0.96 0 0);
+	--destructive: oklch(0.58 0.2 25);
+	--success: oklch(0.74 0.17 150);
+	--warning: oklch(0.78 0.15 65);
+	--destructive-ink: oklch(0.8 0.2 25);
+	--success-ink: oklch(0.7 0.17 150);
+	--warning-ink: oklch(0.72 0.15 65);
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+	/* Same hues stepped for the dark card */
+	--chart-1: #3987e5;
+	--chart-2: #d95926;
+	--chart-3: #199e70;
+	--chart-4: #c98500;
+	--chart-5: #d55181;
+	--chart-6: #008300;
+	--chart-7: #9085e9;
+	--chart-8: #e66767;
+	color-scheme: dark;
+}
+
+/*
+ * Accent presets, matching macOS. Per hue: fill lightness (white text ≥ 4.5:1, both themes) and
+ * ink lightness for text on light / dark surfaces. Yellow is the one light fill, with dark text.
+ */
+[data-accent="purple"] {
+	--accent-hue: 310;
+	--accent-chroma: 0.2;
+	--accent-l: 0.58;
+	--accent-ink-light: 0.55;
+	--accent-ink-dark: 0.74;
+}
+[data-accent="pink"] {
+	--accent-hue: 0;
+	--accent-chroma: 0.21;
+	--accent-l: 0.58;
+	--accent-ink-light: 0.55;
+	--accent-ink-dark: 0.77;
+}
+[data-accent="red"] {
+	--accent-hue: 27;
+	--accent-chroma: 0.21;
+	--accent-l: 0.58;
+	--accent-ink-light: 0.55;
+	--accent-ink-dark: 0.79;
+}
+[data-accent="orange"] {
+	--accent-hue: 55;
+	--accent-chroma: 0.17;
+	--accent-l: 0.57;
+	--accent-ink-light: 0.54;
+	--accent-ink-dark: 0.73;
+}
+[data-accent="yellow"] {
+	--accent-hue: 92;
+	--accent-chroma: 0.17;
+	--accent-l: 0.84;
+	--accent-ink-light: 0.53;
+	--accent-ink-dark: 0.71;
+	--accent-contrast: oklch(0.25 0.03 92);
+}
+[data-accent="green"] {
+	--accent-hue: 148;
+	--accent-chroma: 0.17;
+	--accent-l: 0.54;
+	--accent-ink-light: 0.51;
+	--accent-ink-dark: 0.7;
+}
+[data-accent="graphite"] {
+	--accent-chroma: 0;
+	--accent-l: 0.55;
+	--accent-ink-light: 0.53;
+	--accent-ink-dark: 0.71;
+}
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-primary-ink: var(--primary-ink);
+	--color-destructive: var(--destructive);
+	--color-success: var(--success);
+	--color-warning: var(--warning);
+	--color-destructive-ink: var(--destructive-ink);
+	--color-success-ink: var(--success-ink);
+	--color-warning-ink: var(--warning-ink);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-chart-6: var(--chart-6);
+	--color-chart-7: var(--chart-7);
+	--color-chart-8: var(--chart-8);
+	--color-mac-red: #ff5f57;
+	--color-mac-yellow: #febc2e;
+	--color-mac-green: #28c840;
+
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--radius-2xl: calc(var(--radius) + 8px);
+
+	--font-sans:
+		-apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
+	--font-mono: "SF Mono", ui-monospace, Menlo, "JetBrains Mono", monospace;
+
+	/* Skeleton: a softer pulse than animate-pulse (never fades below 60%). */
+	--animate-skeleton: skeleton 1.8s ease-in-out infinite;
+	@keyframes skeleton {
+		50% {
+			opacity: 0.6;
+		}
+	}
+
+	/* Spinner: each macOS spoke fades from full to faint; staggered delays make it turn. */
+	--animate-spinner: spinner 0.8s linear infinite;
+	@keyframes spinner {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0.15;
+		}
+	}
+
+	/* InputOTP fake caret. */
+	--animate-caret-blink: caret-blink 1.1s step-end infinite;
+	@keyframes caret-blink {
+		50% {
+			opacity: 0;
+		}
+	}
+}
+
+@layer base {
+	/* Carousel slides: exact width for --per-view slides and --gap gaps (set on CarouselContent).
+	   In base, so a basis-* utility on a slide still wins. */
+	[data-carousel-slide] {
+		flex-basis: calc((100% - (var(--per-view, 1) - 1) * var(--gap, 1rem)) / var(--per-view, 1));
+	}
+
+	* {
+		@apply border-border outline-ring/50;
+	}
+	html {
+		-webkit-font-smoothing: antialiased;
+		scroll-behavior: smooth;
+		scrollbar-gutter: stable;
+	}
+	body {
+		@apply bg-background font-sans text-foreground;
+	}
+}
+
+/* Thin token-colored scrollbars. Standard props first (Firefox, Chrome 121+), webkit fallback. */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--border) transparent;
+}
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background: var(--border);
+	border: 3px solid transparent;
+	border-radius: 9999px;
+	background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: var(--muted-foreground);
+	background-clip: padding-box;
+}
+::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+/* Hide native cursor only while <CustomCursor /> is mounted on a fine pointer. */
+@media (hover: hover) and (pointer: fine) {
+	html.has-custom-cursor,
+	html.has-custom-cursor * {
+		/* biome-ignore lint/complexity/noImportantStyles: must beat utility cursor-pointer */
+		cursor: none !important;
+	}
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation: none;
+	}
+}
+
+/* NativeSelect: a real <select>. Where supported, the picker gets the macOS menu look. */
+@supports (appearance: base-select) {
+	.native-select,
+	.native-select::picker(select) {
+		appearance: base-select;
+	}
+	.native-select {
+		align-items: center; /* base-select lays the button out as flex; keep the value centered */
+	}
+	.native-select::picker-icon {
+		display: none; /* our chevron icon is drawn by the component */
+	}
+	.native-select::picker(select) {
+		margin-block: 6px;
+		padding: 4px;
+		border: 1px solid var(--border);
+		border-radius: calc(var(--radius) + 4px);
+		background: color-mix(in oklch, var(--popover) 82%, transparent);
+		backdrop-filter: blur(24px) saturate(1.8);
+		color: var(--popover-foreground);
+		box-shadow:
+			0 10px 30px -10px rgb(0 0 0 / 0.25),
+			0 4px 10px -4px rgb(0 0 0 / 0.12);
+		transition:
+			opacity 0.15s,
+			translate 0.15s,
+			overlay 0.15s allow-discrete,
+			display 0.15s allow-discrete;
+	}
+	@starting-style {
+		.native-select:open::picker(select) {
+			opacity: 0;
+			translate: 0 -4px;
+		}
+	}
+	.native-select option {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-height: 2rem;
+		padding: 0 0.5rem;
+		border-radius: calc(var(--radius) - 2px);
+		font-size: 0.875rem;
+	}
+	.native-select option::checkmark {
+		order: -1; /* macOS pop-up menus put the check on the left */
+		width: 1rem;
+	}
+	.native-select option:hover,
+	.native-select option:focus-visible {
+		background: var(--primary);
+		color: var(--primary-foreground);
+		outline: none;
+	}
+	.native-select option:disabled {
+		opacity: 0.5;
+	}
+	.native-select optgroup {
+		padding-top: 0.25rem;
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: var(--muted-foreground);
+	}
+	.native-select optgroup + optgroup {
+		margin-top: 0.25rem;
+		border-top: 1px solid var(--border);
+	}
+}
+
+/* No-JS fallback for animated components (Reveal, CountTo). */
+@media (scripting: none) {
+	[data-reveal] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override motion inline style */
+		opacity: 1 !important;
+		/* biome-ignore lint/complexity/noImportantStyles: must override motion inline style */
+		transform: none !important;
+	}
+	[data-count-to-animated] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override initial animated display */
+		display: none !important;
+	}
+	[data-count-to-fallback] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override hidden utility */
+		display: inline !important;
+	}
+	[data-typewriter-animated] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override initial animated display */
+		display: none !important;
+	}
+	[data-typewriter-fallback] {
+		/* biome-ignore lint/complexity/noImportantStyles: must override hidden utility */
+		display: inline !important;
+	}
+}
