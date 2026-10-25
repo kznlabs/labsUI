@@ -1,4 +1,6 @@
+import { Compass, Layers, LayoutGrid, MousePointerClick, Sparkles, Table2 } from "lucide-react";
 import type { ReactNode } from "react";
+import { SiteHeader } from "@/components/blocks/site-header";
 import { StructuredData } from "@/components/seo/structured-data";
 import {
 	AccentPickerDemo,
@@ -14,6 +16,7 @@ import {
 	NewsletterDemo,
 	PricingDemo,
 	ProductCardDemo,
+	SiteHeaderDemo,
 	StatsStripDemo,
 	StatTileDemo,
 	TestimonialDemo,
@@ -74,6 +77,7 @@ import {
 	DrawerDemo,
 	DropdownMenuDemo,
 	MenubarDemo,
+	NavigationMenuDemo,
 	SelectDemo,
 } from "@/components/showcase/menu-demos";
 import {
@@ -105,8 +109,6 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { buttonVariants } from "@/components/ui/button-variants";
 import { TextSwap } from "@/components/ui/text-swap";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { groups, registry } from "@/lib/registry";
@@ -139,6 +141,7 @@ const demos: Record<
 	quote: { node: <QuoteDemo />, replay: true, tabs: true },
 	reveal: { node: <RevealDemo />, replay: true },
 	menubar: { node: <MenubarDemo />, preview: "items-start" },
+	"navigation-menu": { node: <NavigationMenuDemo />, preview: "items-start", tabs: true },
 	breadcrumb: { node: <BreadcrumbDemo /> },
 	"button-group": { node: <ButtonGroupDemo /> },
 	collapsible: { node: <CollapsibleDemo /> },
@@ -202,6 +205,7 @@ const demos: Record<
 	"stat-tile": { node: <StatTileDemo /> },
 	changelog: { node: <ChangelogDemo />, preview: "items-start" },
 	newsletter: { node: <NewsletterDemo /> },
+	"site-header": { node: <SiteHeaderDemo />, preview: "p-3 sm:p-8", tabs: true },
 };
 
 /** Registry entries in group order: the nav and the page read top to bottom the same way. */
@@ -213,39 +217,71 @@ const nav = groups.map((label) => ({
 }));
 const ordered = groups.flatMap((g) => registry.filter((c) => c.group === g));
 
+const groupIcons: Record<(typeof groups)[number], ReactNode> = {
+	"Actions & inputs": <MousePointerClick />,
+	Navigation: <Compass />,
+	Layout: <LayoutGrid />,
+	"Data display": <Table2 />,
+	"Overlays & feedback": <Layers />,
+	Motion: <Sparkles />,
+	Blocks: null,
+};
+
+/** Header nav: component groups jump to their first section, blocks get a panel of their own. */
+const headerNav = [
+	{
+		label: "Components",
+		items: nav
+			.filter((g) => g.label !== "Blocks")
+			.map((g) => ({
+				title: g.label,
+				href: `#${g.items[0]?.id ?? ""}`,
+				icon: groupIcons[g.label],
+				description: `${g.items.length} components`,
+			})),
+	},
+	{
+		label: "Blocks",
+		items: registry
+			.filter((c) => c.group === "Blocks")
+			.map((c) => ({ title: c.name, href: `#${c.id}`, description: c.description })),
+	},
+	{ label: "llms.txt", href: "/llms.txt" },
+];
+
 export default function Home() {
 	return (
 		<>
 			<StructuredData />
 
-			<header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-xl backdrop-saturate-150">
-				<nav
-					aria-label="Primary"
-					className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6"
-				>
-					<a href="/" className="flex items-center gap-2 font-semibold text-sm">
-						<span className="flex gap-1" aria-hidden="true">
-							<span className="size-2.5 rounded-full bg-mac-red" />
-							<span className="size-2.5 rounded-full bg-mac-yellow" />
-							<span className="size-2.5 rounded-full bg-mac-green" />
-						</span>
-						{site.name}
-					</a>
-					<Badge variant="secondary" shape="pill" className="hidden sm:inline-flex">
-						v0.1
-					</Badge>
-					<div className="ml-auto flex items-center gap-2">
-						<AccentPicker className="hidden md:flex" />
+			<SiteHeader
+				brand={
+					<>
+						<a
+							href="/"
+							className="flex items-center gap-2 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+						>
+							<span className="flex gap-1" aria-hidden="true">
+								<span className="size-2.5 rounded-full bg-mac-red" />
+								<span className="size-2.5 rounded-full bg-mac-yellow" />
+								<span className="size-2.5 rounded-full bg-mac-green" />
+							</span>
+							{site.name}
+						</a>
+						<Badge variant="secondary" shape="pill" className="hidden sm:inline-flex">
+							v0.1
+						</Badge>
+					</>
+				}
+				nav={headerNav}
+				actions={
+					<>
+						<AccentPicker className="hidden lg:flex" />
 						<SiteCommand />
-						<ButtonGroup attached className="hidden sm:flex">
-							<a href="/llms.txt" className={buttonVariants({ variant: "outline", size: "sm" })}>
-								llms.txt
-							</a>
-						</ButtonGroup>
 						<ThemeToggle />
-					</div>
-				</nav>
-			</header>
+					</>
+				}
+			/>
 
 			<ComponentFilterProvider groups={nav}>
 				<div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">

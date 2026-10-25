@@ -824,6 +824,42 @@ export function MembersDataTable({
 }`,
 		},
 	],
+	"navigation-menu": [
+		{
+			name: "main-nav.tsx",
+			code: `import { Bot, Clapperboard, ShoppingBag } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+
+export function MainNav({ pathname }: { pathname: string }) {
+  return (
+    <NavigationMenu aria-label="Main">
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+          <NavigationMenuContent className="w-80">
+            <NavigationMenuLink href="/bot" icon={<Bot />} title="Discord bot" description="Moderation, logs and slash commands" />
+            <NavigationMenuLink href="/clips" icon={<Clapperboard />} title="Clips" description="Record, trim and share highlights" />
+            <NavigationMenuLink href="/shop" icon={<ShoppingBag />} title="Shop" description="Merch and server boosts" />
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/blog" active={pathname.startsWith("/blog")}>
+            Blog
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}`,
+		},
+	],
 	menubar: [
 		{
 			name: "editor-menubar.tsx",

@@ -88,6 +88,7 @@ Reuse existing primitives inside new ones (AvatarGroup uses Avatar, and so on). 
 - [x] Terminal (`src/components/ui/terminal.tsx`): typed snippets, streamed log that follows the bottom, glyph statuses, copy
 - [x] Marker (`src/components/ui/marker.tsx`): highlighter <mark>, draw-on sweep, Highlight for search hits
 - [x] Resizable (`src/components/ui/resizable.tsx`): split panes, APG window splitter, collapsible panels, nested groups, `onLayout` for persistence
+- [x] Navigation menu (`src/components/ui/navigation-menu.tsx`): APG disclosure nav, hover intent, one morphing viewport, directional slide, crawlable closed panels
 
 ### Code (extend `Code` / `CodePanel`)
 
@@ -104,6 +105,7 @@ Reuse existing primitives inside new ones (AvatarGroup uses Avatar, and so on). 
 - [x] Favicon (`src/app/icon.tsx`): traffic lights on a card tile, generated like the OG image; `/favicon.ico` no longer 404s.
 - [x] Chart: y-axis ticks use as many decimals as they need (0.25% read "0.3%").
 - [x] Resizable: panels register through the DOM instead of `child.type` checks (broke under Fast Refresh and Server Component parents); float slack on collapse.
+- [x] Drawer: layer is `overflow-clip`; focusing into a panel mid-slide scrolled the `overflow-hidden` layer sideways (right drawers opened half off-screen).
 
 ## Build order by use case
 
@@ -167,3 +169,4 @@ Components that appear in several projects go first.
 - [x] **Admin stat tile:** Card + Chart + Badge (delta).
 - [x] **Changelog entry:** Timeline + Badge + Kbd.
 - [x] **Newsletter:** Input group + Button + Toast.
+- [x] **Site header:** Navigation menu + Drawer + Button (dogfooded as the gallery header).

@@ -2,13 +2,18 @@
 
 import {
 	BookOpen,
+	Bot,
+	Clapperboard,
 	Copy,
 	FilePlus,
 	FolderOpen,
+	Gauge,
 	Globe,
+	History,
 	LogOut,
 	MoreHorizontal,
 	Pencil,
+	Radio,
 	Settings,
 	Share,
 	ShoppingBag,
@@ -55,6 +60,14 @@ import {
 	MenubarSeparator,
 	MenubarTrigger,
 } from "@/components/ui/menubar";
+import {
+	NavigationMenu,
+	NavigationMenuContent,
+	NavigationMenuItem,
+	NavigationMenuLink,
+	NavigationMenuList,
+	NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 import { Select } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/toast";
@@ -327,5 +340,112 @@ export function MenubarDemo() {
 				</MenubarContent>
 			</MenubarMenu>
 		</Menubar>
+	);
+}
+
+const products = [
+	{
+		href: "#bot",
+		icon: <Bot />,
+		title: "Discord bot",
+		description: "Moderation, logs and slash commands",
+	},
+	{
+		href: "#clips",
+		icon: <Clapperboard />,
+		title: "Clips",
+		description: "Record, trim and share highlights",
+	},
+	{
+		href: "#shop",
+		icon: <ShoppingBag />,
+		title: "Shop",
+		description: "Merch, boosts and gift cards",
+	},
+	{
+		href: "#dashboard",
+		icon: <Gauge />,
+		title: "Dashboard",
+		description: "Usage and revenue at a glance",
+	},
+];
+
+const resources = [
+	{ href: "#docs", icon: <BookOpen />, title: "Docs", description: "Guides and API reference" },
+	{
+		href: "#changelog",
+		icon: <History />,
+		title: "Changelog",
+		description: "What shipped this week",
+	},
+	{ href: "#status", icon: <Radio />, title: "Status", description: "Uptime for every region" },
+];
+
+export function NavigationMenuDemo() {
+	const [page, setPage] = useState("#pricing");
+	// Demo links stay on this page: mark the pick as current and say where it would go.
+	const go = (href: string) => (e: React.MouseEvent) => {
+		e.preventDefault();
+		setPage(href);
+		toast(`Demo mode: would open ${href.slice(1)}`);
+	};
+	return (
+		<div className="flex min-h-80 w-full justify-center">
+			<NavigationMenu aria-label="Demo site">
+				<NavigationMenuList>
+					<NavigationMenuItem>
+						<NavigationMenuTrigger>Products</NavigationMenuTrigger>
+						<NavigationMenuContent>
+							<ul className="grid w-[32rem] grid-cols-2 gap-0.5">
+								{products.map((p) => (
+									<li key={p.href}>
+										<NavigationMenuLink {...p} active={page === p.href} onClick={go(p.href)} />
+									</li>
+								))}
+							</ul>
+						</NavigationMenuContent>
+					</NavigationMenuItem>
+					<NavigationMenuItem>
+						<NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+						<NavigationMenuContent>
+							<div className="grid w-[30rem] grid-cols-[11rem_1fr] gap-2">
+								<NavigationMenuLink
+									href="#release"
+									active={page === "#release"}
+									onClick={go("#release")}
+									className="flex-col justify-end gap-1 bg-muted p-4"
+								>
+									<span className="font-semibold text-foreground">labsUI 0.1</span>
+									<span className="text-muted-foreground text-xs leading-snug">
+										Every component, one spring. Read the release notes.
+									</span>
+								</NavigationMenuLink>
+								<ul className="flex flex-col gap-0.5">
+									{resources.map((r) => (
+										<li key={r.href}>
+											<NavigationMenuLink {...r} active={page === r.href} onClick={go(r.href)} />
+										</li>
+									))}
+								</ul>
+							</div>
+						</NavigationMenuContent>
+					</NavigationMenuItem>
+					<NavigationMenuItem>
+						<NavigationMenuLink href="#blog" active={page === "#blog"} onClick={go("#blog")}>
+							Blog
+						</NavigationMenuLink>
+					</NavigationMenuItem>
+					<NavigationMenuItem>
+						<NavigationMenuLink
+							href="#pricing"
+							active={page === "#pricing"}
+							onClick={go("#pricing")}
+						>
+							Pricing
+						</NavigationMenuLink>
+					</NavigationMenuItem>
+				</NavigationMenuList>
+			</NavigationMenu>
+		</div>
 	);
 }

@@ -1,16 +1,32 @@
 "use client";
 
-import { Camera, Copy, Headphones, Play, Trash2 } from "lucide-react";
+import {
+	BookOpen,
+	Bot,
+	Camera,
+	Clapperboard,
+	Copy,
+	Gauge,
+	Headphones,
+	History,
+	Play,
+	ShoppingBag,
+	Trash2,
+} from "lucide-react";
+import { useState } from "react";
 import { Changelog } from "@/components/blocks/changelog";
 import { ClipCard } from "@/components/blocks/clip-card";
 import { Newsletter } from "@/components/blocks/newsletter";
 import { Pricing } from "@/components/blocks/pricing";
 import { ProductCard } from "@/components/blocks/product-card";
+import { SiteHeader } from "@/components/blocks/site-header";
 import { StatTile } from "@/components/blocks/stat-tile";
 import { StatsStrip } from "@/components/blocks/stats-strip";
 import { Testimonial } from "@/components/blocks/testimonial";
 import { Button } from "@/components/ui/button";
 import { ContextMenuItem, ContextMenuSeparator } from "@/components/ui/context-menu";
+import { MacWindow } from "@/components/ui/mac-window";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/toast";
 
 export function PricingDemo() {
@@ -271,5 +287,96 @@ export function NewsletterDemo() {
 				)
 			}
 		/>
+	);
+}
+
+export function SiteHeaderDemo() {
+	const [page, setPage] = useState("/pricing");
+	return (
+		<MacWindow
+			title="acme.gg"
+			className="w-full max-w-3xl"
+			bodyClassName="h-96 flex-none overflow-y-auto p-0"
+		>
+			<SiteHeader
+				brand={
+					<a
+						href="#site-header"
+						className="flex items-center gap-2 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+					>
+						<Bot className="size-5 text-primary-ink" aria-hidden="true" />
+						Acme
+					</a>
+				}
+				current={page}
+				onNavigate={(href, e) => {
+					e.preventDefault();
+					setPage(href);
+					toast(`Demo mode: would open ${href}`);
+				}}
+				nav={[
+					{
+						label: "Products",
+						items: [
+							{
+								title: "Discord bot",
+								href: "/bot",
+								icon: <Bot />,
+								description: "Moderation, logs and slash commands",
+							},
+							{
+								title: "Clips",
+								href: "/clips",
+								icon: <Clapperboard />,
+								description: "Record, trim and share highlights",
+							},
+							{
+								title: "Shop",
+								href: "/shop",
+								icon: <ShoppingBag />,
+								description: "Merch, boosts and gift cards",
+							},
+							{
+								title: "Dashboard",
+								href: "/dashboard",
+								icon: <Gauge />,
+								description: "Usage and revenue at a glance",
+							},
+						],
+					},
+					{
+						label: "Resources",
+						items: [
+							{
+								title: "Docs",
+								href: "/docs",
+								icon: <BookOpen />,
+								description: "Guides and API reference",
+							},
+							{
+								title: "Changelog",
+								href: "/changelog",
+								icon: <History />,
+								description: "What shipped this week",
+							},
+						],
+					},
+					{ label: "Blog", href: "/blog" },
+					{ label: "Pricing", href: "/pricing" },
+				]}
+				actions={
+					<Button size="sm" onClick={() => toast("Demo mode: sign-in is turned off")}>
+						Sign in
+					</Button>
+				}
+			/>
+			<div className="mx-auto flex max-w-2xl flex-col gap-4 px-6 py-10" aria-hidden="true">
+				<Skeleton className="h-8 w-2/3" />
+				{Array.from({ length: 12 }, (_, i) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: static filler rows
+					<Skeleton key={i} className="h-4" style={{ width: `${70 + ((i * 37) % 30)}%` }} />
+				))}
+			</div>
+		</MacWindow>
 	);
 }

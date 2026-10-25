@@ -173,6 +173,15 @@ export const registry: Entry[] = [
 		usage: `<Menubar aria-label="Editor"><MenubarMenu><MenubarTrigger>File</MenubarTrigger><MenubarContent><MenubarItem shortcut="⌘N" onSelect={create}>New</MenubarItem></MenubarContent></MenubarMenu></Menubar>`,
 	},
 	{
+		id: "navigation-menu",
+		group: "Navigation",
+		name: "Navigation Menu",
+		file: "navigation-menu.tsx",
+		description:
+			"Website top navigation on the APG disclosure pattern: plain links and panels of rich links. Hover opens after a beat, then sliding along the bar switches panels at once; every panel shares one viewport that springs to the next panel's size and position while the content slides in from the side you moved toward. Click, Enter, ↓, ← → and Esc work; closed panels keep their links in the HTML for crawlers.",
+		usage: `<NavigationMenu aria-label="Main"><NavigationMenuList><NavigationMenuItem><NavigationMenuTrigger>Products</NavigationMenuTrigger><NavigationMenuContent className="w-80"><NavigationMenuLink href="/bot" icon={<Bot />} title="Discord bot" description="Moderation and clips" /></NavigationMenuContent></NavigationMenuItem><NavigationMenuItem><NavigationMenuLink href="/blog" active>Blog</NavigationMenuLink></NavigationMenuItem></NavigationMenuList></NavigationMenu>`,
+	},
+	{
 		id: "breadcrumb",
 		group: "Navigation",
 		name: "Breadcrumb",
@@ -737,5 +746,14 @@ export const registry: Entry[] = [
 		description:
 			"Email signup: InputGroup with the submit Button inside, native email validation, a loading → success toast and an in-place success state on the button.",
 		usage: `<Newsletter title="Release notes" onSubscribe={(email) => subscribe(email)} />`,
+	},
+	{
+		id: "site-header",
+		group: "Blocks",
+		name: "Site Header",
+		file: "blocks/site-header.tsx",
+		description:
+			"Sticky, translucent site header from one nav array: brand, NavigationMenu panels from md up, a right Drawer with the same links below it, and your actions on the right. The hairline underneath appears only once content scrolls beneath it.",
+		usage: `<SiteHeader brand={<a href="/">Acme</a>} current="/blog" nav={[{ label: "Products", items: [{ title: "Bot", href: "/bot", icon: <Bot /> }] }, { label: "Blog", href: "/blog" }]} actions={<ThemeToggle />} />`,
 	},
 ] as const;

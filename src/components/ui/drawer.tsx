@@ -166,11 +166,14 @@ function Handle() {
 	);
 }
 
-/** Click-through while exiting so the fading backdrop never blocks the page. */
+/**
+ * Click-through while exiting so the fading backdrop never blocks the page. `overflow-clip`, not
+ * hidden: focusing into a panel still sliding in would otherwise scroll the layer sideways.
+ */
 function Layer({ children }: { children: ReactNode }) {
 	const present = useIsPresent();
 	return (
-		<div className={cn("fixed inset-0 z-50 overflow-hidden", !present && "pointer-events-none")}>
+		<div className={cn("fixed inset-0 z-50 overflow-clip", !present && "pointer-events-none")}>
 			{children}
 		</div>
 	);
