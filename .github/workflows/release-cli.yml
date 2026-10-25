@@ -18,7 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      # Third-party: pinned to a commit (v2.2.0); Dependabot bumps it.
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -47,4 +48,4 @@ jobs:
 
       - name: Publish to JSR
         working-directory: packages/cli
-        run: bunx jsr publish
+        run: bunx jsr@0.14.3 publish
