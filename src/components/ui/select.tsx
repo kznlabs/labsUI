@@ -260,7 +260,7 @@ export function Select(allProps: SelectProps) {
 												{option.icon}
 												{option.label}
 												{option.value === value && (
-													<Check className="!text-current absolute left-2" aria-hidden="true" />
+													<Check className="!text-current absolute right-2" aria-hidden="true" />
 												)}
 											</div>
 										))}
