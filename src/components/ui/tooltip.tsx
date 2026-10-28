@@ -1,10 +1,18 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { type ReactNode, useEffect, useId, useRef } from "react";
+import {
+	type MouseEvent,
+	type PointerEvent,
+	type ReactNode,
+	useEffect,
+	useId,
+	useRef,
+} from "react";
 import { createPortal } from "react-dom";
 import { useMounted } from "@/lib/platform";
 import { useAnchor } from "@/lib/use-anchor";
+import { useDismiss } from "@/lib/use-dismiss";
 import { useHoverOpen } from "@/lib/use-hover-open";
 import { cn, material, spring } from "@/lib/utils";
 
@@ -21,6 +29,11 @@ type TooltipProps = {
 	align?: "start" | "center" | "end";
 	/** Hover delay in ms before the first tooltip opens (default 500). */
 	delay?: number;
+	/**
+	 * How touch opens it: `press` (touch and hold; a tap still reaches the control) or `tap` (a tap
+	 * toggles it, for triggers with no action of their own).
+	 */
+	touch?: "press" | "tap";
 	className?: string;
 	/** One focusable element, e.g. an icon Button with an aria-label. */
 	children: ReactNode;
@@ -28,20 +41,21 @@ type TooltipProps = {
 
 /**
  * Hover/keyboard-focus label for one element. Stays open while the pointer is on it (WCAG
- * 1.4.13), Esc dismisses, mouse only: touch taps go straight to the trigger.
+ * 1.4.13), Esc dismisses. On touch: touch and hold shows it, or a tap with `touch="tap"`.
  */
 export function Tooltip({
 	content,
 	side = "top",
 	align = "center",
 	delay = 500,
+	touch = "press",
 	className,
 	children,
 }: TooltipProps) {
 	const id = useId();
 	const wrap = useRef<HTMLSpanElement>(null);
 	const panel = useRef<HTMLDivElement>(null);
-	const { open, close, trigger, floating } = useHoverOpen({
+	const { open, close, schedule, trigger, floating } = useHoverOpen({
 		openDelay: delay,
 		closeDelay: 100,
 		instant: () => Date.now() - lastClosed < WARM,
@@ -51,6 +65,47 @@ export function Tooltip({
 	});
 	const pos = useAnchor(open, wrap, panel, { side, align, offset: 8 });
 	const mounted = useMounted();
+	const press = useRef<{ timer?: ReturnType<typeof setTimeout>; held: boolean }>({ held: false });
+
+	useDismiss(open, [panel, wrap], close);
+	useEffect(() => () => clearTimeout(press.current.timer), []);
+
+	const touchHandlers =
+		touch === "tap"
+			? {
+					onPointerUp: (event: PointerEvent) => {
+						if (event.pointerType === "touch") schedule(!open, 0);
+					},
+				}
+			: {
+					// Swallow the tap that ends a hold, so reading a label doesn't press the button.
+					onPointerDown: (event: PointerEvent) => {
+						if (event.pointerType !== "touch") return;
+
+						press.current.held = false;
+						press.current.timer = setTimeout(() => {
+							press.current.held = true;
+							schedule(true, 0);
+						}, 500);
+					},
+					onPointerUp: (event: PointerEvent) => {
+						if (event.pointerType !== "touch") return;
+
+						clearTimeout(press.current.timer);
+						if (press.current.held) schedule(false, 1500);
+					},
+					onPointerCancel: () => clearTimeout(press.current.timer),
+					onContextMenu: (event: MouseEvent) => {
+						if (press.current.held) event.preventDefault();
+					},
+					onClickCapture: (event: MouseEvent) => {
+						if (!press.current.held) return;
+
+						press.current.held = false;
+						event.preventDefault();
+						event.stopPropagation();
+					},
+				};
 
 	// Describe the real control (not the wrapper) with an always-present hidden copy.
 	useEffect(() => {
@@ -79,7 +134,12 @@ export function Tooltip({
 	}, [open, close]);
 
 	return (
-		<span ref={wrap} className="inline-flex" {...trigger}>
+		<span
+			ref={wrap}
+			className="inline-flex [-webkit-touch-callout:none]"
+			{...trigger}
+			{...touchHandlers}
+		>
 			{children}
 			<span id={id} hidden>
 				{content}

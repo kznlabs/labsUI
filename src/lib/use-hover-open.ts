@@ -50,6 +50,8 @@ export function useHoverOpen({
 	return {
 		open,
 		close: () => schedule(false, 0),
+		/** Open (true) or close after `delay` ms, cancelling any pending change. */
+		schedule,
 		trigger: {
 			onPointerEnter: (event: PointerEvent) => mouse(event) && show(),
 			onPointerLeave: (event: PointerEvent) => mouse(event) && hide(),
