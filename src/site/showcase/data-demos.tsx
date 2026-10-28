@@ -197,7 +197,7 @@ const guildColumns: DataTableColumn<GuildMember>[] = [
 					size="sm"
 					fallback={member.role === "Bot" ? <Bot /> : undefined}
 				/>
-				<span className="font-medium">{member.name}</span>
+				<span className="max-w-28 truncate font-medium sm:max-w-none">{member.name}</span>
 			</div>
 		),
 	},
