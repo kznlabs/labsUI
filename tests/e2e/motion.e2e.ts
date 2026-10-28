@@ -7,9 +7,11 @@ test.skip(({ viewport }) => (viewport?.width ?? 0) < 1024, "pointer and layout c
 
 // WebKit on CI can stall the first frame after a click for longer than the whole spring. motion
 // runs these as Web Animations, so keep a handle and seek them instead of waiting for frames.
+// It creates them both ways: element.animate() and new Animation(new KeyframeEffect(...)).
 test.beforeEach(({ page }) =>
 	page.addInitScript(() => {
 		const animate = Element.prototype.animate;
+		const NativeAnimation = window.Animation;
 		const started: Animation[] = [];
 
 		Object.assign(window, { __animations: started });
@@ -20,6 +22,13 @@ test.beforeEach(({ page }) =>
 			started.push(animation);
 
 			return animation;
+		};
+
+		window.Animation = class extends NativeAnimation {
+			constructor(...args: ConstructorParameters<typeof Animation>) {
+				super(...args);
+				started.push(this);
+			}
 		};
 	}),
 );
