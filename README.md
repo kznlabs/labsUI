@@ -45,11 +45,11 @@ daily (everything): all component pages, light and dark, at 390 px and
 | Pointer targets                               | 24 × 24 px or larger |
 | Text contrast, both themes                    | 4.5:1 or higher      |
 
-| Engine   | Covers                                | Status                   |
-| -------- | ------------------------------------- | ------------------------ |
-| Chromium | Chrome, Edge, Brave, Opera, Opera GX  | ![Chromium][chromium]    |
-| Gecko    | Firefox                               | ![Firefox][firefox]      |
-| WebKit   | Safari (macOS); iOS shares the engine | ![WebKit][webkit]        |
+| Engine   | Covers                                | Status                |
+| -------- | ------------------------------------- | --------------------- |
+| Chromium | Chrome, Edge, Brave, Opera, Opera GX  | ![Chromium][chromium] |
+| Gecko    | Firefox                               | ![Firefox][firefox]   |
+| WebKit   | Safari (macOS); iOS shares the engine | ![WebKit][webkit]     |
 
 [chromium]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Fchromium.json
 [firefox]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Ffirefox.json
