@@ -10,6 +10,7 @@ import {
 	useState,
 	useSyncExternalStore,
 } from "react";
+import { useDismiss } from "@/lib/use-dismiss";
 import { cn, material, spring } from "@/lib/utils";
 
 /* ---------- store (module-level, no provider needed) ---------- */
@@ -128,13 +129,14 @@ const icons = {
 	loading: <Loader2 className="size-4 animate-spin text-muted-foreground" aria-hidden="true" />,
 };
 
-/** Mount once (root layout). Stacked toasts: hover/focus expands, swipe dismisses. */
+/** Mount once (root layout). Stacked toasts: hover, focus or a tap expands, swipe dismisses. */
 export function Toaster({ className }: { className?: string }) {
 	const items = useSyncExternalStore(
 		subscribe,
 		() => toasts,
 		() => EMPTY,
 	);
+	const section = useRef<HTMLElement>(null);
 	const [expanded, setExpanded] = useState(false);
 	const [heights, setHeights] = useState<Record<number, number>>({});
 	const onHeight = useCallback(
@@ -147,15 +149,21 @@ export function Toaster({ className }: { className?: string }) {
 		if (items.length === 0) setExpanded(false);
 	}, [items.length]);
 
+	// Touch fires enter and leave on every tap.
+	useDismiss(expanded, [section], () => setExpanded(false));
+
 	const frontH = heights[items[0]?.id ?? -1] ?? 0;
 	let offset = 0;
 
 	return (
+		// biome-ignore lint/a11y/useKeyWithClickEvents: keyboard focus already expands the stack
 		<section
 			aria-label="Notifications"
 			className={cn("fixed right-4 bottom-4 z-[100] w-[min(360px,calc(100vw-2rem))]", className)}
-			onPointerEnter={() => setExpanded(true)}
-			onPointerLeave={() => setExpanded(false)}
+			ref={section}
+			onPointerEnter={(event) => event.pointerType !== "touch" && setExpanded(true)}
+			onPointerLeave={(event) => event.pointerType !== "touch" && setExpanded(false)}
+			onClick={() => setExpanded(true)}
 			onFocus={() => setExpanded(true)}
 			onBlur={(event) => {
 				if (!event.currentTarget.contains(event.relatedTarget)) setExpanded(false);
