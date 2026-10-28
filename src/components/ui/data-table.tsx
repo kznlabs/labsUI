@@ -1,7 +1,7 @@
 "use client";
 
 import { MoreHorizontal, SearchX } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -136,6 +136,35 @@ export function DataTable<T>({
 	const allHere = filteredIds.length > 0 && selectedHere.length === filteredIds.length;
 	const span = columns.length + (selectable ? 1 : 0) + (rowActions ? 1 : 0);
 
+	// Never shrinks while paging, or a short last page pulls the pager from under your finger.
+	const box = useRef<HTMLDivElement>(null);
+	const layoutKey = `${query}|${pageSize}|${data.length}`;
+	const [tallest, setTallest] = useState({ key: "", height: 0 });
+	const minHeight = tallest.key === layoutKey ? tallest.height : undefined;
+
+	useLayoutEffect(() => {
+		const table = box.current?.firstElementChild as HTMLElement | null;
+
+		if (!table) return;
+
+		const observer = new ResizeObserver(() => {
+			const height = table.offsetHeight;
+
+			setTallest((current) =>
+				current.key === layoutKey && current.height >= height
+					? current
+					: {
+							key: layoutKey,
+							height: current.key === layoutKey ? Math.max(current.height, height) : height,
+						},
+			);
+		});
+
+		observer.observe(table);
+
+		return () => observer.disconnect();
+	}, [layoutKey]);
+
 	return (
 		<div className={cn("grid w-full grid-cols-1 gap-3", className)}>
 			{(searchable || toolbar) && (
@@ -160,119 +189,122 @@ export function DataTable<T>({
 				</div>
 			)}
 
-			<Table striped={striped} aria-label={label}>
-				<TableHeader>
-					<TableRow>
-						{selectable && (
-							<TableHead>
-								<Checkbox
-									aria-label={`Select all ${sorted.length} ${label.toLowerCase()}`}
-									checked={allHere}
-									indeterminate={selectedHere.length > 0 && !allHere}
-									disabled={sorted.length === 0}
-									onCheckedChange={(on) =>
-										select(
-											on
-												? [...new Set([...selected, ...filteredIds])]
-												: selected.filter((id) => !filteredIds.includes(id)),
-										)
-									}
-								/>
-							</TableHead>
-						)}
-						{columns.map((column) => (
-							<TableHead
-								key={column.id}
-								className={column.className}
-								{...(column.sortable && column.accessor
-									? {
-											sort: sort?.id === column.id ? sort.dir : "none",
-											onSort: () => {
-												setSort((current) => ({
-													id: column.id,
-													dir:
-														current?.id === column.id && current.dir === "ascending"
-															? "descending"
-															: "ascending",
-												}));
-												setPage(1);
-											},
+			<div ref={box} style={{ minHeight }}>
+				<Table striped={striped} aria-label={label}>
+					<TableHeader>
+						<TableRow>
+							{selectable && (
+								<TableHead>
+									<Checkbox
+										aria-label={`Select all ${sorted.length} ${label.toLowerCase()}`}
+										checked={allHere}
+										indeterminate={selectedHere.length > 0 && !allHere}
+										disabled={sorted.length === 0}
+										onCheckedChange={(on) =>
+											select(
+												on
+													? [...new Set([...selected, ...filteredIds])]
+													: selected.filter((id) => !filteredIds.includes(id)),
+											)
 										}
-									: {})}
-							>
-								{column.header}
-							</TableHead>
-						))}
-						{rowActions && (
-							<TableHead className="w-px">
-								<span className="sr-only">Actions</span>
-							</TableHead>
-						)}
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{rows.length === 0 ? (
-						<TableRow className="hover:bg-transparent">
-							<TableCell colSpan={span}>
-								<Empty
-									icon={<SearchX />}
-									title={needle ? "No matches" : `No ${label.toLowerCase()} yet`}
-									description={needle ? `Nothing matches “${query.trim()}”.` : undefined}
+									/>
+								</TableHead>
+							)}
+							{columns.map((column) => (
+								<TableHead
+									key={column.id}
+									className={column.className}
+									{...(column.sortable && column.accessor
+										? {
+												sort: sort?.id === column.id ? sort.dir : "none",
+												onSort: () => {
+													setSort((current) => ({
+														id: column.id,
+														dir:
+															current?.id === column.id && current.dir === "ascending"
+																? "descending"
+																: "ascending",
+													}));
+													setPage(1);
+												},
+											}
+										: {})}
 								>
-									{needle && (
-										<Button size="sm" variant="outline" onClick={() => setQuery("")}>
-											Clear search
-										</Button>
-									)}
-								</Empty>
-							</TableCell>
+									{column.header}
+								</TableHead>
+							))}
+							{rowActions && (
+								<TableHead className="w-px">
+									<span className="sr-only">Actions</span>
+								</TableHead>
+							)}
 						</TableRow>
-					) : (
-						rows.map((row) => {
-							const id = getRowId(row);
-							const on = selected.includes(id);
+					</TableHeader>
+					<TableBody>
+						{rows.length === 0 ? (
+							<TableRow className="hover:bg-transparent">
+								<TableCell colSpan={span}>
+									<Empty
+										icon={<SearchX />}
+										title={needle ? "No matches" : `No ${label.toLowerCase()} yet`}
+										description={needle ? `Nothing matches “${query.trim()}”.` : undefined}
+									>
+										{needle && (
+											<Button size="sm" variant="outline" onClick={() => setQuery("")}>
+												Clear search
+											</Button>
+										)}
+									</Empty>
+								</TableCell>
+							</TableRow>
+						) : (
+							rows.map((row) => {
+								const id = getRowId(row);
+								const on = selected.includes(id);
 
-							return (
-								<TableRow key={id} data-state={on ? "selected" : undefined}>
-									{selectable && (
-										<TableCell>
-											<Checkbox
-												aria-label={`Select ${rowLabel(row)}`}
-												checked={on}
-												onCheckedChange={(column) =>
-													select(column ? [...selected, id] : selected.filter((x) => x !== id))
-												}
-											/>
-										</TableCell>
-									)}
-									{columns.map((column) => (
-										<TableCell key={column.id} className={column.className}>
-											{column.cell ? column.cell(row) : column.accessor?.(row)}
-										</TableCell>
-									))}
-									{rowActions && (
-										<TableCell className="py-1 pr-2">
-											<DropdownMenu>
-												<DropdownMenuTrigger
-													variant="ghost"
-													size="icon"
-													aria-label={`Actions for ${rowLabel(row)}`}
-													className="size-8"
-												>
-													<MoreHorizontal />
-												</DropdownMenuTrigger>
-												<DropdownMenuContent align="end">{rowActions(row)}</DropdownMenuContent>
-											</DropdownMenu>
-										</TableCell>
-									)}
-								</TableRow>
-							);
-						})
-					)}
-				</TableBody>
-			</Table>
+								return (
+									<TableRow key={id} data-state={on ? "selected" : undefined}>
+										{selectable && (
+											<TableCell>
+												<Checkbox
+													aria-label={`Select ${rowLabel(row)}`}
+													checked={on}
+													onCheckedChange={(column) =>
+														select(column ? [...selected, id] : selected.filter((x) => x !== id))
+													}
+												/>
+											</TableCell>
+										)}
+										{columns.map((column) => (
+											<TableCell key={column.id} className={column.className}>
+												{column.cell ? column.cell(row) : column.accessor?.(row)}
+											</TableCell>
+										))}
+										{rowActions && (
+											<TableCell className="py-1 pr-2">
+												<DropdownMenu>
+													<DropdownMenuTrigger
+														variant="ghost"
+														size="icon"
+														aria-label={`Actions for ${rowLabel(row)}`}
+														className="size-8"
+													>
+														<MoreHorizontal />
+													</DropdownMenuTrigger>
+													<DropdownMenuContent align="end">{rowActions(row)}</DropdownMenuContent>
+												</DropdownMenu>
+											</TableCell>
+										)}
+									</TableRow>
+								);
+							})
+						)}
+					</TableBody>
+				</Table>
+			</div>
 
-			<div className="flex flex-wrap items-center justify-between gap-3">
+			{/* Stacked on phones, a long count would wrap the pages. */}
+			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<p className="text-muted-foreground text-xs tabular-nums" aria-live="polite">
 					{selectable && selected.length > 0 && `${selected.length} selected · `}
 					{sorted.length === 0
