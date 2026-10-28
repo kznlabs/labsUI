@@ -6,6 +6,7 @@ import {
 	type ComponentProps,
 	type KeyboardEvent,
 	type PointerEvent,
+	type ReactNode,
 	useCallback,
 	useState,
 } from "react";
@@ -73,6 +74,47 @@ function niceTicks(min: number, max: number) {
 		ticks.push(Number((ticks[ticks.length - 1] + step).toPrecision(12)));
 
 	return ticks;
+}
+
+// Clips only mid-spring, so the tooltip and focus ring can spill out at rest.
+function ViewSwap({ view, children }: { view: string; children: ReactNode }) {
+	const [height, setHeight] = useState<number>();
+	const [moving, setMoving] = useState(false);
+
+	const measure = useCallback((element: HTMLDivElement | null) => {
+		if (!element) return;
+
+		const observer = new ResizeObserver(() => setHeight(element.offsetHeight));
+
+		observer.observe(element);
+
+		return () => observer.disconnect();
+	}, []);
+
+	return (
+		<motion.div
+			initial={false}
+			animate={{ height: height ?? "auto" }}
+			transition={spring}
+			onAnimationStart={() => setMoving(true)}
+			onAnimationComplete={() => setMoving(false)}
+			className={cn("relative", moving && "overflow-hidden")}
+		>
+			<div ref={measure}>
+				<AnimatePresence mode="popLayout" initial={false}>
+					<motion.div
+						key={view}
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={spring}
+					>
+						{children}
+					</motion.div>
+				</AnimatePresence>
+			</div>
+		</motion.div>
+	);
 }
 
 /**
@@ -378,215 +420,216 @@ export function Chart({
 				</Button>
 			</div>
 
-			{view === "table" ? (
-				table
-			) : (
-				<>
-					<div
-						ref={box}
-						role="img"
-						aria-roledescription="chart"
-						aria-label={`${label}. Arrow keys read values.`}
-						// biome-ignore lint/a11y/noNoninteractiveTabindex: focus lets arrow keys walk the data
-						tabIndex={0}
-						onKeyDown={onKey}
-						onFocus={(event) => {
-							if (event.currentTarget.matches(":focus-visible") && active === null)
-								setActive(rowCount - 1);
-						}}
-						onBlur={() => setActive(null)}
-						className="relative rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-						style={{ height }}
-					>
-						{width > 0 && (
-							// Out of flow, otherwise the fixed-width svg holds the box and the chart can grow but
-							// never shrink.
-							<svg
-								width={width}
-								height={height}
-								aria-hidden="true"
-								className="absolute inset-0 block overflow-visible"
-							>
-								{ticks.map((tick) => (
-									<g key={tick}>
-										<line
-											x1={margin.left}
-											x2={width - margin.right}
-											y1={Math.round(y(tick)) + 0.5}
-											y2={Math.round(y(tick)) + 0.5}
-											className={tick === 0 ? "stroke-foreground/25" : "stroke-border"}
-											shapeRendering="crispEdges"
-										/>
-										<text
-											x={margin.left - 8}
-											y={y(tick)}
-											textAnchor="end"
-											dominantBaseline="middle"
-											className="fill-muted-foreground text-[11px] tabular-nums"
-										>
-											{tickFmt.format(tick)}
-										</text>
-									</g>
-								))}
-								{data.map((row, i) =>
-									i % every === 0 ? (
-										<text
-											key={String(row[index])}
-											x={cx(i)}
-											y={height - 8}
-											textAnchor="middle"
-											className="fill-muted-foreground text-[11px]"
-										>
-											{row[index]}
-										</text>
-									) : null,
-								)}
-
-								{active !== null &&
-									(type === "bar" ? (
-										<rect
-											x={cx(active) - band / 2}
-											y={margin.top}
-											width={band}
-											height={plotH}
-											rx={6}
-											className="fill-foreground/[0.04]"
-										/>
-									) : (
-										<line
-											x1={Math.round(cx(active)) + 0.5}
-											x2={Math.round(cx(active)) + 0.5}
-											y1={margin.top}
-											y2={margin.top + plotH}
-											className="stroke-foreground/25"
-											shapeRendering="crispEdges"
-										/>
-									))}
-
-								{type === "bar"
-									? bars().map((bar) => (
-											<motion.path
-												key={bar.key}
-												initial={{ d: bar.flat }}
-												animate={{ d: bar.d }}
-												transition={spring}
-												fill={bar.fill}
-											/>
-										))
-									: shown.map((item) => {
-											const pts = points(item.key);
-											const fill = color(slots.get(item.key) ?? 1);
-
-											return (
-												<g key={item.key}>
-													{type === "area" && (
-														<motion.path
-															initial={{ d: areaPath(flat(pts)) }}
-															animate={{ d: areaPath(pts) }}
-															transition={spring}
-															fill={fill}
-															fillOpacity={0.1}
-														/>
-													)}
-													<motion.path
-														initial={{ d: linePath(flat(pts)) }}
-														animate={{ d: linePath(pts) }}
-														transition={spring}
-														fill="none"
-														stroke={fill}
-														strokeWidth={2}
-														strokeLinejoin="round"
-														strokeLinecap="round"
-													/>
-													{(active === null ? [rowCount - 1] : [active]).map((i) =>
-														pts[i] ? (
-															<motion.circle
-																key="dot"
-																initial={false}
-																animate={{ cx: pts[i][0], cy: pts[i][1] }}
-																transition={spring}
-																r={4}
-																fill={fill}
-																strokeWidth={2}
-																className="stroke-card"
-															/>
-														) : null,
-													)}
-												</g>
-											);
-										})}
-
-								{endsFit &&
-									ends.map((end) => (
-										<text
-											key={end.s.key}
-											x={cx(rowCount - 1) + 10}
-											y={end.y}
-											dominantBaseline="middle"
-											className="fill-muted-foreground text-[11px]"
-										>
-											{end.s.label}
-										</text>
-									))}
-
-								{/* Hit layer: the whole band answers, not just the painted mark. */}
-								<rect
-									x={margin.left}
-									y={0}
-									width={plotW}
+			<ViewSwap view={view}>
+				{view === "table" ? (
+					table
+				) : (
+					<>
+						<div
+							ref={box}
+							role="img"
+							aria-roledescription="chart"
+							aria-label={`${label}. Arrow keys read values.`}
+							// biome-ignore lint/a11y/noNoninteractiveTabindex: focus lets arrow keys walk the data
+							tabIndex={0}
+							onKeyDown={onKey}
+							onFocus={(event) => {
+								if (event.currentTarget.matches(":focus-visible") && active === null)
+									setActive(rowCount - 1);
+							}}
+							onBlur={() => setActive(null)}
+							className="relative rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+							style={{ height }}
+						>
+							{width > 0 && (
+								// Out of flow, or the svg's fixed width keeps the chart from shrinking.
+								<svg
+									width={width}
 									height={height}
-									fill="transparent"
-									onPointerMove={pick}
-									onPointerLeave={() => setActive(null)}
-								/>
-							</svg>
-						)}
-
-						<AnimatePresence>
-							{row && active !== null && (
-								<motion.div
-									key="tip"
 									aria-hidden="true"
-									initial={{ opacity: 0, x: cx(active), y: margin.top }}
-									animate={{ opacity: 1, x: cx(active), y: margin.top }}
-									exit={{ opacity: 0 }}
-									transition={spring}
-									className="pointer-events-none absolute top-0 left-0 z-10"
+									className="absolute inset-0 block overflow-visible"
 								>
-									<div
-										className={cn(
-											"min-w-36 rounded-lg border px-2.5 py-2 text-popover-foreground text-xs shadow-md",
-											material,
-											flip ? "-translate-x-full -ml-3" : "ml-3",
-										)}
-									>
-										<p className="mb-1.5 text-muted-foreground">{row[index]}</p>
-										<ul className="grid gap-1">
-											{shown.map((item) => (
-												<li key={item.key} className="flex items-center gap-2">
-													<span
-														className="h-0.5 w-2.5 shrink-0 rounded-full"
-														style={{ background: color(slots.get(item.key) ?? 1) }}
-													/>
-													<span className="text-muted-foreground">{item.label}</span>
-													<span className="ml-auto pl-3 font-medium tabular-nums">
-														{fmt.format(num(row[item.key]))}
-													</span>
-												</li>
-											))}
-										</ul>
-									</div>
-								</motion.div>
+									{ticks.map((tick) => (
+										<g key={tick}>
+											<line
+												x1={margin.left}
+												x2={width - margin.right}
+												y1={Math.round(y(tick)) + 0.5}
+												y2={Math.round(y(tick)) + 0.5}
+												className={tick === 0 ? "stroke-foreground/25" : "stroke-border"}
+												shapeRendering="crispEdges"
+											/>
+											<text
+												x={margin.left - 8}
+												y={y(tick)}
+												textAnchor="end"
+												dominantBaseline="middle"
+												className="fill-muted-foreground text-[11px] tabular-nums"
+											>
+												{tickFmt.format(tick)}
+											</text>
+										</g>
+									))}
+									{data.map((row, i) =>
+										i % every === 0 ? (
+											<text
+												key={String(row[index])}
+												x={cx(i)}
+												y={height - 8}
+												textAnchor="middle"
+												className="fill-muted-foreground text-[11px]"
+											>
+												{row[index]}
+											</text>
+										) : null,
+									)}
+
+									{active !== null &&
+										(type === "bar" ? (
+											<rect
+												x={cx(active) - band / 2}
+												y={margin.top}
+												width={band}
+												height={plotH}
+												rx={6}
+												className="fill-foreground/[0.04]"
+											/>
+										) : (
+											<line
+												x1={Math.round(cx(active)) + 0.5}
+												x2={Math.round(cx(active)) + 0.5}
+												y1={margin.top}
+												y2={margin.top + plotH}
+												className="stroke-foreground/25"
+												shapeRendering="crispEdges"
+											/>
+										))}
+
+									{type === "bar"
+										? bars().map((bar) => (
+												<motion.path
+													key={bar.key}
+													initial={{ d: bar.flat }}
+													animate={{ d: bar.d }}
+													transition={spring}
+													fill={bar.fill}
+												/>
+											))
+										: shown.map((item) => {
+												const pts = points(item.key);
+												const fill = color(slots.get(item.key) ?? 1);
+
+												return (
+													<g key={item.key}>
+														{type === "area" && (
+															<motion.path
+																initial={{ d: areaPath(flat(pts)) }}
+																animate={{ d: areaPath(pts) }}
+																transition={spring}
+																fill={fill}
+																fillOpacity={0.1}
+															/>
+														)}
+														<motion.path
+															initial={{ d: linePath(flat(pts)) }}
+															animate={{ d: linePath(pts) }}
+															transition={spring}
+															fill="none"
+															stroke={fill}
+															strokeWidth={2}
+															strokeLinejoin="round"
+															strokeLinecap="round"
+														/>
+														{(active === null ? [rowCount - 1] : [active]).map((i) =>
+															pts[i] ? (
+																<motion.circle
+																	key="dot"
+																	initial={false}
+																	animate={{ cx: pts[i][0], cy: pts[i][1] }}
+																	transition={spring}
+																	r={4}
+																	fill={fill}
+																	strokeWidth={2}
+																	className="stroke-card"
+																/>
+															) : null,
+														)}
+													</g>
+												);
+											})}
+
+									{endsFit &&
+										ends.map((end) => (
+											<text
+												key={end.s.key}
+												x={cx(rowCount - 1) + 10}
+												y={end.y}
+												dominantBaseline="middle"
+												className="fill-muted-foreground text-[11px]"
+											>
+												{end.s.label}
+											</text>
+										))}
+
+									{/* Hit layer: the whole band, not just the mark. */}
+									<rect
+										x={margin.left}
+										y={0}
+										width={plotW}
+										height={height}
+										fill="transparent"
+										onPointerMove={pick}
+										onPointerLeave={() => setActive(null)}
+									/>
+								</svg>
 							)}
-						</AnimatePresence>
-					</div>
-					<p className="sr-only" aria-live="polite">
-						{readout}
-					</p>
-					{/* The same numbers for screen readers, search engines and no-JS. */}
-					<div className="sr-only">{table}</div>
-				</>
-			)}
+
+							<AnimatePresence>
+								{row && active !== null && (
+									<motion.div
+										key="tip"
+										aria-hidden="true"
+										initial={{ opacity: 0, x: cx(active), y: margin.top }}
+										animate={{ opacity: 1, x: cx(active), y: margin.top }}
+										exit={{ opacity: 0 }}
+										transition={spring}
+										className="pointer-events-none absolute top-0 left-0 z-10"
+									>
+										<div
+											className={cn(
+												"min-w-36 rounded-lg border px-2.5 py-2 text-popover-foreground text-xs shadow-md",
+												material,
+												flip ? "-translate-x-full -ml-3" : "ml-3",
+											)}
+										>
+											<p className="mb-1.5 text-muted-foreground">{row[index]}</p>
+											<ul className="grid gap-1">
+												{shown.map((item) => (
+													<li key={item.key} className="flex items-center gap-2">
+														<span
+															className="h-0.5 w-2.5 shrink-0 rounded-full"
+															style={{ background: color(slots.get(item.key) ?? 1) }}
+														/>
+														<span className="text-muted-foreground">{item.label}</span>
+														<span className="ml-auto pl-3 font-medium tabular-nums">
+															{fmt.format(num(row[item.key]))}
+														</span>
+													</li>
+												))}
+											</ul>
+										</div>
+									</motion.div>
+								)}
+							</AnimatePresence>
+						</div>
+						<p className="sr-only" aria-live="polite">
+							{readout}
+						</p>
+						{/* The same numbers for screen readers, search engines and no-JS. */}
+						<div className="sr-only">{table}</div>
+					</>
+				)}
+			</ViewSwap>
 		</figure>
 	);
 }
