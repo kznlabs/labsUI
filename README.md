@@ -7,10 +7,10 @@ Hand-made, accessible, and copied into your project so you own the code.
 [npm](https://www.npmjs.com/package/@kznlabs/labsui) ·
 [JSR](https://jsr.io/@kznlabs/labsui)
 
-[![WCAG 2.2 AA: 0 axe violations](https://img.shields.io/badge/WCAG_2.2_AA-0_axe_violations-2ea44f)](#accessibility-and-browsers)
-[![Chromium: tested](https://img.shields.io/badge/Chromium-tested-2ea44f)](#accessibility-and-browsers)
-[![Firefox: tested](https://img.shields.io/badge/Firefox-tested-2ea44f)](#accessibility-and-browsers)
-[![WebKit: tested](https://img.shields.io/badge/WebKit-tested-2ea44f)](#accessibility-and-browsers)
+[![Chromium][chromium]](#accessibility-and-browsers)
+[![Firefox][firefox]](#accessibility-and-browsers)
+[![WebKit][webkit]](#accessibility-and-browsers)
+[![WCAG 2.2 AA][wcag]](#accessibility-and-browsers)
 
 ## Why labsUI
 
@@ -31,11 +31,12 @@ Hand-made, accessible, and copied into your project so you own the code.
 
 CI runs an automated sweep on pull requests (the pages a change reaches) and
 daily (everything): all component pages, light and dark, at 390 px and
-1280 px, in three browser engines.
+1280 px, in three browser engines. The badges show the latest full run on
+`main`.
 
-| Check                                         | Result               |
+| Check                                         | Required             |
 | --------------------------------------------- | -------------------- |
-| WCAG 2.2 A + AA rules (axe 4.14)              | 0 violations         |
+| WCAG 2.2 A + AA rules (axe)                   | 0 violations         |
 | JavaScript errors                             | none                 |
 | Sideways page overflow                        | none                 |
 | Every control reachable by a click            | pass                 |
@@ -44,11 +45,16 @@ daily (everything): all component pages, light and dark, at 390 px and
 | Pointer targets                               | 24 × 24 px or larger |
 | Text contrast, both themes                    | 4.5:1 or higher      |
 
-| Engine   | Version tested | Covers                                | Status |
-| -------- | -------------- | ------------------------------------- | ------ |
-| Chromium | 156            | Chrome, Edge, Brave, Opera, Opera GX  | ✔      |
-| Gecko    | Firefox 157    | Firefox                               | ✔      |
-| WebKit   | 27.2           | Safari (macOS); iOS shares the engine | ✔      |
+| Engine   | Covers                                | Status                   |
+| -------- | ------------------------------------- | ------------------------ |
+| Chromium | Chrome, Edge, Brave, Opera, Opera GX  | ![Chromium][chromium]    |
+| Gecko    | Firefox                               | ![Firefox][firefox]      |
+| WebKit   | Safari (macOS); iOS shares the engine | ![WebKit][webkit]        |
+
+[chromium]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Fchromium.json
+[firefox]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Ffirefox.json
+[webkit]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Fwebkit.json
+[wcag]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Fwcag.json
 
 Minimum versions come from Tailwind CSS v4: Chrome 111, Safari 16.4,
 Firefox 128. Two features enhance where supported and fall back cleanly:
