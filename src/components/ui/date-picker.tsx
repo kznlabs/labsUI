@@ -135,9 +135,13 @@ export function DatePicker(allProps: DatePickerProps) {
 					<CalendarDays />
 					<span className="truncate">{label ?? placeholder}</span>
 				</PopoverTrigger>
-				<PopoverContent align="start" className="flex w-auto gap-3 p-3">
+				<PopoverContent align="start" className="flex w-auto flex-col gap-3 p-3 sm:flex-row">
 					{presets && presets.length > 0 && (
-						<ul className="flex min-w-32 flex-col gap-0.5 border-r pr-3" aria-label="Presets">
+						// No room beside the calendar on phones.
+						<ul
+							className="flex flex-wrap gap-1.5 border-b pb-3 sm:min-w-32 sm:flex-col sm:flex-nowrap sm:gap-0.5 sm:border-r sm:border-b-0 sm:pr-3 sm:pb-0"
+							aria-label="Presets"
+						>
 							{presets.map((preset) => (
 								<li key={preset.label}>
 									<button
@@ -146,7 +150,7 @@ export function DatePicker(allProps: DatePickerProps) {
 											setShown((count) => count + 1);
 											commit(preset.value);
 										}}
-										className="w-full cursor-default rounded-md px-2 py-1.5 text-left text-sm outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+										className="min-h-6 w-full cursor-default rounded-md px-2 py-1.5 text-left text-sm outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 max-sm:rounded-full max-sm:border max-sm:px-2.5 max-sm:py-1 max-sm:text-xs"
 									>
 										{preset.label}
 									</button>
