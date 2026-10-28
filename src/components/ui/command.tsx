@@ -278,9 +278,14 @@ export function CommandItem({
 			data-value={value}
 			aria-selected={selected}
 			aria-disabled={disabled || undefined}
-			onPointerMove={() => !disabled && !selected && setActive(value)}
+			// Scrolling with a finger would drag the highlight along.
+			onPointerMove={(event) =>
+				event.pointerType !== "touch" && !disabled && !selected && setActive(value)
+			}
 			onClick={() => {
 				if (disabled) return;
+
+				setActive(value);
 				onSelect?.(value);
 				if (!keepOpen) close?.();
 			}}
