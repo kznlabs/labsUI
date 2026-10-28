@@ -25,8 +25,9 @@ type NewsletterProps = {
 };
 
 /**
- * Email signup: InputGroup with a submit Button inside, native email validation, and a
- * a loading toast that turns into a success toast. The button confirms in place, then resets for the next address.
+ * Email signup: InputGroup with a submit Button inside, native email validation, and a loading
+ * toast that turns into a success toast. The button confirms in place, then resets for the next
+ * address.
  */
 export function Newsletter({
 	onSubscribe,
