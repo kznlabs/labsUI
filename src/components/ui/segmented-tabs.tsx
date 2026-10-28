@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { useRef } from "react";
+import { OverflowFocus } from "@/lib/overflow-focus";
 import { useIndicator } from "@/lib/use-indicator";
 import { cn, spring } from "@/lib/utils";
 
@@ -25,14 +26,18 @@ export function SegmentedTabs({ label, items, value, onChange, className }: Segm
 	return (
 		<nav
 			aria-label={label}
-			className={cn("relative isolate flex min-w-0 items-center gap-1", className)}
+			// Padding keeps the pill's ring inside the scroller's clip.
+			className={cn(
+				"-mx-1 relative isolate flex min-w-0 items-center gap-1 overflow-x-auto px-1 py-1 outline-none [scrollbar-width:none] focus-visible:ring-[3px] focus-visible:ring-ring/50",
+				className,
+			)}
 		>
 			<motion.span
 				aria-hidden="true"
 				initial={false}
 				animate={{ x: indicator.x, width: indicator.width }}
 				transition={spring}
-				className="-z-10 absolute inset-y-0 left-0 rounded-md bg-raised shadow-sm ring-[0.5px] ring-raised-ring"
+				className="-z-10 absolute inset-y-1 left-0 rounded-md bg-raised shadow-sm ring-[0.5px] ring-raised-ring"
 			/>
 			{items.map((item) => (
 				<button
@@ -52,6 +57,7 @@ export function SegmentedTabs({ label, items, value, onChange, className }: Segm
 					{item}
 				</button>
 			))}
+			<OverflowFocus />
 		</nav>
 	);
 }
