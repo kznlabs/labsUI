@@ -38,7 +38,7 @@ export async function describe(
 		...(item.title && { title: item.title }),
 		...(item.description && { description: item.description }),
 		...(item.docs && { docs: item.docs }),
-		install: `npx labsui add ${item.name}`,
+		install: `npx @kznlabs/labsui add ${item.name}`,
 		brings: order
 			.slice(0, -1)
 			.map((i) => i.name)

@@ -83,13 +83,13 @@ export async function doctor(cwd: string, registryFlag?: string): Promise<Doctor
 
 	const saved = readConfig(cwd);
 
-	if (!saved) add("config", "warn", `No ${CONFIG}.`, "Run npx labsui init.");
+	if (!saved) add("config", "warn", `No ${CONFIG}.`, "Run npx @kznlabs/labsui init.");
 	else if (saved.alias !== detected.alias || saved.root !== detected.root)
 		add(
 			"config",
 			"warn",
 			`${CONFIG} says ${saved.alias} → ${saved.root}, tsconfig says ${detected.alias} → ${detected.root}.`,
-			`Fix ${CONFIG}, or run npx labsui init again.`,
+			`Fix ${CONFIG}, or run npx @kznlabs/labsui init again.`,
 		);
 	else add("config", "pass", CONFIG);
 
@@ -109,7 +109,7 @@ export async function doctor(cwd: string, registryFlag?: string): Promise<Doctor
 	const owned = new Set(items.flatMap(({ files }) => files));
 
 	if (!existsSync(join(base, "styles/labsui.css")))
-		add("styles", "fail", "styles/labsui.css is missing.", "Run npx labsui init.");
+		add("styles", "fail", "styles/labsui.css is missing.", "Run npx @kznlabs/labsui init.");
 	else {
 		const css = findCss(cwd, config.root);
 		const shown = css && relative(cwd, css).replaceAll("\\", "/");
@@ -121,7 +121,7 @@ export async function doctor(cwd: string, registryFlag?: string): Promise<Doctor
 				"styles",
 				"fail",
 				css ? `${shown} does not import labsui.css.` : "No stylesheet imports Tailwind.",
-				'Run npx labsui init, or add @import "<path>/styles/labsui.css"; after @import "tailwindcss".',
+				'Run npx @kznlabs/labsui init, or add @import "<path>/styles/labsui.css"; after @import "tailwindcss".',
 			);
 	}
 
@@ -200,7 +200,7 @@ export async function doctor(cwd: string, registryFlag?: string): Promise<Doctor
 			"files",
 			"fail",
 			`Missing files: ${broken.join(", ")}`,
-			`npx labsui add ${[...new Set(broken.map((line) => line.split(" → ")[1]))].join(" ")}`,
+			`npx @kznlabs/labsui add ${[...new Set(broken.map((line) => line.split(" → ")[1]))].join(" ")}`,
 		);
 
 	const unresolved = items

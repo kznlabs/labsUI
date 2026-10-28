@@ -1,7 +1,7 @@
 /*
  * labsUI styles: tokens, accent presets, animations and component CSS.
  * Import once, right after Tailwind: @import "tailwindcss"; @import "./labsui.css";
- * `npx labsui init` installs this file; re-run `npx labsui add styles --overwrite` to update it.
+ * `npx @kznlabs/labsui init` installs this file; re-run `npx @kznlabs/labsui add styles --overwrite` to update it.
  */
 
 /* Class-based dark mode: `.dark` on <html>, set pre-paint by the theme script. */

@@ -2,11 +2,11 @@
 /**
  * labsui: copy labsUI components into your project, where you own and edit them.
  *
- *   npx labsui init             styles, theme, utils, motion provider; wires your CSS
- *   npx labsui add button tabs  components plus everything they import
- *   npx labsui search date      find by name, export or intent; `view` shows props
- *   npx labsui doctor           check the setup
- *   npx labsui mcp              the same, as tools for coding agents
+ *   npx @kznlabs/labsui init             styles, theme, utils, motion provider; wires your CSS
+ *   npx @kznlabs/labsui add button tabs  components plus everything they import
+ *   npx @kznlabs/labsui search date      find by name, export or intent; `view` shows props
+ *   npx @kznlabs/labsui doctor           check the setup
+ *   npx @kznlabs/labsui mcp              the same, as tools for coding agents
  *
  * Files land at their registry path under your `@/*` alias root (src/ or the project root), so
  * `@/components/ui/button` imports keep working. The registry ships inside the package (built

@@ -17,7 +17,7 @@ for (const entry of registry) {
 	// One file: its card already carries the description and install line.
 	const summary =
 		names.length > 1
-			? [entry.description, "", `- Install all: \`npx labsui add ${names.join(" ")}\``]
+			? [entry.description, "", `- Install all: \`npx @kznlabs/labsui add ${names.join(" ")}\``]
 			: [];
 	const md = [
 		`# ${entry.name}`,

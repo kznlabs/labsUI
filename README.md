@@ -4,7 +4,7 @@ Clean, composable React components with one smooth spring for every motion.
 Hand-made, accessible, and copied into your project so you own the code.
 
 [Docs and live demos](https://kznlabs.github.io/labsUI) ·
-[npm](https://www.npmjs.com/package/labsui) ·
+[npm](https://www.npmjs.com/package/@kznlabs/labsui) ·
 [JSR](https://jsr.io/@kznlabs/labsui)
 
 [![WCAG 2.2 AA: 0 axe violations](https://img.shields.io/badge/WCAG_2.2_AA-0_axe_violations-2ea44f)](#accessibility-and-browsers)
@@ -17,8 +17,8 @@ Hand-made, accessible, and copied into your project so you own the code.
 - **One spring.** Every animation shares
   `{ type: "spring", stiffness: 400, damping: 30 }`, so the whole UI moves the
   same way. Reduced motion is respected everywhere.
-- **You own the code.** `npx labsui add` writes plain TSX into your repo. No
-  runtime package to upgrade around, edit anything.
+- **You own the code.** `npx @kznlabs/labsui add` writes plain TSX into your
+  repo. No runtime package to upgrade around, edit anything.
 - **Accessible by default.** WAI-ARIA patterns, full keyboard support, and WCAG
   AA contrast in light and dark mode for all eight accent colors.
 - **Server-friendly.** Many components are server-safe, and form controls use
@@ -67,11 +67,11 @@ Requires React 19, Tailwind CSS v4 and a `@/*` path alias in `tsconfig.json`.
 The CLI runs on Node.js 22 or newer, or Deno.
 
 ```sh
-npx labsui init               # styles, theme, utils, motion provider
-npx labsui add button dialog  # components plus everything they import
-npx labsui search date range  # find by name, export or intent
-npx labsui view dialog        # exact props, examples, what it installs
-npx labsui doctor             # check the setup, with a fix for each problem
+npx @kznlabs/labsui init               # styles, theme, utils, motion provider
+npx @kznlabs/labsui add button dialog  # components plus everything they import
+npx @kznlabs/labsui search date range  # find by name, export or intent
+npx @kznlabs/labsui view dialog        # exact props, examples, what it installs
+npx @kznlabs/labsui doctor             # check the setup, with a fix for each problem
 ```
 
 Any package manager works: `bunx`, `pnpm dlx`, `yarn dlx` and
@@ -79,7 +79,7 @@ Any package manager works: `bunx`, `pnpm dlx`, `yarn dlx` and
 one your lockfile shows. Bun is recommended: labsUI is built with it.
 See the [CLI reference](packages/cli/README.md) for every option.
 
-Coding agents get the same through `npx labsui mcp` (an MCP server with
+Coding agents get the same through `npx @kznlabs/labsui mcp` (an MCP server with
 search, view, add, init and doctor tools, plus the library's coding rules) or
 through `--json` on any command.
 

@@ -240,7 +240,7 @@ writeJson("index.json", {
 	homepage: site.url,
 	items: index,
 });
-// The CLI ships the whole registry, so `npx labsui add` needs no server and each CLI version
+// The CLI ships the whole registry, so `npx @kznlabs/labsui add` needs no server and each CLI version
 // pins the components it installs.
 writeFileSync(CLI_BUNDLE, `${JSON.stringify({ items: bundle, index })}\n`);
 

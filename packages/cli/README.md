@@ -11,35 +11,36 @@ Node.js 22 or newer, or Deno. It has no dependencies and works offline.
 ## Usage
 
 ```sh
-npx labsui init                # once: styles, theme, utils, motion provider
-npx labsui add button tabs     # components plus everything they import
-npx labsui search date range   # find by name, export or intent
-npx labsui view dialog         # props, examples, what it installs
-npx labsui update              # newer components, keeping your edits
-npx labsui doctor              # check the setup
+npx @kznlabs/labsui init                # once: styles, theme, utils, motion provider
+npx @kznlabs/labsui add button tabs     # components plus everything they import
+npx @kznlabs/labsui search date range   # find by name, export or intent
+npx @kznlabs/labsui view dialog         # props, examples, what it installs
+npx @kznlabs/labsui update              # newer components, keeping your edits
+npx @kznlabs/labsui doctor              # check the setup
 ```
 
-Any runner works: `bunx labsui add button`, `pnpm dlx labsui …`,
-`yarn dlx labsui …`, or from JSR with
+Any runner works: `bunx @kznlabs/labsui add button`, `pnpm dlx @kznlabs/labsui …`,
+`yarn dlx @kznlabs/labsui …`, or from JSR with
 `deno run -A jsr:@kznlabs/labsui add button`. npm dependencies install with
 whatever package manager your lockfile shows.
 
 The component registry ships inside the package: no network needed beyond
 installing npm dependencies, and each labsui version installs the same
-component code. `npx labsui@latest add …` gets the newest components.
+component code. `npx @kznlabs/labsui@latest add …` gets the newest components.
 
 ### Global install
 
-To type `labsui` instead of `npx labsui` in every project:
+To type `labsui` instead of `npx @kznlabs/labsui` in every project:
 
 ```sh
-npm install -g labsui    # or: bun add -g labsui
+npm install -g @kznlabs/labsui    # or: bun add -g @kznlabs/labsui
 deno install -gA -n labsui jsr:@kznlabs/labsui
 ```
 
 A global install pins its components to that version, the same way the
 registry ships inside each release. Update it when you want newer ones
-(`npm install -g labsui@latest`); `npx labsui@latest` always gets them.
+(`npm install -g @kznlabs/labsui@latest`); `npx @kznlabs/labsui@latest`
+always gets them.
 
 ## Commands
 
@@ -133,7 +134,7 @@ Context Protocol, over stdio. Register it with your agent:
 ```json
 {
 	"mcpServers": {
-		"labsui": { "command": "npx", "args": ["-y", "labsui", "mcp"] }
+		"labsui": { "command": "npx", "args": ["-y", "@kznlabs/labsui", "mcp"] }
 	}
 }
 ```

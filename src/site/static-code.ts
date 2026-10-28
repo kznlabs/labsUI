@@ -3,9 +3,9 @@
  * build time too.
  */
 
-/** The install command for an entry's files: `npx labsui add button pricing` for `button.tsx · blocks/pricing.tsx`. */
+/** The install command for an entry's files: `npx @kznlabs/labsui add button pricing` for `button.tsx · blocks/pricing.tsx`. */
 export const installCommand = (file: string) =>
-	`npx labsui add ${file
+	`npx @kznlabs/labsui add ${file
 		.split("·")
 		.map((file) =>
 			file
@@ -17,8 +17,8 @@ export const installCommand = (file: string) =>
 
 /** Getting started: the commands and the three files it walks through. */
 export const guide = {
-	init: "npx labsui init",
-	add: "npx labsui add button data-table",
+	init: "npx @kznlabs/labsui init",
+	add: "npx @kznlabs/labsui add button data-table",
 	layout: `import type { ReactNode } from "react";
 import { MotionProvider } from "@/components/motion-provider";
 import { themeScript } from "@/lib/theme";

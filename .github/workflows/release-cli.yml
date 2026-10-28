@@ -41,8 +41,8 @@ jobs:
         working-directory: packages/cli
         run: |
           version=$(node -p 'require("./package.json").version')
-          if npm view "labsui@$version" version >/dev/null 2>&1; then
-            echo "labsui@$version is already on npm, skipping"
+          if npm view "@kznlabs/labsui@$version" version >/dev/null 2>&1; then
+            echo "@kznlabs/labsui@$version is already on npm, skipping"
           else
             npm publish --access public
           fi

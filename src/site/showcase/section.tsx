@@ -14,7 +14,7 @@ type ShowcaseSectionProps = {
 	name: string;
 	description: string;
 	files: { name: string; code: string }[];
-	/** CLI command that installs this component, e.g. `npx labsui add button`. */
+	/** CLI command that installs this component, e.g. `npx @kznlabs/labsui add button`. */
 	install: string;
 	/** The install line, highlighted at build time. */
 	installTokens?: CodeToken[][];

@@ -42,9 +42,10 @@ it.
   `/components/[id]` is one static page per registry entry with its own title,
   description, canonical, JSON-LD (`ComponentStructuredData`) and sitemap
   entry, rendering `ShowcaseSection` from `sectionProps()` (code, API).
-- CLI: `packages/cli` (`npx labsui init|add|list`), zero deps; the registry is
-  bundled into it (`src/registry.json`, generated), so a CLI release is a
-  component release. `bun run cli:build` (runs on Node 22+ or Deno).
+- CLI: `packages/cli` (`npx @kznlabs/labsui init|add|list`, command
+  `labsui`), zero deps; the registry is bundled into it
+  (`src/registry.json`, generated), so a CLI release is a component
+  release. `bun run cli:build` (runs on Node 22+ or Deno).
   `src/index.ts` parses args;
   `commands/{init,add,list,search,view,diff,update,doctor}.ts` return data
   and print separately (`--json`, and `mcp.ts`, a stdio MCP server, reuse

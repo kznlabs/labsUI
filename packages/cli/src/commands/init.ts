@@ -145,6 +145,6 @@ ${bold("labsui add toast confirm")}; drop them if you don't use them.
 
 ${result.layout.replace(/^/gm, "  ")}
 
-Then: ${bold("npx labsui add button")}. Check the setup any time: ${bold("npx labsui doctor")}
+Then: ${bold("npx @kznlabs/labsui add button")}. Check the setup any time: ${bold("npx @kznlabs/labsui doctor")}
 `);
 }

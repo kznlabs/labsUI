@@ -141,7 +141,8 @@ export function recordInstalled(cwd: string, names: string[], version: string) {
 export function loadConfig(cwd: string, registry?: string): Config {
 	const config = readConfig(cwd);
 
-	if (!config) throw new CliError(`No ${CONFIG} here. Run ${bold("npx labsui init")} first.`);
+	if (!config)
+		throw new CliError(`No ${CONFIG} here. Run ${bold("npx @kznlabs/labsui init")} first.`);
 
 	return registry ? { ...config, registry } : config;
 }
