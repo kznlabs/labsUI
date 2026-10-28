@@ -30,7 +30,7 @@ Hand-made, accessible, and copied into your project so you own the code.
 ## Accessibility and browsers
 
 CI runs an automated sweep on pull requests (the pages a change reaches) and
-weekly (everything): all component pages, light and dark, at 390 px and
+daily (everything): all component pages, light and dark, at 390 px and
 1280 px, in three browser engines.
 
 | Check                                         | Result               |

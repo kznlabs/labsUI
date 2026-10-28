@@ -3,6 +3,19 @@ name: Deploy docs to GitHub Pages
 on:
   push:
     branches: [main]
+    # only what ends up on the site; ci.yml checks every push
+    paths:
+      - "src/**"
+      - "public/**"
+      - "scripts/**"
+      - "packages/cli/src/**"
+      - "packages/cli/package.json"
+      - "package.json"
+      - "bun.lock"
+      - "next.config.ts"
+      - "postcss.config.mjs"
+      - "tsconfig.json"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -28,7 +41,6 @@ jobs:
         with:
           node-version: 24
       - run: bun install --frozen-lockfile
-      - run: bun run lint && bun run typecheck && bun test
       - run: bun run build
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
