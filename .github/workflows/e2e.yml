@@ -105,9 +105,48 @@ jobs:
           for e in $ENGINES; do projects="$projects --project $e-390 --project $e-1280"; done
           bun run e2e $projects
 
+      - name: Summary
+        if: ${{ !cancelled() && hashFiles('e2e-results.json') != '' }}
+        run: bun tests/e2e/report.ts summary e2e-results.json e2e-summary
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() && hashFiles('e2e-summary/*.json') != '' }}
+        with:
+          name: e2e-summary-${{ strategy.job-index }}
+          path: e2e-summary
+          retention-days: 1
+
       - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-${{ strategy.job-index }}
           path: playwright-report
           retention-days: 14
+
+  # Only a full run on main speaks for the whole library: it refreshes the README badges, kept on
+  # the badges branch (one commit, replaced every time).
+  badges:
+    needs: [plan, e2e]
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.plan.outputs.pages == 'all' && needs.plan.outputs.jobs == '["chromium","firefox","webkit"]' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: e2e-summary-*
+          path: e2e-summary
+          merge-multiple: true
+      - run: bun tests/e2e/report.ts badges e2e-summary badges
+      - name: Publish
+        working-directory: badges
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          git init -q -b badges
+          git add .
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "e2e badges"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${REPO}" badges

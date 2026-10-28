@@ -22,3 +22,5 @@ src/site/snippets.formatted.json
 /PUBLISHING.md
 /.claude/
 /CLAUDE.local.md
+/e2e-results.json
+/e2e-summary/

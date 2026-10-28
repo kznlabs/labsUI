@@ -22,7 +22,9 @@ export default defineConfig({
 	retries: CI ? 1 : 0,
 	reporter: [
 		[CI ? "dot" : "line"],
-		...(CI ? [["github"] as const] : []),
+		...(CI
+			? [["github"] as const, ["json", { outputFile: "../../e2e-results.json" }] as const]
+			: []),
 		["html", { outputFolder: "../../playwright-report", open: "never" }],
 	],
 	use: {
