@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /** Frosted material for floating surfaces (menus, popovers, tooltips, toasts): translucent + blur. */
-export const material = "bg-popover/80 backdrop-blur-2xl backdrop-saturate-[1.8]";
+export const material = "bg-popover/92 backdrop-blur-xl backdrop-saturate-125";
 
 /** The one spring. Every interaction in the library uses it. */
 export const spring = { type: "spring", stiffness: 400, damping: 30 } as const;
