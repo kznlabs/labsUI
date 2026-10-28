@@ -1,0 +1,23 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"categories": { "correctness": "off" },
+	"jsPlugins": ["@stylistic/eslint-plugin"],
+	"ignorePatterns": [".next/**", "out/**", "public/**", "packages/cli/dist/**", "**/*.generated.*"],
+	"rules": {
+		"@stylistic/padding-line-between-statements": [
+			"error",
+			{ "blankLine": "always", "prev": "*", "next": ["const", "let", "var"] },
+			{ "blankLine": "always", "prev": ["const", "let", "var"], "next": "*" },
+			{ "blankLine": "any", "prev": ["const", "let", "var"], "next": ["const", "let", "var"] },
+			{ "blankLine": "always", "prev": "*", "next": "return" },
+			{ "blankLine": "always", "prev": "*", "next": "multiline-block-like" },
+			{ "blankLine": "always", "prev": "multiline-block-like", "next": "*" },
+			{ "blankLine": "always", "prev": "directive", "next": "*" }
+		],
+		"id-length": [
+			"error",
+			{ "min": 2, "properties": "never", "exceptions": ["i", "j", "x", "y", "a", "b", "T", "_"] }
+		],
+		"id-denylist": ["error", "el", "cb", "fn", "ev", "ro", "mq", "nf", "ua", "pm", "tw"]
+	}
+}

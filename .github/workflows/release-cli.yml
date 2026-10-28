@@ -1,0 +1,52 @@
+name: Release CLI
+
+on:
+  push:
+    tags: ["cli-v*"]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Check versions match the tag
+        run: |
+          tag="${GITHUB_REF_NAME#cli-v}"
+          npm_v=$(bun -e 'console.log(require("./packages/cli/package.json").version)')
+          jsr_v=$(bun -e 'console.log(require("./packages/cli/jsr.json").version)')
+          echo "tag $tag · package.json $npm_v · jsr.json $jsr_v"
+          test "$tag" = "$npm_v" && test "$tag" = "$jsr_v"
+
+      - run: bun install --frozen-lockfile
+      - run: bun run lint && bun run typecheck && bun test
+      - run: bun run cli:build
+      - name: Smoke test
+        working-directory: packages/cli
+        run: node dist/index.js --version && node dist/index.js list | head -3
+
+      # trusted publishing needs npm 11.5.1+
+      - run: npm install -g npm@12.2.1
+
+      - name: Publish to npm
+        working-directory: packages/cli
+        run: |
+          version=$(node -p 'require("./package.json").version')
+          if npm view "labsui@$version" version >/dev/null 2>&1; then
+            echo "labsui@$version is already on npm, skipping"
+          else
+            npm publish --access public
+          fi
+
+      - name: Publish to JSR
+        working-directory: packages/cli
+        run: bunx jsr@0.14.3 publish

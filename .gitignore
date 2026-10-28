@@ -1,0 +1,24 @@
+node_modules
+.next
+*.tsbuildinfo
+next-env.d.ts
+.playwright-mcp/
+
+/public/r/
+/public/components/
+packages/cli/dist/
+packages/cli/src/registry.json
+src/site/api.generated.json
+src/site/snippets.formatted.json
+
+/out/
+
+# End-to-end reports
+/test-results/
+/playwright-report/
+
+# Maintainer notes, kept out of the public repo
+/TODO.md
+/PUBLISHING.md
+/.claude/
+/CLAUDE.local.md

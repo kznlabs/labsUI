@@ -1,0 +1,50 @@
+{
+	"name": "labsui",
+	"version": "0.1.1",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "bun run registry && next dev",
+		"build": "bun run registry && next build",
+		"start": "next start",
+		"lint": "biome check . && oxlint",
+		"format": "oxlint --fix && biome check --write .",
+		"check-dead-code": "knip",
+		"typecheck": "bun run registry && tsc --noEmit",
+		"registry": "node scripts/build-api.ts && bun scripts/build-registry.ts && bun scripts/build-docs-md.ts && bun scripts/format-snippets.ts",
+		"cli:build": "bun run registry && cd packages/cli && bun run build",
+		"release:cli": "bumpp packages/cli/package.json packages/cli/jsr.json --tag \"cli-v%s\" --commit \"chore(cli): release v%s\" --sign --git-check",
+		"test": "bun test",
+		"e2e:build": "STATIC_EXPORT=1 NEXT_PUBLIC_BASE_PATH=/labsUI bun run build",
+		"e2e": "playwright test -c tests/e2e",
+		"e2e:affected": "bun scripts/affected.ts"
+	},
+	"dependencies": {
+		"clsx": "^2.1.1",
+		"lucide-react": "1.63.0",
+		"motion": "14.7.1",
+		"next": "16.4.3",
+		"postcss": "^8.5.32",
+		"prettier": "^3.9.10",
+		"react": "19.3.1",
+		"react-dom": "19.3.1",
+		"shiki": "^4.5.0",
+		"tailwind-merge": "^3.7.0"
+	},
+	"devDependencies": {
+		"@axe-core/playwright": "^4.14.0",
+		"@biomejs/biome": "2.6.3",
+		"@playwright/test": "^1.64.1",
+		"@stylistic/eslint-plugin": "^5.10.0",
+		"@tailwindcss/postcss": "4.3.3",
+		"@types/bun": "^1.4.4",
+		"@types/node": "^26.6.5",
+		"@types/react": "^19.3.0",
+		"@types/react-dom": "^19.3.0",
+		"bumpp": "^12.3.0",
+		"knip": "6.43.0",
+		"oxlint": "^1.90.0",
+		"tailwindcss": "4.3.3",
+		"typescript": "^7.0.2"
+	}
+}

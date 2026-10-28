@@ -1,0 +1,114 @@
+name: End-to-end
+
+# PRs: only the pages a change reaches; up to 15 run in all three engines, more in Chromium only.
+# Weekly and manual runs cover everything.
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "public/**"
+      - "scripts/**"
+      - "tests/e2e/**"
+      - "package.json"
+      - "bun.lock"
+      - "next.config.ts"
+      - "postcss.config.mjs"
+      - "tsconfig.json"
+      - ".github/workflows/e2e.yml"
+  schedule:
+    # Weekly while the repo is private (Actions minutes); daily once it's public.
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      pages:
+        description: Registry ids, comma-separated, or "all"
+        default: all
+      engines:
+        description: Engines
+        type: choice
+        options: [all, chromium]
+        default: all
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      pages: ${{ steps.plan.outputs.pages }}
+      jobs: ${{ steps.plan.outputs.jobs }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+      - id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.base_ref }}
+          PAGES: ${{ inputs.pages }}
+          ENGINES: ${{ inputs.engines }}
+        run: |
+          case "$EVENT" in
+            pull_request) pages=$(bun scripts/affected.ts "origin/$BASE") ;;
+            workflow_dispatch) pages=$PAGES ;;
+            *) pages=all ;;
+          esac
+          count=$(echo "$pages" | tr ',' '\n' | grep -c . || true)
+          # A short list fits one job with every engine; a full run gets a job per engine.
+          if [ -z "$pages" ]; then jobs='[]'
+          elif [ "$ENGINES" = chromium ]; then jobs='["chromium"]'
+          elif [ "$EVENT" = pull_request ] && { [ "$pages" = all ] || [ "$count" -gt 15 ]; }; then jobs='["chromium"]'
+          elif [ "$pages" = all ]; then jobs='["chromium","firefox","webkit"]'
+          else jobs='["chromium firefox webkit"]'
+          fi
+          echo "pages: ${pages:-none} · jobs: $jobs"
+          echo "pages=$pages" >> "$GITHUB_OUTPUT"
+          echo "jobs=$jobs" >> "$GITHUB_OUTPUT"
+
+  e2e:
+    needs: plan
+    if: needs.plan.outputs.jobs != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        engines: ${{ fromJSON(needs.plan.outputs.jobs) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: bun install --frozen-lockfile
+
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ matrix.engines }}-${{ hashFiles('bun.lock') }}
+      - run: bunx playwright install --with-deps ${{ matrix.engines }}
+
+      - run: bun run e2e:build
+
+      - name: Test
+        env:
+          E2E_PAGES: ${{ needs.plan.outputs.pages }}
+          ENGINES: ${{ matrix.engines }}
+        run: |
+          projects=""
+          for e in $ENGINES; do projects="$projects --project $e-390 --project $e-1280"; done
+          bun run e2e $projects
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-${{ strategy.job-index }}
+          path: playwright-report
+          retention-days: 14

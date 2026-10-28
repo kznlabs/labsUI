@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+	<title>labsUI</title>
+	<rect x="0.5" y="0.5" width="31" height="31" rx="8" fill="#ffffff" stroke="#e4e4e7"/>
+	<circle cx="16" cy="10.5" r="4.5" fill="#f2554e"/>
+	<circle cx="10.5" cy="21" r="4.5" fill="#f5b730"/>
+	<circle cx="21.5" cy="21" r="4.5" fill="#30bd4c"/>
+</svg>

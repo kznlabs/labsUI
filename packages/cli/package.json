@@ -1,0 +1,34 @@
+{
+	"name": "labsui",
+	"version": "0.1.1",
+	"description": "Add labsUI components to your React + Tailwind v4 project: clean primitives you own, with smooth spring motion.",
+	"type": "module",
+	"bin": {
+		"labsui": "dist/index.js"
+	},
+	"files": [
+		"dist"
+	],
+	"engines": {
+		"node": ">=22"
+	},
+	"scripts": {
+		"build": "bun build src/index.ts --target node --outfile dist/index.js",
+		"prepublishOnly": "cd ../.. && bun run cli:build"
+	},
+	"keywords": [
+		"react",
+		"tailwindcss",
+		"components",
+		"cli",
+		"nextjs",
+		"motion"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kznlabs/labsUI.git",
+		"directory": "packages/cli"
+	},
+	"homepage": "https://kznlabs.github.io/labsUI",
+	"license": "MIT"
+}
