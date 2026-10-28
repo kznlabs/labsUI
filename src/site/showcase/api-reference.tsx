@@ -79,7 +79,38 @@ export function ApiReference({
 						) : (
 							<>
 								{entry.props.length > 0 && (
-									<Table containerClassName="shadow-none">
+									<ul
+										className="divide-y rounded-xl border bg-card text-sm sm:hidden"
+										aria-label={`${entry.name} props`}
+									>
+										{entry.props.map((prop) => (
+											<li key={prop.name} className="grid gap-1.5 px-3 py-3">
+												<div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+													<code className={`${mono} font-medium text-foreground`}>
+														{prop.name}
+														{prop.required && <span className="text-destructive-ink">*</span>}
+													</code>
+													{prop.default && (
+														<span className="text-muted-foreground text-xs">
+															default{" "}
+															<code className={`${mono} text-foreground`}>{prop.default}</code>
+														</span>
+													)}
+												</div>
+												<code className={`${mono} text-primary-ink wrap-break-word`}>
+													{prop.type}
+												</code>
+												{prop.description && (
+													<p className="text-muted-foreground text-xs leading-relaxed">
+														{prose(prop.description)}
+													</p>
+												)}
+											</li>
+										))}
+									</ul>
+								)}
+								{entry.props.length > 0 && (
+									<Table containerClassName="shadow-none max-sm:hidden">
 										<TableHeader>
 											<TableRow>
 												<TableHead>Prop</TableHead>
