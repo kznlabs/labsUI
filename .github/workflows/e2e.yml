@@ -1,7 +1,7 @@
 name: End-to-end
 
 # PRs: only the pages a change reaches; up to 15 run in all three engines, more in Chromium only.
-# Weekly and manual runs cover everything.
+# Daily and manual runs cover everything.
 
 on:
   pull_request:
@@ -17,8 +17,7 @@ on:
       - "tsconfig.json"
       - ".github/workflows/e2e.yml"
   schedule:
-    # Weekly while the repo is private (Actions minutes); daily once it's public.
-    - cron: "0 3 * * 1"
+    - cron: "0 3 * * *"
   workflow_dispatch:
     inputs:
       pages:
