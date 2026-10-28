@@ -373,7 +373,7 @@ function CodeLines({
 								</span>
 							)}
 							{note ? (
-								<Tooltip content={note} side="top" align="start" delay={150}>
+								<Tooltip content={note} side="top" align="start" delay={150} touch="tap">
 									<span
 										// biome-ignore lint/a11y/noNoninteractiveTabindex: lets keyboard users reach the note
 										tabIndex={0}
