@@ -8,6 +8,7 @@ import {
 	type PointerEvent,
 	type ReactNode,
 	useCallback,
+	useRef,
 	useState,
 } from "react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { cn, material, spring } from "@/lib/utils";
+import { useDismiss } from "@/lib/use-dismiss";
+import { clamp, cn, material, spring } from "@/lib/utils";
 
 type ChartSeries = {
 	key: string;
@@ -54,6 +56,7 @@ type ChartProps = Omit<ComponentProps<"figure">, "children"> & {
 const GAP = 2; // surface gap between touching marks
 const BAR = 24; // max bar thickness
 const CHAR = 6.5; // approx. width of an 11px digit/letter, for margins
+const TIP_GAP = 12;
 
 const color = (slot: number) => `var(--chart-${slot})`;
 const num = (value: string | number | undefined) =>
@@ -150,9 +153,13 @@ export function Chart({
 	const [hidden, setHidden] = useState<string[]>([]);
 	const [active, setActive] = useState<number | null>(null);
 	const [view, setView] = useState<"chart" | "table">("chart");
+	const [tipWidth, setTipWidth] = useState(144);
+	const plot = useRef<HTMLDivElement>(null);
 
 	// Callback ref, the plot remounts after the table view.
 	const box = useCallback((element: HTMLDivElement | null) => {
+		plot.current = element;
+
 		if (!element) return;
 
 		const observer = new ResizeObserver(() => setWidth(element.clientWidth));
@@ -161,6 +168,18 @@ export function Chart({
 
 		return () => observer.disconnect();
 	}, []);
+
+	const tip = useCallback((element: HTMLDivElement | null) => {
+		if (!element) return;
+
+		const observer = new ResizeObserver(() => setTipWidth(element.offsetWidth));
+
+		observer.observe(element);
+
+		return () => observer.disconnect();
+	}, []);
+
+	useDismiss(active !== null, [plot], () => setActive(null));
 
 	const fmt = new Intl.NumberFormat(locale, format);
 	const slots = new Map(series.map((item, i) => [item.key, item.color ?? i + 1]));
@@ -331,7 +350,19 @@ export function Chart({
 	const readout = row
 		? `${row[index]}: ${shown.map((item) => `${item.label} ${fmt.format(num(row[item.key]))}`).join(", ")}`
 		: "";
-	const flip = active !== null && cx(active) > width * 0.6;
+	const tipX = (() => {
+		if (active === null) return 0;
+
+		const point = cx(active);
+		const left = point + TIP_GAP + tipWidth > width && point > width / 2;
+
+		// Kept inside the plot: a narrow chart has no room on either side.
+		return clamp(
+			left ? point - TIP_GAP - tipWidth : point + TIP_GAP,
+			0,
+			Math.max(0, width - tipWidth),
+		);
+	})();
 
 	const table = (
 		// Off-screen copy for the chart view. Not a scroller, or it's an unreachable region with no tab
@@ -438,7 +469,7 @@ export function Chart({
 									setActive(rowCount - 1);
 							}}
 							onBlur={() => setActive(null)}
-							className="relative rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+							className="relative select-none rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 							style={{ height }}
 						>
 							{width > 0 && (
@@ -578,8 +609,10 @@ export function Chart({
 										width={plotW}
 										height={height}
 										fill="transparent"
+										onPointerDown={pick}
 										onPointerMove={pick}
-										onPointerLeave={() => setActive(null)}
+										// A lifted finger fires leave too.
+										onPointerLeave={(event) => event.pointerType !== "touch" && setActive(null)}
 									/>
 								</svg>
 							)}
@@ -589,17 +622,17 @@ export function Chart({
 									<motion.div
 										key="tip"
 										aria-hidden="true"
-										initial={{ opacity: 0, x: cx(active), y: margin.top }}
-										animate={{ opacity: 1, x: cx(active), y: margin.top }}
+										initial={{ opacity: 0, x: tipX, y: margin.top }}
+										animate={{ opacity: 1, x: tipX, y: margin.top }}
 										exit={{ opacity: 0 }}
 										transition={spring}
 										className="pointer-events-none absolute top-0 left-0 z-10"
 									>
 										<div
+											ref={tip}
 											className={cn(
 												"min-w-36 rounded-lg border px-2.5 py-2 text-popover-foreground text-xs shadow-md",
 												material,
-												flip ? "-translate-x-full -ml-3" : "ml-3",
 											)}
 										>
 											<p className="mb-1.5 text-muted-foreground">{row[index]}</p>
