@@ -40,6 +40,8 @@ export function Playground({
 					// off.
 					"flex min-h-56 flex-wrap justify-center gap-4 overflow-auto rounded-[inherit] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset *:min-w-0 *:*:min-w-0 bg-[radial-gradient(var(--border)_1px,transparent_1px)] bg-size-[16px_16px] px-3 py-12 [align-content:safe_center] [align-items:safe_center] sm:px-10 sm:py-16",
 					previewClassName,
+					// Room for Replay, whatever padding the demo sets.
+					replay && "pt-12 sm:pt-12",
 				)}
 			>
 				<div key={run} className="contents">
