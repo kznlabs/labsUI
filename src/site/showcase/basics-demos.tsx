@@ -22,7 +22,7 @@ import { withBase } from "@/site/config";
 
 const stats = [
 	{ label: "Members", value: 12840 },
-	{ label: "Commands run", value: 48290 },
+	{ label: "Commands", value: 48290 },
 	{ label: "Clips", value: 1312 },
 ];
 
