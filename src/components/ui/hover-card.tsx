@@ -1,10 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { type ReactNode, useRef } from "react";
+import { type FocusEvent, type MouseEvent, type PointerEvent, type ReactNode, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useMounted } from "@/lib/platform";
 import { useAnchor } from "@/lib/use-anchor";
+import { useDismiss } from "@/lib/use-dismiss";
 import { useHoverOpen } from "@/lib/use-hover-open";
 import { cn, material, spring } from "@/lib/utils";
 
@@ -24,7 +25,10 @@ type HoverCardProps = {
 	children: ReactNode;
 };
 
-/** Preview card on hover or keyboard focus, for sighted mouse users. Pointer can move into it. */
+/**
+ * Preview card on hover or keyboard focus; the pointer can move into it. On touch the first tap
+ * opens it, the second acts.
+ */
 export function HoverCard({
 	content,
 	side = "bottom",
@@ -36,12 +40,35 @@ export function HoverCard({
 }: HoverCardProps) {
 	const wrap = useRef<HTMLSpanElement>(null);
 	const panel = useRef<HTMLDivElement>(null);
-	const { open, trigger, floating } = useHoverOpen({ openDelay, closeDelay });
+	const { open, close, schedule, trigger, floating } = useHoverOpen({ openDelay, closeDelay });
 	const pos = useAnchor(open, wrap, panel, { side, align, offset: 8 });
 	const mounted = useMounted();
+	const touched = useRef(false);
+
+	useDismiss(open, [panel, wrap], close);
 
 	return (
-		<span ref={wrap} className="inline-flex" {...trigger}>
+		// biome-ignore lint/a11y/noStaticElementInteractions: events bubble from the trigger inside
+		<span
+			ref={wrap}
+			className="inline-flex"
+			{...trigger}
+			// Null on a tap inside the card; useDismiss handles outside taps.
+			onBlur={(event: FocusEvent) => {
+				if (event.relatedTarget && !panel.current?.contains(event.relatedTarget)) close();
+			}}
+			onPointerDown={(event: PointerEvent) => {
+				touched.current = event.pointerType === "touch";
+			}}
+			onClickCapture={(event: MouseEvent) => {
+				// Portal clicks bubble here too.
+				if (!touched.current || open || !wrap.current?.contains(event.target as Node)) return;
+
+				event.preventDefault();
+				event.stopPropagation();
+				schedule(true, 0);
+			}}
+		>
 			{children}
 			{mounted &&
 				createPortal(

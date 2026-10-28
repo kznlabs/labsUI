@@ -151,6 +151,13 @@ export function HoverCardDemo() {
 							<CalendarDays className="size-3.5" aria-hidden="true" />
 							Joined March 2024 · 128 clips
 						</p>
+						<Button
+							size="sm"
+							variant="outline"
+							onClick={() => toast("Demo mode: would open @jane's profile")}
+						>
+							View profile
+						</Button>
 					</div>
 				}
 			>
