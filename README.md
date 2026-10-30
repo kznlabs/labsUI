@@ -116,6 +116,10 @@ library's coding rules, or through `--json` on any command. It's listed in the
 }
 ```
 
+Agents that share no workspace, such as Claude Desktop, also need
+`"--cwd", "/path/to/app"` after `"mcp"`
+([setup](packages/cli/README.md#mcp-server)).
+
 ```tsx
 import { Button } from "@/components/ui/button";
 

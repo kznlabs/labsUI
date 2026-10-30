@@ -142,7 +142,19 @@ Context Protocol, over stdio. Register it with your agent:
 It works in the folder your agent shares as its workspace (MCP roots), or
 the one it starts the server in. If your agent starts servers elsewhere and
 shares no workspace, add `"--cwd", "/path/to/app"` after `"mcp"`; `--cwd`
-always wins.
+always wins. Claude Desktop is one of those: it shares no workspace, so give
+it `--cwd`. On Windows, Desktop starts `npx` through `cmd`:
+
+```json
+{
+	"mcpServers": {
+		"labsui": {
+			"command": "cmd",
+			"args": ["/c", "npx", "-y", "@kznlabs/labsui", "mcp", "--cwd", "C:\\path\\to\\app"]
+		}
+	}
+}
+```
 
 | Tool     | Does                                                     |
 | -------- | -------------------------------------------------------- |
