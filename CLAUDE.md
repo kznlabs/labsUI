@@ -71,12 +71,14 @@ it.
   needs one: the script fails and lists the gaps otherwise. In a
   discriminated union (`mode`, `multiple`, `type`), TS joins the docs of every
   branch, so document the first branch only, worded for both.
-- Originality: every component is written here. Demos use only assets drawn
-  for them (e.g. `public/avatar-demo.svg`), no third-party images or logos.
-  Copy, docs, comments and names describe labsUI on its own terms, without
-  comparisons to other projects. Browser support (README "Accessibility and
-  browsers", the gallery's checks strip) names engines and browsers as plain
-  facts, and only claims what the last automated sweep measured.
+- Originality: every component is written here. Demo images are drawn for
+  them or CC0, downloaded into `public/` with their license metadata kept
+  (`public/avatar-demo.svg` is DiceBear Thumbs, CC0); no hotlinked images,
+  no logos. Copy, docs, comments and names describe labsUI on its own terms,
+  without comparisons to other projects. Browser support (README
+  "Accessibility and browsers", the gallery's checks strip) names engines and
+  browsers as plain facts, and only claims what the last automated sweep
+  measured.
 - Docs site: GitHub Pages (`.github/workflows/pages.yml`, static export to
   `out/` under `/labsUI`). Plain `<a href>`/`<img src>` to root paths use
   `withBase()` from `@/site/config`. The favicon and header mark are
