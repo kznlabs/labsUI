@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Combobox } from "@/components/ui/combobox";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputOTP } from "@/components/ui/input-otp";
 import { NumberInput } from "@/components/ui/number-input";
@@ -85,6 +86,20 @@ export default function FormsProbe() {
 
 			<Probe id="tags-disabled">
 				<TagInput name="tags" defaultValue={["alpha"]} disabled aria-label="Tags" />
+			</Probe>
+
+			<Probe id="field-groups">
+				<Field label="How was it?">
+					<Rating name="score" />
+				</Field>
+
+				<Field label="Billing">
+					<RadioGroup name="billing">
+						<RadioGroupItem value="monthly">Monthly</RadioGroupItem>
+
+						<RadioGroupItem value="yearly">Yearly</RadioGroupItem>
+					</RadioGroup>
+				</Field>
 			</Probe>
 
 			<Probe id="rating-required">

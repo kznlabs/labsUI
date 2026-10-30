@@ -142,8 +142,10 @@ it.
   `const [v, setV] = useControllableState(value, defaultValue, onChange)` from
   `@/lib/use-controllable-state`; never hand-roll `prop ?? inner`.
 - New form controls call `useFieldControl(props)` from `field.tsx` and set
-  `data-slot` if InputGroup must find them. A control without a native
-  input submits through `<FormValue>` from `@/lib/form-value`, never
+  `data-slot` if InputGroup must find them. A fieldset control (no single
+  input) takes its name from `useFieldLabel()` as `aria-labelledby`. A
+  control without a native input submits through `<FormValue>` from
+  `@/lib/form-value`, never
   `type="hidden"`: browsers skip hidden inputs in validation, so `required`
   would do nothing. Pass it `disabled` too, so a disabled control submits
   nothing. State the DOM doesn't hold goes back to `defaultValue` on the

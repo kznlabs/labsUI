@@ -7,6 +7,7 @@ import { cn, spring } from "@/lib/utils";
 
 type FieldCtx = {
 	id: string;
+	labelId: string | undefined;
 	describedBy: string | undefined;
 	invalid: boolean;
 	required: boolean;
@@ -43,8 +44,13 @@ export function useFieldControl<Props extends ControlProps>(props: Props): Props
 	};
 }
 
+/** Id of the enclosing Field's label: names a group control (a fieldset can't be a label's target). */
+export function useFieldLabel() {
+	return use(FieldContext)?.labelId;
+}
+
 type FieldProps = {
-	/** Label wired to the control's id. */
+	/** Label wired to the control's id; names RadioGroup and Rating, which have no single input. */
 	label?: ReactNode;
 	/** Hint under the control. */
 	description?: ReactNode;
@@ -79,10 +85,11 @@ export function Field({
 	const id = idProp ?? auto;
 	const descId = description ? `${id}-description` : undefined;
 	const errorId = error ? `${id}-error` : undefined;
+	const labelId = label ? `${id}-label` : undefined;
 	const horizontal = orientation === "horizontal";
 
 	const labelEl = label && (
-		<Label htmlFor={id} className={cn(disabled && "cursor-not-allowed opacity-50")}>
+		<Label id={labelId} htmlFor={id} className={cn(disabled && "cursor-not-allowed opacity-50")}>
 			{label}
 
 			{required && (
@@ -97,6 +104,7 @@ export function Field({
 		<FieldContext
 			value={{
 				id,
+				labelId,
 				describedBy: [descId, errorId].filter(Boolean).join(" ") || undefined,
 				invalid: !!error,
 				required,

@@ -325,3 +325,13 @@ test.describe("form reset", () => {
 		expect((await submits())[2]).toBe(untouched);
 	});
 });
+
+test.describe("field label on groups", () => {
+	only("field", "rating", "radio-group");
+	test("names a Rating and a RadioGroup", async ({ page }) => {
+		const form = await probe(page, "field-groups");
+
+		await expect(form.getByRole("group", { name: "How was it?" })).toBeVisible();
+		await expect(form.getByRole("group", { name: "Billing" })).toBeVisible();
+	});
+});

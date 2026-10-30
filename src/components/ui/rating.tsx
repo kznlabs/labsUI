@@ -3,7 +3,7 @@
 import { Star } from "lucide-react";
 import { motion } from "motion/react";
 import { useId, useRef, useState } from "react";
-import { useFieldControl } from "@/components/ui/field";
+import { useFieldControl, useFieldLabel } from "@/components/ui/field";
 import { useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { clamp, cn, spring } from "@/lib/utils";
@@ -25,7 +25,7 @@ type RatingProps = {
 	required?: boolean;
 	/** Stars can't be picked and the value isn't submitted. */
 	disabled?: boolean;
-	/** Group label (visually hidden). */
+	/** Group label (visually hidden). Defaults to the enclosing Field's label, else "Rating". */
 	label?: string;
 	/** Star size. */
 	size?: "sm" | "default";
@@ -52,13 +52,15 @@ export function Rating(allProps: RatingProps) {
 		name,
 		required,
 		disabled,
-		label = "Rating",
+		label,
 		size = "default",
 		className,
 		"aria-describedby": describedBy,
 		"aria-invalid": invalid,
 	} = useFieldControl(allProps);
 	const auto = useId();
+	const fieldLabel = useFieldLabel();
+	const legend = label ?? (fieldLabel ? undefined : "Rating");
 	const [value, setValue] = useControllableState(valueProp, defaultValue, onValueChange);
 	const [hover, setHover] = useState<number | null>(null);
 	const group = useRef<HTMLFieldSetElement>(null);
@@ -110,11 +112,12 @@ export function Rating(allProps: RatingProps) {
 		<fieldset
 			ref={group}
 			disabled={disabled}
+			aria-labelledby={label === undefined ? fieldLabel : undefined}
 			aria-describedby={describedBy}
 			onPointerLeave={() => setHover(null)}
 			className={cn("inline-flex items-center gap-0.5", disabled && "opacity-50", className)}
 		>
-			<legend className="sr-only">{label}</legend>
+			{legend && <legend className="sr-only">{legend}</legend>}
 
 			{stars.map((star) => (
 				<label

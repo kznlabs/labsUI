@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { type ComponentProps, createContext, type ReactNode, use, useId, useRef } from "react";
-import { useFieldControl } from "@/components/ui/field";
+import { useFieldControl, useFieldLabel } from "@/components/ui/field";
 import { useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
@@ -19,7 +19,7 @@ type RadioCtx = {
 const RadioContext = createContext<RadioCtx | null>(null);
 
 type RadioGroupProps = Omit<ComponentProps<"fieldset">, "defaultValue" | "onChange"> & {
-	/** Visible group label, rendered as the fieldset's <legend>. */
+	/** Visible group label, rendered as the fieldset's <legend>. Without it, an enclosing Field's label names the group. */
 	legend?: ReactNode;
 	/** Controlled value; pair with `onValueChange`. */
 	value?: string;
@@ -51,6 +51,7 @@ export function RadioGroup({
 	// A fieldset takes no id from Field (labels can't target it); required goes on the radios.
 	const { id: _id, required, ...props } = useFieldControl(rest);
 	const auto = useId();
+	const fieldLabel = useFieldLabel();
 	const [value, setValue] = useControllableState(valueProp, defaultValue, onValueChange);
 	const items = useRef<HTMLDivElement>(null);
 
@@ -67,7 +68,11 @@ export function RadioGroup({
 				invalid: !!props["aria-invalid"],
 			}}
 		>
-			<fieldset className={cn("min-w-0", className)} {...props}>
+			<fieldset
+				aria-labelledby={legend ? undefined : fieldLabel}
+				className={cn("min-w-0", className)}
+				{...props}
+			>
 				{legend && <legend className="mb-3 font-medium text-sm leading-none">{legend}</legend>}
 
 				<div
