@@ -14,6 +14,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
+import { tabbables } from "@/lib/focus";
 import { useMounted } from "@/lib/platform";
 import { useAnchor } from "@/lib/use-anchor";
 import { useControllableState } from "@/lib/use-controllable-state";
@@ -83,12 +84,11 @@ export function PopoverTrigger({ onClick, ref, ...props }: ComponentProps<typeof
 	);
 }
 
-const FOCUSABLE =
-	'a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
-
 /**
  * Focus moves in on open. Esc or an outside click closes it; Esc returns focus to the trigger.
- * Not a focus trap: Tab past the end closes it and moves on, like any non-modal popup.
+ * Not a focus trap: Tab past the end closes it and moves on, like any non-modal popup; Shift+Tab
+ * from the first field returns to the trigger. Children unmount while closed, so keep field values
+ * in state above it.
  */
 export function PopoverContent({
 	align = "center",
@@ -118,11 +118,7 @@ export function PopoverContent({
 		const node = panel.current;
 
 		// data-autofocus claims first focus (a Calendar's selected day), else the first field.
-		(
-			node?.querySelector<HTMLElement>("[data-autofocus]") ??
-			node?.querySelector<HTMLElement>(FOCUSABLE) ??
-			node
-		)?.focus();
+		(node?.querySelector<HTMLElement>("[data-autofocus]") ?? tabbables(node)[0] ?? node)?.focus();
 
 		// Focus leaving the panel (Tab past the end, clicking elsewhere) closes it.
 		const focusOut = (event: FocusEvent) => {
@@ -152,14 +148,15 @@ export function PopoverContent({
 					aria-labelledby={`${id}-trigger`}
 					tabIndex={-1}
 					onKeyDown={(event) => {
-						// The panel sits at the end of body: Tab past its last field goes on from the trigger.
-						if (event.key === "Tab" && !event.shiftKey) {
-							const last = [...(panel.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])].at(
-								-1,
-							);
+						// The panel sits at the end of body: past either end, focus goes on from the trigger.
+						if (event.key === "Tab") {
+							const fields = tabbables(panel.current);
+							const edge = event.shiftKey ? fields[0] : fields.at(-1);
 
-							if (last && event.target !== last) return;
-							setOpen(false);
+							if (edge && event.target !== edge) return;
+
+							if (event.shiftKey) event.preventDefault();
+							else setOpen(false);
 							trigger.current?.focus();
 
 							return;

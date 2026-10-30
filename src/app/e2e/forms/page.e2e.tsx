@@ -19,12 +19,9 @@ const options = [
 	{ value: "beta", label: "Beta" },
 ];
 
-const entries = (form: HTMLFormElement) =>
+const entries = (data: FormData) =>
 	JSON.stringify(
-		[...new FormData(form)].map(([key, value]) => [
-			key,
-			typeof value === "string" ? value : value.name,
-		]),
+		[...data].map(([key, value]) => [key, typeof value === "string" ? value : value.name]),
 	);
 
 function Probe({ id, children }: { id: string; children: ReactNode }) {
@@ -37,7 +34,7 @@ function Probe({ id, children }: { id: string; children: ReactNode }) {
 			aria-label={id}
 			onSubmit={(event) => {
 				event.preventDefault();
-				setSent(entries(event.currentTarget));
+				setSent(entries(new FormData(event.currentTarget)));
 				setCount((total) => total + 1);
 			}}
 			className="grid gap-3 rounded-xl border bg-card p-4"
@@ -153,6 +150,8 @@ export default function FormsProbe() {
 
 			<StepperProbe />
 
+			<ActionProbe />
+
 			<Stepper
 				id="stepper-guard"
 				aria-label="stepper-guard"
@@ -191,7 +190,7 @@ function StepperProbe() {
 			]}
 			onSubmit={(event) => {
 				event.preventDefault();
-				setSent(entries(event.currentTarget));
+				setSent(entries(new FormData(event.currentTarget)));
 			}}
 		>
 			<StepperStep value="account">
@@ -206,5 +205,28 @@ function StepperProbe() {
 
 			<output>{sent}</output>
 		</Stepper>
+	);
+}
+
+function ActionProbe() {
+	const [sent, setSent] = useState<string[]>([]);
+
+	return (
+		<form
+			id="action-reset"
+			aria-label="action-reset"
+			action={(data) => setSent((list) => [...list, entries(data)])}
+			className="grid gap-3 rounded-xl border bg-card p-4"
+		>
+			<Rating name="rating" />
+
+			<TagInput name="topics" aria-label="Topics" />
+
+			<Select name="plan" options={options} aria-label="Plan" />
+
+			<button type="submit">Submit</button>
+
+			<output>{sent.join("|")}</output>
+		</form>
 	);
 }

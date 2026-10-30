@@ -12,6 +12,7 @@ import {
 	useRef,
 } from "react";
 import { Button } from "@/components/ui/button";
+import { tabbables } from "@/lib/focus";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
 
@@ -39,8 +40,6 @@ function useStepper() {
 }
 
 const FIELDS = "input:not([type='hidden']),select,textarea";
-const FOCUSABLE =
-	"input:not([type='hidden']):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),[tabindex]:not([tabindex='-1'])";
 
 function check(fieldset: HTMLFieldSetElement | undefined) {
 	const bad = [...(fieldset?.querySelectorAll<HTMLInputElement>(FIELDS) ?? [])].find(
@@ -118,7 +117,7 @@ export function Stepper({
 		const step = steps[index];
 		const fs = step && fieldsets.get(step.value);
 
-		(fs?.querySelector<HTMLElement>(FOCUSABLE) ?? fs)?.focus();
+		(tabbables(fs ?? null)[0] ?? fs)?.focus();
 	}, [index, steps, fieldsets]);
 
 	const submit = (event: SubmitEvent<HTMLFormElement>) => {

@@ -25,6 +25,7 @@ import {
 	useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { tabbables } from "@/lib/focus";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { useDismiss } from "@/lib/use-dismiss";
 import { useIndicator } from "@/lib/use-indicator";
@@ -37,9 +38,6 @@ import { cn, material, spring } from "@/lib/utils";
 const OPEN_DELAY = 120;
 const CLOSE_DELAY = 250;
 const MARGIN = 8;
-
-const FOCUSABLE =
-	'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 type NavCtx = {
 	value: string;
@@ -440,7 +438,7 @@ export function NavigationMenuTrigger({
 }
 
 function focusFirst(scope: HTMLElement | null) {
-	scope?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+	tabbables(scope)[0]?.focus();
 }
 
 const slide = {
@@ -533,7 +531,7 @@ function Panel({
 	const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (event.key !== "Tab") return;
 
-		const focusables = [...(ref.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])];
+		const focusables = tabbables(ref.current);
 		const trigger = nav.items.get(nav.value);
 
 		if (event.shiftKey && document.activeElement === focusables[0]) {
@@ -541,7 +539,7 @@ function Panel({
 			trigger?.focus();
 		} else if (!event.shiftKey && document.activeElement === focusables.at(-1)) {
 			// Past the last link: on to whatever follows the trigger on the bar.
-			const bar = [...(nav.list.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])];
+			const bar = tabbables(nav.list.current);
 			const next = trigger ? bar[bar.indexOf(trigger) + 1] : undefined;
 
 			if (next) {

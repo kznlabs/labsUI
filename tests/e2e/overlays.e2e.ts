@@ -34,6 +34,21 @@ test.describe("dialog", () => {
 		}
 	});
 
+	test("Tab wraps past a field with a hidden helper input", async ({ page }) => {
+		await open(page, "e2e/overlays");
+		await page.getByRole("button", { name: "Form dialog" }).click();
+
+		const email = page.getByRole("textbox", { name: "Email" });
+
+		await expect(email).toBeFocused();
+		await page.keyboard.press("Tab");
+		await expect(page.getByRole("combobox", { name: "Role" })).toBeFocused();
+		await page.keyboard.press("Tab");
+		await expect(email).toBeFocused();
+		await page.keyboard.press("Shift+Tab");
+		await expect(page.getByRole("combobox", { name: "Role" })).toBeFocused();
+	});
+
 	test("backdrop closes a plain dialog, not an alert", async ({ page }) => {
 		await open(page, "e2e/overlays");
 
@@ -73,6 +88,27 @@ test.describe("popover", () => {
 		await page.keyboard.press("Tab");
 		await expect(page.getByRole("textbox", { name: "Last filter" })).toBeHidden();
 		await expect(page.getByRole("button", { name: "After popover" })).toBeFocused();
+	});
+
+	test("Tab past a field with a hidden helper input still moves on", async ({ page }) => {
+		await open(page, "e2e/overlays");
+		await page.getByRole("button", { name: "Tags", exact: true }).click();
+		await page.keyboard.press("Tab");
+		await expect(page.getByRole("textbox", { name: "Tags" })).toBeFocused();
+		await page.keyboard.press("Tab");
+		await expect(page.getByRole("textbox", { name: "Tags" })).toBeHidden();
+		await expect(page.getByRole("button", { name: "After tags" })).toBeFocused();
+	});
+
+	test("Shift+Tab from the first field returns to the trigger", async ({ page }) => {
+		await open(page, "e2e/overlays");
+
+		const trigger = page.getByRole("button", { name: "Filters" });
+
+		await trigger.click();
+		await expect(page.getByRole("textbox", { name: "First filter" })).toBeFocused();
+		await page.keyboard.press("Shift+Tab");
+		await expect(trigger).toBeFocused();
 	});
 
 	test("an outside click closes it", async ({ page }) => {

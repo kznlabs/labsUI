@@ -13,6 +13,7 @@ import {
 	useRef,
 } from "react";
 import { createPortal } from "react-dom";
+import { tabbables } from "@/lib/focus";
 import { useMounted } from "@/lib/platform";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
@@ -99,9 +100,6 @@ export function DialogClose({ onClick, variant = "outline", ...props }: ButtonPr
 /** Open dialogs, innermost last. Only the top one handles Esc and Tab. */
 const stack: HTMLElement[] = [];
 
-const FOCUSABLE =
-	'a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
-
 /**
  * Modal behavior shared by Dialog and Drawer: focus first field, trap Tab, restore focus,
  * lock page scroll, close on Esc (topmost modal only). Attach the returned ref to the panel.
@@ -126,9 +124,7 @@ export function useModal() {
 
 		html.style.overflow = "hidden";
 
-		const focusables = () => [...(node?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])];
-
-		(focusables()[0] ?? node)?.focus();
+		(tabbables(node)[0] ?? node)?.focus();
 
 		const onKey = (event: KeyboardEvent) => {
 			if (stack.at(-1) !== node) return;
@@ -136,7 +132,7 @@ export function useModal() {
 			if (event.key === "Escape") return event.defaultPrevented || close();
 			if (event.key !== "Tab") return;
 
-			const focusable = focusables();
+			const focusable = tabbables(node);
 			const first = focusable[0];
 			const last = focusable.at(-1);
 

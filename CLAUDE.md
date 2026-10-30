@@ -124,7 +124,8 @@ it.
   `useHoverOpen()` from `@/lib/use-hover-open`. Outside-click close:
   `useDismiss(open, [panel, trigger], onDismiss)` from `@/lib/use-dismiss`
   (nested `data-floating` panels count as inside). Modals: `useModal()` from
-  `dialog.tsx`. Media/platform: `useMediaQuery`, `useIsMac`, `useMounted` (gate
+  `dialog.tsx`. First/last Tab stop in a panel: `tabbables(root)` from
+  `@/lib/focus`, never a selector string (it would count FormValue helpers). Media/platform: `useMediaQuery`, `useIsMac`, `useMounted` (gate
   portals) from `@/lib/platform`. Sliding pills:
   `useIndicator(itemsMap, active)` from `@/lib/use-indicator`. Latest callback
   inside an effect: `useEffectEvent`, never a ref written during render.

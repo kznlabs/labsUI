@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select } from "@/components/ui/select";
+import { TagInput } from "@/components/ui/tag-input";
 import { Tooltip } from "@/components/ui/tooltip";
 
 export default function OverlaysProbe() {
@@ -68,6 +70,35 @@ export default function OverlaysProbe() {
 			</Popover>
 
 			<Button variant="ghost">After popover</Button>
+
+			<Popover>
+				<PopoverTrigger variant="outline">Tags</PopoverTrigger>
+
+				<PopoverContent>
+					<Input aria-label="Tag filter" />
+
+					<TagInput name="tags" required aria-label="Tags" />
+				</PopoverContent>
+			</Popover>
+
+			<Button variant="ghost">After tags</Button>
+
+			<Dialog>
+				<DialogTrigger>Form dialog</DialogTrigger>
+
+				<DialogContent showClose={false}>
+					<DialogTitle>Invite</DialogTitle>
+
+					<Input aria-label="Email" />
+
+					<Select
+						name="role"
+						required
+						aria-label="Role"
+						options={[{ value: "admin", label: "Admin" }]}
+					/>
+				</DialogContent>
+			</Dialog>
 
 			<DropdownMenu>
 				<DropdownMenuTrigger variant="outline">Menu</DropdownMenuTrigger>
