@@ -13,7 +13,7 @@ import { useControllableState } from "@/lib/use-controllable-state";
 import { useDismiss } from "@/lib/use-dismiss";
 import { cn, material, spring } from "@/lib/utils";
 
-type ComboboxOption = {
+export type ComboboxOption = {
 	/** Submitted and matched value. */
 	value: string;
 	/** Text shown and searched. */

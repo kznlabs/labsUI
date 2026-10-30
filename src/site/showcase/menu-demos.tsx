@@ -68,7 +68,7 @@ import {
 	NavigationMenuList,
 	NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { Select } from "@/components/ui/select";
+import { Select, type SelectGroup, type SelectOption } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/toast";
 
@@ -203,7 +203,7 @@ export function DropdownMenuDemo() {
 	);
 }
 
-const zones = [
+const zones: SelectGroup[] = [
 	{
 		label: "Europe",
 		options: [
@@ -222,7 +222,7 @@ const zones = [
 	},
 ];
 
-const roles = [
+const roles: SelectOption[] = [
 	{ value: "admin", label: "Admin" },
 	{ value: "moderator", label: "Moderator" },
 	{ value: "member", label: "Member" },

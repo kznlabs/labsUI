@@ -13,8 +13,8 @@ import { useControllableState } from "@/lib/use-controllable-state";
 import { useDismiss } from "@/lib/use-dismiss";
 import { cn, material, spring } from "@/lib/utils";
 
-type SelectOption = { value: string; label: string; icon?: ReactNode; disabled?: boolean };
-type SelectGroup = { label: string; options: SelectOption[] };
+export type SelectOption = { value: string; label: string; icon?: ReactNode; disabled?: boolean };
+export type SelectGroup = { label: string; options: SelectOption[] };
 
 type SelectProps = {
 	/** Flat options, or labeled groups of options. */

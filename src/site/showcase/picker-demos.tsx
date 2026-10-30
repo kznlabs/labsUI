@@ -4,7 +4,7 @@ import { Bot, Hash, Shield, User } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar, type DateRange } from "@/components/ui/calendar";
-import { Combobox } from "@/components/ui/combobox";
+import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Field } from "@/components/ui/field";
 import { RelativeTime } from "@/components/ui/relative-time";
@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { TagInput } from "@/components/ui/tag-input";
 import { toast } from "@/components/ui/toast";
 
-const channels = [
+const channels: ComboboxOption[] = [
 	"general",
 	"announcements",
 	"clips",
@@ -27,7 +27,7 @@ const channels = [
 	"feedback",
 ].map((channel) => ({ value: channel, label: channel, icon: <Hash /> }));
 
-const roles = [
+const roles: ComboboxOption[] = [
 	{ value: "admin", label: "Admin", icon: <Shield />, keywords: ["owner", "manage"] },
 	{ value: "moderator", label: "Moderator", icon: <Shield />, keywords: ["mod"] },
 	{ value: "member", label: "Member", icon: <User /> },
