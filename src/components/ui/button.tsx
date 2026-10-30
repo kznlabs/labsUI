@@ -20,9 +20,9 @@ type Phase = "idle" | "armed" | "loading" | "success";
 
 type ButtonProps = Omit<HTMLMotionProps<"button">, "children"> &
 	VariantProps & {
-		/** Disables the button and shows a spinner before the label. */
+		/** Shows a spinner before the label and ignores clicks and Enter, so a form can't submit twice. Stays focusable. */
 		loading?: boolean;
-		/** In-place feedback: `loading` spins, `success` swaps the label to `successLabel`. */
+		/** In-place feedback: `loading` spins, `success` swaps the label to `successLabel`. Both ignore clicks and Enter, so a form can't submit twice. */
 		status?: ButtonStatus;
 		/** Text shown on `status="success"`, with a check icon. Defaults to "Done". */
 		successLabel?: ReactNode;
