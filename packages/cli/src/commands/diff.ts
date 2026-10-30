@@ -6,10 +6,28 @@ import type { Config, RegistryItem } from "../types.ts";
 import { projectBase, rewriteAlias, safeTarget } from "./add.ts";
 
 type Op = { kind: " " | "-" | "+"; line: string };
-export type FileDiff = { path: string; added: number; removed: number; patch: string };
+export type FileDiff = {
+	path: string;
+	added: number;
+	removed: number;
+	/** Only blank lines or indentation differ: a formatter, not an edit. */
+	formatting: boolean;
+	patch: string;
+};
 export type ItemDiff = { name: string; files: FileDiff[] };
 
 export const lines = (text: string) => text.replace(/\r\n/g, "\n").replace(/\n$/, "").split("\n");
+
+/** The same code apart from blank lines and indentation. */
+export function sameCode(a: string, b: string) {
+	const strip = (text: string) =>
+		lines(text)
+			.map((line) => line.trim())
+			.filter(Boolean)
+			.join("\n");
+
+	return strip(a) === strip(b);
+}
 
 /** For each line of `a`, the index of the line of `b` it is kept as, or -1 where it changed. */
 export function matches(a: string[], b: string[]) {
@@ -141,12 +159,9 @@ export async function diff(cwd: string, config: Config, names: string[], version
 			if (!local || !existsSync(local)) return;
 
 			const shown = relative(cwd, local).replaceAll("\\", "/");
-			const patch = unifiedDiff(
-				rewriteAlias(file.content, config.alias),
-				readFileSync(local, "utf8"),
-				`labsui@${version}/${file.path}`,
-				shown,
-			);
+			const theirs = rewriteAlias(file.content, config.alias);
+			const yours = readFileSync(local, "utf8");
+			const patch = unifiedDiff(theirs, yours, `labsui@${version}/${file.path}`, shown);
 
 			if (!patch) return;
 
@@ -156,6 +171,7 @@ export async function diff(cwd: string, config: Config, names: string[], version
 				path: shown,
 				added: body.filter((line) => line.startsWith("+")).length,
 				removed: body.filter((line) => line.startsWith("-")).length,
+				formatting: sameCode(theirs, yours),
 				patch,
 			});
 		});
@@ -172,7 +188,7 @@ export function printDiff(items: ItemDiff[], full: boolean) {
 		for (const file of item.files) {
 			if (!full) {
 				console.log(
-					`  ${item.name.padEnd(24)} ${green(`+${file.added}`)} ${red(`-${file.removed}`)}  ${dim(file.path)}`,
+					`  ${item.name.padEnd(24)} ${green(`+${file.added}`)} ${red(`-${file.removed}`)}  ${dim(file.path)}${file.formatting ? dim("  (formatting only)") : ""}`,
 				);
 				continue;
 			}

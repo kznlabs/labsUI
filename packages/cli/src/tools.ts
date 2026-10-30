@@ -96,7 +96,7 @@ export const TOOLS = [
 		name: "diff",
 		title: "Diff installed labsUI items",
 		description:
-			"Compare installed labsUI items with this labsUI version. Returns a unified patch per changed file, from the registry file to the project file (+ lines exist only in the project); matching items are left out, and when nothing differs it says so. Use it to see local edits before update. Needs init.",
+			"Compare installed labsUI items with this labsUI version. Returns a unified patch per changed file, from the registry file to the project file (+ lines exist only in the project), with formatting: true when only blank lines or indentation differ; matching items are left out, and when nothing differs it says so. Use it to see local edits before update. Needs init.",
 		inputSchema: {
 			type: "object",
 			properties: { names: installed },

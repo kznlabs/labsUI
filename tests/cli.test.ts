@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { projectBase, rewriteAlias, safeTarget } from "../packages/cli/src/commands/add.ts";
-import { unifiedDiff } from "../packages/cli/src/commands/diff.ts";
+import { sameCode, unifiedDiff } from "../packages/cli/src/commands/diff.ts";
 import { doctor } from "../packages/cli/src/commands/doctor.ts";
 import { searchIndex } from "../packages/cli/src/commands/search.ts";
 import { describe as view, viewMarkdown } from "../packages/cli/src/commands/view.ts";
@@ -122,6 +122,11 @@ describe("diff", () => {
 
 	test("line endings alone are not a change", () => {
 		expect(unifiedDiff("a\nb\n", "a\r\nb\r\n", "a", "b")).toBe("");
+	});
+
+	test("blank lines and indentation are formatting, not an edit", () => {
+		expect(sameCode("<a />\n<b />\n", "<a />\n\n  <b />\n")).toBe(true);
+		expect(sameCode("<a />\n<b />\n", "<a />\n<c />\n")).toBe(false);
 	});
 });
 

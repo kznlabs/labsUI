@@ -6,7 +6,7 @@ import { hasConflictMarkers } from "../merge.ts";
 import { CONFIG, detectAlias, findCss, readConfig, readPackage } from "../project.ts";
 import type { Config } from "../types.ts";
 import { packageName, projectBase, rewriteAlias } from "./add.ts";
-import { installedItems } from "./diff.ts";
+import { installedItems, sameCode } from "./diff.ts";
 
 type Status = "pass" | "info" | "warn" | "fail";
 export type Check = { id: string; status: Status; message: string; fix?: string };
@@ -216,23 +216,36 @@ export async function doctor(cwd: string, registryFlag?: string): Promise<Doctor
 			"Pick between the <<<<<<< yours and >>>>>>> labsui sides, then delete the markers.",
 		);
 
-	const edited = items.filter(({ item, files }) =>
-		item.files.some((file, i) => {
-			const local = files[i];
+	const drift = (code: boolean) =>
+		items
+			.filter(({ item, files }) =>
+				item.files.some((file, i) => {
+					const local = files[i];
 
-			if (!local || !existsSync(local)) return false;
+					if (!local || !existsSync(local)) return false;
 
-			const norm = (text: string) => text.replace(/\r\n/g, "\n").trimEnd();
+					const yours = readFileSync(local, "utf8");
+					const theirs = rewriteAlias(file.content, config.alias);
+					const norm = (text: string) => text.replace(/\r\n/g, "\n").trimEnd();
 
-			return norm(readFileSync(local, "utf8")) !== norm(rewriteAlias(file.content, config.alias));
-		}),
-	);
+					return code ? !sameCode(yours, theirs) : norm(yours) !== norm(theirs);
+				}),
+			)
+			.map((entry) => entry.item.name);
+	const edited = drift(true);
+	const formatted = drift(false).filter((name) => !edited.includes(name));
+	const parts = [
+		edited.length &&
+			`${edited.length} differ from this labsui version (your edits or another version, see labsui diff): ${edited.join(", ")}`,
+		formatted.length &&
+			`${formatted.length} differ only in blank lines or indentation: ${formatted.join(", ")}`,
+	].filter(Boolean);
 
 	if (items.length)
 		add(
 			"drift",
 			"info",
-			`${items.length} item(s) installed${edited.length ? `; ${edited.length} differ from this labsui version (your edits or another version, see labsui diff): ${edited.map((entry) => entry.item.name).join(", ")}` : ", all match this labsui version"}`,
+			`${items.length} item(s) installed${parts.length ? `; ${parts.join("; ")}` : ", all match this labsui version"}`,
 		);
 
 	return done();
