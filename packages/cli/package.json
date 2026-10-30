@@ -1,6 +1,6 @@
 {
 	"name": "@kznlabs/labsui",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Add labsUI components to your React + Tailwind v4 project: clean primitives you own, with smooth spring motion.",
 	"type": "module",
 	"mcpName": "io.github.kznlabs/labsui",
