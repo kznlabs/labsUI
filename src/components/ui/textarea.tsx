@@ -1,7 +1,8 @@
 "use client";
 
-import { type ComponentProps, useId, useState } from "react";
+import { type ComponentProps, useId, useRef, useState } from "react";
 import { useFieldControl } from "@/components/ui/field";
+import { useFormReset } from "@/lib/form-value";
 import { cn } from "@/lib/utils";
 import { fieldClass } from "./input";
 
@@ -15,6 +16,10 @@ export function Textarea({ className, showCount, onChange, ...rest }: TextareaPr
 	const props = useFieldControl(rest);
 	const countId = useId();
 	const [typed, setTyped] = useState(() => String(rest.defaultValue ?? "").length);
+	const box = useRef<HTMLSpanElement>(null);
+
+	useFormReset(box, () => setTyped(String(rest.defaultValue ?? "").length));
+
 	const used = rest.value !== undefined ? String(rest.value).length : typed;
 	const max = rest.maxLength;
 	const counted = showCount && max !== undefined;
@@ -46,7 +51,7 @@ export function Textarea({ className, showCount, onChange, ...rest }: TextareaPr
 	if (!counted) return textarea;
 
 	return (
-		<span className="relative block w-full min-w-0">
+		<span ref={box} className="relative block w-full min-w-0">
 			{textarea}
 
 			<span

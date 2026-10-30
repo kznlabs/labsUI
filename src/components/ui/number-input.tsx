@@ -1,9 +1,10 @@
 "use client";
 
 import { Minus, Plus } from "lucide-react";
-import { type ComponentProps, useState } from "react";
+import { type ComponentProps, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
+import { useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn } from "@/lib/utils";
 
@@ -45,6 +46,13 @@ export function NumberInput({
 	const [value, setValue] = useControllableState(valueProp, defaultValue, onValueChange);
 	// Raw text while typing so the field can be cleared and retyped; null = show the value.
 	const [draft, setDraft] = useState<string | null>(null);
+	const root = useRef<HTMLDivElement>(null);
+
+	useFormReset(root, () => {
+		setDraft(null);
+		setValue(defaultValue);
+	});
+
 	const clamp = (value: number) => Math.min(max ?? value, Math.max(min ?? value, value));
 	// Round to the step's precision so 0.1 + 0.2 shows 0.3.
 	const round = (value: number) => Number(value.toFixed(decimals(step)));
@@ -57,7 +65,7 @@ export function NumberInput({
 		"grid size-7 cursor-pointer place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-40";
 
 	return (
-		<InputGroup className={cn("w-32", className)}>
+		<InputGroup ref={root} className={cn("w-32", className)}>
 			<InputGroupAddon className="pl-1">
 				<button
 					type="button"

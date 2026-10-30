@@ -125,7 +125,8 @@ it.
   `useDismiss(open, [panel, trigger], onDismiss)` from `@/lib/use-dismiss`
   (nested `data-floating` panels count as inside). Modals: `useModal()` from
   `dialog.tsx`. First/last Tab stop in a panel: `tabbables(root)` from
-  `@/lib/focus`, never a selector string (it would count FormValue helpers). Media/platform: `useMediaQuery`, `useIsMac`, `useMounted` (gate
+  `@/lib/focus`, never a selector string (it would count FormValue
+  helpers). Media/platform: `useMediaQuery`, `useIsMac`, `useMounted` (gate
   portals) from `@/lib/platform`. Sliding pills:
   `useIndicator(itemsMap, active)` from `@/lib/use-indicator`. Latest callback
   inside an effect: `useEffectEvent`, never a ref written during render.
@@ -145,8 +146,11 @@ it.
   input submits through `<FormValue>` from `@/lib/form-value`, never
   `type="hidden"`: browsers skip hidden inputs in validation, so `required`
   would do nothing. Pass it `disabled` too, so a disabled control submits
-  nothing. Test it on `/e2e/forms` (`forms.e2e.ts`): required blocks an
-  empty submit, a value submits, disabled submits nothing.
+  nothing. State the DOM doesn't hold goes back to `defaultValue` on the
+  form's reset (`useFormReset(ref, onReset)`, same file): React resets a
+  form after a `<form action>` succeeds. Test it on `/e2e/forms`
+  (`forms.e2e.ts`): required blocks an empty submit, a value submits,
+  disabled submits nothing, a reset restores the default.
 - `cn()` from `@/lib/utils` for all class merging. Accept `className`, spread
   rest props.
 - Style: readable names (`event`, `element`, `option`, not `e`, `el`, `o`;

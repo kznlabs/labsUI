@@ -6,7 +6,7 @@ import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState 
 import { createPortal } from "react-dom";
 import { useFieldControl } from "@/components/ui/field";
 import { Tag, tagFieldClass } from "@/components/ui/tag-input";
-import { FormValue } from "@/lib/form-value";
+import { FormValue, useFormReset } from "@/lib/form-value";
 import { listKeyTarget, scrollIntoList } from "@/lib/list";
 import { useMounted } from "@/lib/platform";
 import { useAnchor } from "@/lib/use-anchor";
@@ -121,6 +121,13 @@ export function Combobox(allProps: ComboboxProps) {
 	const [query, setQuery] = useState("");
 	const [active, setActive] = useState<string>();
 	const values = raw === undefined ? [] : [raw].flat().filter(Boolean);
+
+	useFormReset(box, () => {
+		setRaw(defaultValue);
+		setQuery("");
+		setInvalid(false);
+	});
+
 	const pos = useAnchor(open, box, list);
 	const mounted = useMounted();
 

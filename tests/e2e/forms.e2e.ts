@@ -269,3 +269,59 @@ test.describe("stepper guard", () => {
 		await expect(form.getByRole("textbox", { name: "After" })).toBeHidden();
 	});
 });
+
+test.describe("form reset", () => {
+	only("rating", "tag-input", "select", "combobox", "date-picker", "radio-group", "forms");
+	test("after a form action every control is back at its default", async ({ page }) => {
+		const form = await probe(page, "action-reset");
+		const submits = () =>
+			sent(form)
+				.textContent()
+				.then((text) => text?.split("|") ?? []);
+
+		const send = async (count: number) => {
+			await submit(form);
+			await expect.poll(async () => (await submits()).length).toBe(count);
+		};
+
+		await send(1);
+
+		await form.locator("fieldset label").nth(2).click();
+		await form.getByRole("textbox", { name: "Topics" }).fill("ui");
+		await form.getByRole("textbox", { name: "Topics" }).press("Enter");
+		await form.getByRole("combobox", { name: "Plan" }).click();
+		await page.getByRole("listbox", { name: "Plan" }).getByRole("option", { name: "Beta" }).click();
+		await form.getByRole("combobox", { name: "Channel" }).click();
+		await page
+			.getByRole("listbox", { name: "Channel" })
+			.getByRole("option", { name: "Alpha" })
+			.click();
+		await page.keyboard.press("Escape");
+		await form.getByRole("button", { name: "Date" }).click();
+		await page.getByRole("button", { name: "Launch day" }).click();
+		await form.getByRole("radio", { name: "Large" }).check();
+		await form.getByRole("checkbox", { name: "Agree" }).check();
+		await form.getByRole("switch", { name: "Notify" }).check();
+		await form.getByRole("slider", { name: "Volume" }).press("ArrowRight");
+		await form.getByRole("button", { name: "Increase" }).click();
+		await form.getByRole("textbox", { name: "Code" }).fill("123456");
+		await form.getByRole("textbox", { name: "Notes" }).fill("hello");
+
+		await send(2);
+
+		const [untouched, changed] = await submits();
+
+		expect(changed).not.toBe(untouched);
+		await expect(form.locator("svg.text-warning")).toHaveCount(0);
+		await expect(form.getByRole("button", { name: /^Remove/ })).toHaveCount(0);
+		await expect(form.getByRole("combobox", { name: "Plan" })).not.toHaveText("Beta");
+		await expect(form.getByRole("combobox", { name: "Channel" })).toHaveValue("");
+		await expect(form.getByRole("checkbox", { name: "Agree" })).not.toBeChecked();
+		await expect(form.getByRole("switch", { name: "Notify" })).not.toBeChecked();
+		await expect(form.getByRole("radio", { name: "Small" })).toBeChecked();
+		await expect(form.getByText("0/50")).toBeVisible();
+
+		await send(3);
+		expect((await submits())[2]).toBe(untouched);
+	});
+});

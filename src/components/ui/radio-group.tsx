@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
-import { type ComponentProps, createContext, type ReactNode, use, useId } from "react";
+import { type ComponentProps, createContext, type ReactNode, use, useId, useRef } from "react";
 import { useFieldControl } from "@/components/ui/field";
+import { useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
 
@@ -51,6 +52,9 @@ export function RadioGroup({
 	const { id: _id, required, ...props } = useFieldControl(rest);
 	const auto = useId();
 	const [value, setValue] = useControllableState(valueProp, defaultValue, onValueChange);
+	const items = useRef<HTMLDivElement>(null);
+
+	useFormReset(items, () => setValue(defaultValue));
 
 	return (
 		<RadioContext
@@ -67,6 +71,7 @@ export function RadioGroup({
 				{legend && <legend className="mb-3 font-medium text-sm leading-none">{legend}</legend>}
 
 				<div
+					ref={items}
 					className={cn(
 						"flex gap-3",
 						orientation === "vertical" ? "flex-col" : "flex-wrap gap-x-5",

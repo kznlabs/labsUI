@@ -6,7 +6,7 @@ import { Calendar, type DateRange, key } from "@/components/ui/calendar";
 import { useFieldControl } from "@/components/ui/field";
 import { fieldClass } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { FormValue } from "@/lib/form-value";
+import { FormValue, useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn } from "@/lib/utils";
 
@@ -96,6 +96,12 @@ export function DatePicker(allProps: DatePickerProps) {
 		defaultValue ?? null,
 		onValueChange as ((value: Date | DateRange | null) => void) | undefined,
 	);
+
+	useFormReset(anchor, () => {
+		setValue(defaultValue ?? null);
+		setInvalid(false);
+	});
+
 	// Remount on a preset so the grid jumps to that month.
 	const [shown, setShown] = useState(0);
 

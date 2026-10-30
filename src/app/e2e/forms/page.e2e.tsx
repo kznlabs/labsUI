@@ -3,16 +3,20 @@
 import { type ReactNode, useState } from "react";
 import { FileDropzone } from "@/components/ui/attachment";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Combobox } from "@/components/ui/combobox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { InputOTP } from "@/components/ui/input-otp";
+import { NumberInput } from "@/components/ui/number-input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Rating } from "@/components/ui/rating";
 import { Select } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Stepper, StepperFooter, StepperStep } from "@/components/ui/stepper";
+import { Switch } from "@/components/ui/switch";
 import { TagInput } from "@/components/ui/tag-input";
+import { Textarea } from "@/components/ui/textarea";
 
 const options = [
 	{ value: "alpha", label: "Alpha" },
@@ -162,7 +166,7 @@ export default function FormsProbe() {
 			>
 				<StepperStep
 					value="check"
-					onNext={() => new Promise((done) => setTimeout(() => done(false), 300))}
+					onNext={() => new Promise((done) => setTimeout(() => done(false), 1000))}
 				>
 					<input name="guarded" aria-label="Guarded" />
 				</StepperStep>
@@ -223,6 +227,32 @@ function ActionProbe() {
 			<TagInput name="topics" aria-label="Topics" />
 
 			<Select name="plan" options={options} aria-label="Plan" />
+
+			<Combobox name="channel" options={options} aria-label="Channel" />
+
+			<DatePicker
+				name="date"
+				presets={[{ label: "Launch day", value: new Date(2026, 9, 21) }]}
+				aria-label="Date"
+			/>
+
+			<RadioGroup legend="Size" name="size" defaultValue="s">
+				<RadioGroupItem value="s">Small</RadioGroupItem>
+
+				<RadioGroupItem value="l">Large</RadioGroupItem>
+			</RadioGroup>
+
+			<Checkbox name="agree" aria-label="Agree" />
+
+			<Switch name="notify" aria-label="Notify" />
+
+			<Slider name="volume" defaultValue={[30]} labels={["Volume"]} />
+
+			<NumberInput name="quantity" defaultValue={1} aria-label="Quantity" />
+
+			<InputOTP name="code" aria-label="Code" />
+
+			<Textarea name="notes" maxLength={50} showCount aria-label="Notes" />
 
 			<button type="submit">Submit</button>
 

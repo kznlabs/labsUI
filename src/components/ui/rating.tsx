@@ -2,8 +2,9 @@
 
 import { Star } from "lucide-react";
 import { motion } from "motion/react";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { useFieldControl } from "@/components/ui/field";
+import { useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { clamp, cn, spring } from "@/lib/utils";
 
@@ -60,6 +61,10 @@ export function Rating(allProps: RatingProps) {
 	const auto = useId();
 	const [value, setValue] = useControllableState(valueProp, defaultValue, onValueChange);
 	const [hover, setHover] = useState<number | null>(null);
+	const group = useRef<HTMLFieldSetElement>(null);
+
+	useFormReset(group, () => setValue(defaultValue));
+
 	const stars = Array.from({ length: max }, (_, i) => i + 1);
 
 	if (readOnly) {
@@ -103,6 +108,7 @@ export function Rating(allProps: RatingProps) {
 
 	return (
 		<fieldset
+			ref={group}
 			disabled={disabled}
 			aria-describedby={describedBy}
 			onPointerLeave={() => setHover(null)}

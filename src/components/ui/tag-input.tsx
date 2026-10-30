@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { type ComponentProps, type ReactNode, useRef, useState } from "react";
 import { useFieldControl } from "@/components/ui/field";
-import { FormValue } from "@/lib/form-value";
+import { FormValue, useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
 
@@ -103,6 +103,13 @@ export function TagInput({
 	const input = useRef<HTMLInputElement>(null);
 	const [tags, set] = useControllableState(valueProp, defaultValue, onValueChange);
 	const [draft, setDraft] = useState("");
+
+	useFormReset(input, () => {
+		set(defaultValue);
+		setDraft("");
+		setInvalid(false);
+	});
+
 	const full = max !== undefined && tags.length >= max;
 
 	const add = (raw: string[]) => {

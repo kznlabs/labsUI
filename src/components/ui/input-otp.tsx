@@ -4,6 +4,7 @@ import { Check } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { type ComponentProps, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { useFieldControl } from "@/components/ui/field";
+import { useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
 
@@ -73,6 +74,8 @@ export function InputOTP({
 	const root = useRef<HTMLDivElement>(null);
 	const slots = useRef<(HTMLDivElement | null)[]>([]);
 	const [merge, setMerge] = useState<number[] | null>(null);
+
+	useFormReset(root, () => setValue(defaultValue));
 
 	useEffect(() => {
 		if (!verified) {

@@ -6,7 +6,7 @@ import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState 
 import { createPortal } from "react-dom";
 import { useFieldControl } from "@/components/ui/field";
 import { fieldClass } from "@/components/ui/input";
-import { FormValue } from "@/lib/form-value";
+import { FormValue, useFormReset } from "@/lib/form-value";
 import { listKeyTarget, scrollIntoList } from "@/lib/list";
 import { useMounted } from "@/lib/platform";
 import { useAnchor } from "@/lib/use-anchor";
@@ -72,6 +72,12 @@ export function Select(allProps: SelectProps) {
 	const [value, setValue] = useControllableState(valueProp, defaultValue, onValueChange);
 	const [open, setOpen] = useState(false);
 	const [invalid, setInvalid] = useState(false);
+
+	useFormReset(trigger, () => {
+		setValue(defaultValue);
+		setInvalid(false);
+	});
+
 	const [active, setActive] = useState<string>();
 	const pos = useAnchor(open, trigger, list);
 	const mounted = useMounted();

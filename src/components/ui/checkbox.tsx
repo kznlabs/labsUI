@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
-import type { ComponentProps } from "react";
+import { type ComponentProps, useRef } from "react";
 import { useFieldControl } from "@/components/ui/field";
+import { useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
 
@@ -31,10 +32,14 @@ export function Checkbox({
 }: CheckboxProps) {
 	const props = useFieldControl(rest);
 	const [on, setOn] = useControllableState(checked, defaultChecked, onCheckedChange);
+	const root = useRef<HTMLSpanElement>(null);
+
+	useFormReset(root, () => setOn(defaultChecked));
+
 	const filled = on || indeterminate;
 
 	return (
-		<span className={cn("relative inline-flex size-4 shrink-0", className)}>
+		<span ref={root} className={cn("relative inline-flex size-4 shrink-0", className)}>
 			<input
 				type="checkbox"
 				ref={(element) => {

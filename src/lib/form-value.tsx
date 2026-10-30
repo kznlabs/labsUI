@@ -1,4 +1,4 @@
-import type { RefObject } from "react";
+import { type RefObject, useEffect, useEffectEvent } from "react";
 
 type FormValueProps = {
 	/** Form field name; without it the value only takes part in validation. */
@@ -36,4 +36,24 @@ export function FormValue({ name, value, required, disabled, anchor, onInvalid }
 			className="pointer-events-none absolute size-px opacity-0"
 		/>
 	);
+}
+
+/**
+ * Calls `onReset` when the control's form resets: a reset button, or React after a `<form action>`
+ * succeeds. Custom state goes back to its default there, as a native control's does.
+ */
+export function useFormReset(field: RefObject<HTMLElement | null>, onReset: () => void) {
+	const reset = useEffectEvent(onReset);
+
+	useEffect(() => {
+		const form = field.current?.closest("form");
+
+		if (!form) return;
+
+		const listener = () => reset();
+
+		form.addEventListener("reset", listener);
+
+		return () => form.removeEventListener("reset", listener);
+	}, [field]);
 }

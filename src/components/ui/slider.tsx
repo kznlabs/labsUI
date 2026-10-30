@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useFieldControl } from "@/components/ui/field";
+import { useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { clamp, cn, spring } from "@/lib/utils";
 
@@ -58,6 +59,10 @@ export function Slider(allProps: SliderProps) {
 	} = useFieldControl(allProps);
 	const [values, setValues] = useControllableState(valueProp, defaultValue, onValueChange);
 	const [held, setHeld] = useState<number | null>(null);
+	const root = useRef<HTMLDivElement>(null);
+
+	useFormReset(root, () => setValues(defaultValue));
+
 	// Keyboard focus only, a click also focuses and shouldn't draw a ring.
 	const [focused, setFocused] = useState<number | null>(null);
 	const range = values.length > 1;
@@ -85,6 +90,7 @@ export function Slider(allProps: SliderProps) {
 
 	return (
 		<div
+			ref={root}
 			className={cn(
 				"relative flex h-5 w-full touch-none items-center",
 				disabled && "opacity-50",
