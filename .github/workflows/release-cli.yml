@@ -5,7 +5,7 @@ on:
     tags: ["cli-v*"]
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # release notes since the previous tag
       - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-node@v7
         with:
@@ -77,3 +79,17 @@ jobs:
           jq --arg v "$version" '.packages[0].version = $v' server.json > server.tmp && mv server.tmp server.json
           ./mcp-publisher login github-oidc
           ./mcp-publisher publish
+
+      # Glama's Auto-Release builds from it, so it goes last
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "$GITHUB_REF_NAME already has a GitHub release, skipping"
+            exit 0
+          fi
+          previous=$(git describe --tags --abbrev=0 --match "cli-v*" "$GITHUB_REF_NAME^" 2>/dev/null || true)
+          git log --format='- %s' --invert-grep --grep='^chore(cli): release' \
+            "${previous:+$previous..}$GITHUB_REF_NAME" > notes.md
+          gh release create "$GITHUB_REF_NAME" --title "CLI ${GITHUB_REF_NAME#cli-}" --notes-file notes.md

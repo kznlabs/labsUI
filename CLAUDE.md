@@ -92,7 +92,11 @@ it.
   pushes; `.github/workflows/release-cli.yml` publishes to npm, JSR
   (`@kznlabs/labsui`) and then the MCP registry
   (`io.github.kznlabs/labsui`, OIDC; it checks `mcpName` in the published
-  npm package, so npm goes first).
+  npm package, so npm goes first), then creates the GitHub release that
+  Glama's Auto-Release builds from (Glama installs the npm package). MCP
+  tools in `mcp.ts`: every parameter has a `description` (a test fails
+  otherwise); shared ones (`names`, `installed`, `dryRun`) are reused, not
+  redefined.
 
 ## Rules
 
