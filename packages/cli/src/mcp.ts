@@ -22,6 +22,19 @@ const names = {
 	items: { type: "string", pattern: "^[a-z0-9][a-z0-9-]*$" },
 	minItems: 1,
 	maxItems: 20,
+	description: "Item names as search lists them, e.g. button or date-picker.",
+};
+
+const installed = {
+	...names,
+	minItems: 0,
+	description: "Installed item names, e.g. button. Empty: every installed item.",
+};
+
+const dryRun = {
+	type: "boolean",
+	default: false,
+	description: "Report what would change, write nothing.",
 };
 
 const TOOLS = [
@@ -34,8 +47,18 @@ const TOOLS = [
 			type: "object",
 			properties: {
 				query: { type: "string", description: "Words to match. Empty lists everything." },
-				kind: { type: "string", enum: ["component", "block", "hook", "helper", "setup"] },
-				limit: { type: "integer", minimum: 1, maximum: 200, default: 12 },
+				kind: {
+					type: "string",
+					enum: ["component", "block", "hook", "helper", "setup"],
+					description: "Only items of this kind.",
+				},
+				limit: {
+					type: "integer",
+					minimum: 1,
+					maximum: 200,
+					default: 12,
+					description: "Most results to return.",
+				},
 			},
 		},
 		annotations: { readOnlyHint: true, openWorldHint: false },
@@ -62,10 +85,7 @@ const TOOLS = [
 			"Copy items and everything they import into the project and install their npm packages. Keeps files that already exist. Reports what to mount in the root layout.",
 		inputSchema: {
 			type: "object",
-			properties: {
-				names,
-				dryRun: { type: "boolean", default: false, description: "Report, write nothing." },
-			},
+			properties: { names, dryRun },
 			required: ["names"],
 		},
 		annotations: {
@@ -82,7 +102,7 @@ const TOOLS = [
 			"One-time setup: styles, theme, utils and motion provider; imports labsui.css into the Tailwind stylesheet and writes labsui.json. Returns the root layout code to add.",
 		inputSchema: {
 			type: "object",
-			properties: { dryRun: { type: "boolean", default: false } },
+			properties: { dryRun },
 		},
 		annotations: {
 			readOnlyHint: false,
@@ -98,7 +118,7 @@ const TOOLS = [
 			"How installed items differ from this labsui version, as unified patches from the registry file to the project's. No names: every item that differs.",
 		inputSchema: {
 			type: "object",
-			properties: { names: { ...names, minItems: 0 } },
+			properties: { names: installed },
 		},
 		annotations: { readOnlyHint: true, openWorldHint: false },
 	},
@@ -109,10 +129,7 @@ const TOOLS = [
 			"Bring installed items to this labsui version. Unedited files are replaced; edited ones are merged three ways from the version that installed them, with conflict markers where both sides changed the same lines. No names: everything installed.",
 		inputSchema: {
 			type: "object",
-			properties: {
-				names: { ...names, minItems: 0 },
-				dryRun: { type: "boolean", default: false, description: "Report, write nothing." },
-			},
+			properties: { names: installed, dryRun },
 		},
 		annotations: {
 			readOnlyHint: false,

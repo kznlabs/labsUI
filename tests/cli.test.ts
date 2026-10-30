@@ -242,6 +242,25 @@ describe("mcp", () => {
 		expect(await call("nope")).toMatchObject({ error: { code: -32601 } });
 	});
 
+	test("every tool and parameter is described", async () => {
+		const listed = (await call("tools/list")) as {
+			result: {
+				tools: {
+					name: string;
+					description: string;
+					inputSchema: { properties: Record<string, { description?: string }> };
+				}[];
+			};
+		};
+
+		for (const tool of listed.result.tools) {
+			expect(tool.description, tool.name).toBeTruthy();
+
+			for (const [key, schema] of Object.entries(tool.inputSchema.properties))
+				expect(schema.description, `${tool.name}.${key}`).toBeTruthy();
+		}
+	});
+
 	test("tool errors come back as results the agent can read", async () => {
 		const result = (await call("tools/call", {
 			name: "view",
