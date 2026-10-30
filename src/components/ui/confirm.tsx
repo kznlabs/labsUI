@@ -12,7 +12,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 
-type ConfirmOptions = {
+export type ConfirmOptions = {
 	/** Question in the dialog heading. */
 	title: ReactNode;
 	/** Consequences, under the title. */

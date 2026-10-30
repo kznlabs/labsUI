@@ -1,6 +1,6 @@
 import { clamp } from "@/lib/utils";
 
-type ListKeyOptions = {
+export type ListKeyOptions = {
 	/** Which arrows move: Left/Right for "horizontal", Up/Down for "vertical". */
 	orientation: "horizontal" | "vertical";
 	/** Wrap past the last item to the first and back. Default true. */

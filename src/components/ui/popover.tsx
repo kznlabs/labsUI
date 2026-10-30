@@ -152,6 +152,19 @@ export function PopoverContent({
 					aria-labelledby={`${id}-trigger`}
 					tabIndex={-1}
 					onKeyDown={(event) => {
+						// The panel sits at the end of body: Tab past its last field goes on from the trigger.
+						if (event.key === "Tab" && !event.shiftKey) {
+							const last = [...(panel.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])].at(
+								-1,
+							);
+
+							if (last && event.target !== last) return;
+							setOpen(false);
+							trigger.current?.focus();
+
+							return;
+						}
+
 						if (event.key !== "Escape" || event.defaultPrevented) return;
 						// Handled here so an enclosing Dialog stays open.
 						event.preventDefault();

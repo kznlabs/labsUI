@@ -19,7 +19,7 @@ export function matchesHotkey(
 	return mod ? event.metaKey || event.ctrlKey : !event.metaKey && !event.ctrlKey;
 }
 
-type HotkeyOptions = {
+export type HotkeyOptions = {
 	/** Ignore the shortcut while typing in a field. Default: only for single keys. */
 	skipInFields?: boolean;
 };

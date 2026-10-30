@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import type { ComponentProps, MouseEventHandler, ReactNode } from "react";
 
-type Crumb = {
+export type BreadcrumbItem = {
 	/** What the step reads as. */
 	label: ReactNode;
 	/** Leave out for a step that has no page of its own. */
@@ -12,7 +12,7 @@ type Crumb = {
 
 type BreadcrumbProps = Omit<ComponentProps<"nav">, "children"> & {
 	/** The trail, outermost first. The last item is the current page. */
-	items: Crumb[];
+	items: BreadcrumbItem[];
 	/** Drawn between items. Default a chevron. */
 	separator?: ReactNode;
 };

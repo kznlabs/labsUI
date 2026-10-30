@@ -15,8 +15,8 @@ import { Button } from "@/components/ui/button";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
 
-type StepInfo = { value: string; title: string; description?: string };
-type Guard = () => boolean | undefined | Promise<boolean | undefined>;
+export type StepInfo = { value: string; title: string; description?: string };
+export type StepGuard = () => boolean | undefined | Promise<boolean | undefined>;
 
 type StepperCtx = {
 	steps: StepInfo[];
@@ -25,7 +25,7 @@ type StepperCtx = {
 	next: () => Promise<void>;
 	back: () => void;
 	fieldsets: Map<string, HTMLFieldSetElement>;
-	guards: Map<string, Guard>;
+	guards: Map<string, StepGuard>;
 };
 
 const StepperContext = createContext<StepperCtx | null>(null);
@@ -88,7 +88,7 @@ export function Stepper({
 		steps.findIndex((step) => step.value === value),
 	);
 	const fieldsets = useRef(new Map<string, HTMLFieldSetElement>()).current;
-	const guards = useRef(new Map<string, Guard>()).current;
+	const guards = useRef(new Map<string, StepGuard>()).current;
 	const moved = useRef(false);
 
 	const go = (i: number) => {
@@ -246,7 +246,7 @@ export function StepperStep({
 	/** Matches a step in `steps`. */
 	value: string;
 	/** Runs on Continue after the native checks; return false to stay. */
-	onNext?: Guard;
+	onNext?: StepGuard;
 	className?: string;
 	/** The step's fields. */
 	children: ReactNode;

@@ -11,6 +11,7 @@ type RadioCtx = {
 	value: string;
 	setValue: (value: string) => void;
 	disabled?: boolean;
+	required?: boolean;
 	invalid?: boolean;
 };
 
@@ -29,6 +30,8 @@ type RadioGroupProps = Omit<ComponentProps<"fieldset">, "defaultValue" | "onChan
 	name?: string;
 	/** Stack items or lay them in a row. */
 	orientation?: "vertical" | "horizontal";
+	/** Submit needs a picked item. */
+	required?: boolean;
 	"aria-invalid"?: boolean;
 };
 
@@ -44,12 +47,8 @@ export function RadioGroup({
 	children,
 	...rest
 }: RadioGroupProps) {
-	// A fieldset takes no id from Field (labels can't target it) and no required.
-	const {
-		id: _id,
-		required: _required,
-		...props
-	} = useFieldControl<typeof rest & { required?: boolean }>(rest);
+	// A fieldset takes no id from Field (labels can't target it); required goes on the radios.
+	const { id: _id, required, ...props } = useFieldControl(rest);
 	const auto = useId();
 	const [value, setValue] = useControllableState(valueProp, defaultValue, onValueChange);
 
@@ -60,6 +59,7 @@ export function RadioGroup({
 				value,
 				setValue,
 				disabled: props.disabled,
+				required,
 				invalid: !!props["aria-invalid"],
 			}}
 		>
@@ -114,6 +114,7 @@ export function RadioGroupItem({
 					value={value}
 					checked={checked}
 					disabled={off}
+					required={ctx.required}
 					aria-invalid={ctx.invalid || undefined}
 					aria-describedby={description ? `${id}-description` : undefined}
 					onChange={() => ctx.setValue(value)}

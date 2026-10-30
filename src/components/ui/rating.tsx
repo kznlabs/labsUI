@@ -3,6 +3,7 @@
 import { Star } from "lucide-react";
 import { motion } from "motion/react";
 import { useId, useState } from "react";
+import { useFieldControl } from "@/components/ui/field";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { clamp, cn, spring } from "@/lib/utils";
 
@@ -19,10 +20,18 @@ type RatingProps = {
 	readOnly?: boolean;
 	/** Form field name for the chosen value. */
 	name?: string;
+	/** Submit needs a rating. */
+	required?: boolean;
+	/** Stars can't be picked and the value isn't submitted. */
+	disabled?: boolean;
 	/** Group label (visually hidden). */
 	label?: string;
 	/** Star size. */
 	size?: "sm" | "default";
+	/** Ids of hint or error text; Field fills it in. */
+	"aria-describedby"?: string;
+	/** Error styling; Field sets it from `error`. */
+	"aria-invalid"?: boolean;
 	className?: string;
 };
 
@@ -32,17 +41,22 @@ const sizes = { sm: "size-4", default: "size-5" } as const;
  * Star rating. Interactive: native radios (arrow keys, forms, screen readers) with a hover
  * preview and a spring lift/press on the stars. `readOnly`: an image of the score, fractions included.
  */
-export function Rating({
-	value: valueProp,
-	defaultValue = 0,
-	onValueChange,
-	max = 5,
-	readOnly = false,
-	name,
-	label = "Rating",
-	size = "default",
-	className,
-}: RatingProps) {
+export function Rating(allProps: RatingProps) {
+	const {
+		value: valueProp,
+		defaultValue = 0,
+		onValueChange,
+		max = 5,
+		readOnly = false,
+		name,
+		required,
+		disabled,
+		label = "Rating",
+		size = "default",
+		className,
+		"aria-describedby": describedBy,
+		"aria-invalid": invalid,
+	} = useFieldControl(allProps);
 	const auto = useId();
 	const [value, setValue] = useControllableState(valueProp, defaultValue, onValueChange);
 	const [hover, setHover] = useState<number | null>(null);
@@ -88,17 +102,25 @@ export function Rating({
 
 	return (
 		<fieldset
+			disabled={disabled}
+			aria-describedby={describedBy}
 			onPointerLeave={() => setHover(null)}
-			className={cn("inline-flex items-center gap-0.5", className)}
+			className={cn("inline-flex items-center gap-0.5", disabled && "opacity-50", className)}
 		>
 			<legend className="sr-only">{label}</legend>
 			{stars.map((star) => (
-				<label key={star} className="relative cursor-pointer" onPointerEnter={() => setHover(star)}>
+				<label
+					key={star}
+					className={cn("relative", disabled ? "cursor-not-allowed" : "cursor-pointer")}
+					onPointerEnter={() => !disabled && setHover(star)}
+				>
 					<input
 						type="radio"
 						name={name ?? auto}
 						value={star}
 						checked={value === star}
+						required={required}
+						aria-invalid={invalid || undefined}
 						onChange={() => setValue(star)}
 						className="peer sr-only"
 					/>

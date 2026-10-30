@@ -10,13 +10,13 @@ import { OverflowFocus } from "@/lib/overflow-focus";
 import { cn } from "@/lib/utils";
 
 /** One line, or an inclusive `[from, to]` run. Numbers are the ones shown in the gutter. */
-type LineRange = number | [from: number, to: number];
+export type LineRange = number | [from: number, to: number];
 
 /**
  * Text to mark: every match of a string, matches on one line, or an exact `[start, end)`
  * column range (String#slice indices) on one line.
  */
-type CodeMark =
+export type CodeMark =
 	| string
 	| { text: string; line?: number }
 	| { line: number; start: number; end: number };
@@ -32,7 +32,7 @@ type Annotations = {
 	notes?: Record<number, ReactNode>;
 };
 
-type CodeFile = Annotations & {
+export type CodeFile = Annotations & {
 	name: string;
 	code: string;
 	/** Lines from `highlightCode()`, made ahead of time (server or build): no Shiki in the browser. */

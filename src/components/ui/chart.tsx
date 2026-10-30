@@ -24,7 +24,7 @@ import {
 import { useDismiss } from "@/lib/use-dismiss";
 import { clamp, cn, material, spring } from "@/lib/utils";
 
-type ChartSeries = {
+export type ChartSeries = {
 	key: string;
 	/** Legend and tooltip name of the series. */
 	label: string;

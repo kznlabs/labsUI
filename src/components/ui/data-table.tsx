@@ -23,7 +23,7 @@ import {
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn } from "@/lib/utils";
 
-type Sort = { id: string; dir: "ascending" | "descending" };
+export type DataTableSort = { id: string; dir: "ascending" | "descending" };
 
 export type DataTableColumn<T> = {
 	/** Unique key; also used by `defaultSort`. */
@@ -52,7 +52,7 @@ type DataTableProps<T> = {
 	/** Rows per page. */
 	pageSize?: number;
 	/** Sort at first render. */
-	defaultSort?: Sort;
+	defaultSort?: DataTableSort;
 	/** Show a search field that filters every column. */
 	searchable?: boolean;
 	/** Search field placeholder. */

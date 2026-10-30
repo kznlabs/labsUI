@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
 	poweredByHeader: false,
 	...(process.env.STATIC_EXPORT && { output: "export" }),
 	basePath,
+	pageExtensions: ["tsx", "ts", ...(process.env.E2E ? ["e2e.tsx"] : [])],
 	experimental: {
 		optimizePackageImports: ["lucide-react", "motion"],
 	},

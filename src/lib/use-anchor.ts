@@ -3,15 +3,15 @@
 import { type RefObject, useLayoutEffect, useState } from "react";
 import { clamp } from "@/lib/utils";
 
-type Side = "bottom" | "top";
+export type AnchorSide = "bottom" | "top";
 
-type Placement = {
+export type AnchorPlacement = {
 	top: number;
 	left: number;
 	/** Anchor width, for `min-width` matching (Select). */
 	width: number;
 	/** Side actually used: the preferred one, or the other for lack of room. */
-	side: Side;
+	side: AnchorSide;
 };
 
 const MARGIN = 8;
@@ -29,9 +29,9 @@ export function useAnchor(
 		align = "start",
 		side: preferred = "bottom",
 		offset = 6,
-	}: { align?: "start" | "center" | "end"; side?: Side; offset?: number } = {},
+	}: { align?: "start" | "center" | "end"; side?: AnchorSide; offset?: number } = {},
 ) {
-	const [pos, setPos] = useState<Placement>({
+	const [pos, setPos] = useState<AnchorPlacement>({
 		top: -9999,
 		left: -9999,
 		width: 0,
@@ -54,7 +54,7 @@ export function useAnchor(
 			const above = anchorRect.top - offset - height;
 			const fitsBelow = below + height <= innerHeight - MARGIN;
 			const fitsAbove = above >= MARGIN;
-			const side: Side =
+			const side: AnchorSide =
 				preferred === "bottom"
 					? fitsBelow || !fitsAbove
 						? "bottom"

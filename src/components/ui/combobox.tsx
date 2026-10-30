@@ -34,11 +34,11 @@ type BaseProps = {
 	placeholder?: string;
 	/** Shown in the list when nothing matches. */
 	emptyText?: ReactNode;
-	/** Submits the value(s) through hidden inputs (one per value when multiple). */
+	/** Form field name: one entry per picked value. */
 	name?: string;
 	/** Id of the input; Field fills it in. */
 	id?: string;
-	/** Blocks typing and opening. */
+	/** Blocks typing and opening; the value isn't submitted. */
 	disabled?: boolean;
 	/** Form submit needs a value. */
 	required?: boolean;
@@ -262,11 +262,12 @@ export function Combobox(allProps: ComboboxProps) {
 			</div>
 			{name &&
 				(multiple ? values : values.slice(0, 1)).map((picked) => (
-					<input key={picked} type="hidden" name={name} value={picked} />
+					<input key={picked} type="hidden" name={name} value={picked} disabled={disabled} />
 				))}
 			<FormValue
 				value={values.join(",")}
-				required={required && !disabled}
+				required={required}
+				disabled={disabled}
 				anchor={input}
 				onInvalid={() => setInvalid(true)}
 			/>

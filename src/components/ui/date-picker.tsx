@@ -10,7 +10,7 @@ import { FormValue } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn } from "@/lib/utils";
 
-type Preset<Value> = { label: string; value: Value };
+export type DatePickerPreset<Value> = { label: string; value: Value };
 
 type Base = {
 	/** Button text when nothing is picked. */
@@ -25,11 +25,11 @@ type Base = {
 	weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 	/** BCP 47 locale for the button text and the calendar. */
 	locale?: string;
-	/** Submits ISO through a hidden input: `2026-10-21`, or `2026-10-03/2026-10-09` for a range. */
+	/** Submits ISO: `2026-10-21`, or `2026-10-03/2026-10-09` for a range. */
 	name?: string;
 	/** Pair with <Label htmlFor>, or let <Field> fill it in. */
 	id?: string;
-	/** Blocks opening. */
+	/** Blocks opening; the value isn't submitted. */
 	disabled?: boolean;
 	/** Form submit needs a date. */
 	required?: boolean;
@@ -52,7 +52,7 @@ type SingleProps = Base & {
 	/** Called with the picked day, or with the range once both ends are set. */
 	onValueChange?: (date: Date) => void;
 	/** Shortcuts beside the grid, e.g. Today, or Last 7 days for a range. Readers reach for these first. */
-	presets?: Preset<Date>[];
+	presets?: DatePickerPreset<Date>[];
 };
 
 type RangeProps = Base & {
@@ -60,7 +60,7 @@ type RangeProps = Base & {
 	value?: DateRange | null;
 	defaultValue?: DateRange | null;
 	onValueChange?: (range: DateRange) => void;
-	presets?: Preset<DateRange>[];
+	presets?: DatePickerPreset<DateRange>[];
 };
 
 type DatePickerProps = SingleProps | RangeProps;
@@ -179,7 +179,8 @@ export function DatePicker(allProps: DatePickerProps) {
 			<FormValue
 				name={name}
 				value={iso}
-				required={required && !trigger.disabled}
+				required={required}
+				disabled={trigger.disabled}
 				anchor={anchor}
 				onInvalid={() => setInvalid(true)}
 			/>

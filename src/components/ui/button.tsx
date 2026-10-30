@@ -13,9 +13,9 @@ import {
 import { spring } from "@/lib/utils";
 import { buttonVariants, type VariantProps } from "./button-variants";
 
-type ButtonStatus = "idle" | "loading" | "success";
+export type ButtonStatus = "idle" | "loading" | "success";
 /** Where the old label slides out to; the new one comes from the opposite side. */
-type SwapDirection = "left" | "right" | "up" | "down";
+export type SwapDirection = "left" | "right" | "up" | "down";
 type Phase = "idle" | "armed" | "loading" | "success";
 
 type ButtonProps = Omit<HTMLMotionProps<"button">, "children"> &

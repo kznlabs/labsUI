@@ -55,7 +55,7 @@ export const snippets: Record<string, { name: string; code: string }[]> = {
 	toast: [
 		{
 			name: "save.tsx",
-			code: 'import { toast } from "@/components/ui/toast";\nexport function notifySaved() {\n  toast.success("Changes saved", {\n    description: "All changes synced",\n    action: { label: "Undo", onClick: undo },\n  });\n}',
+			code: 'import { toast } from "@/components/ui/toast";\nexport function notifySaved(undo: () => void) {\n  toast.success("Changes saved", {\n    description: "All changes synced",\n    action: { label: "Undo", onClick: undo },\n  });\n}',
 		},
 	],
 	"app-window": [
@@ -929,7 +929,7 @@ export function EditorMenubar({ onNew, onExport }: { onNew: () => void; onExport
 			name: "clip-upload.tsx",
 			code: `import { FileDropzone } from "@/components/ui/attachment";
 import { Button } from "@/components/ui/button";
-import { uploadClips } from "./actions"; // "use server": (formData) => formData.getAll("clips")
+import { uploadClips } from "./actions";
 
 // Picked and dropped files both land in the input, so the Server Action gets them.
 export function ClipUpload() {
@@ -966,6 +966,16 @@ export function Attachments({ files, onRemove }: { files: File[]; onRemove: (id:
   );
 }`,
 		},
+		{
+			name: "actions.ts",
+			code: `"use server";
+
+export async function uploadClips(formData: FormData) {
+  const clips = formData.getAll("clips") as File[];
+
+  console.log(clips.map((clip) => clip.name));
+}`,
+		},
 	],
 	stepper: [
 		{
@@ -973,7 +983,7 @@ export function Attachments({ files, onRemove }: { files: File[]; onRemove: (id:
 			code: `import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Stepper, StepperFooter, StepperList, StepperStep } from "@/components/ui/stepper";
-import { createBot } from "./actions"; // "use server"
+import { createBot } from "./actions";
 
 const steps = [
   { value: "server", title: "Server", description: "Where the bot will live." },
@@ -998,6 +1008,17 @@ export default function SetupPage() {
       <StepperFooter submitLabel="Create bot" />
     </Stepper>
   );
+}`,
+		},
+		{
+			name: "actions.ts",
+			code: `"use server";
+
+export async function createBot(formData: FormData) {
+  const serverId = String(formData.get("serverId"));
+  const botName = String(formData.get("botName"));
+
+  console.log({ serverId, botName });
 }`,
 		},
 	],

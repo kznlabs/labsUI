@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 // Server-safe: CountTo and Reveal are the client parts.
 
-type Stat = {
+export type StatsStripItem = {
 	/** What the number counts, e.g. "Active users". */
 	label: string;
 	/** Number to count up to. */
@@ -26,7 +26,7 @@ export function StatsStrip({
 	className,
 }: {
 	/** Numbers in display order. */
-	stats: Stat[];
+	stats: StatsStripItem[];
 	className?: string;
 }) {
 	return (

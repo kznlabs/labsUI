@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { cn, spring } from "@/lib/utils";
 
-type GroupUser = {
+export type AvatarGroupUser = {
 	alt: string;
 	/** Image URL; initials from `alt` show without one. */
 	src?: string;
@@ -15,7 +15,7 @@ type GroupUser = {
 
 type AvatarGroupProps = {
 	/** People in order; `alt` is each one's name. */
-	users: GroupUser[];
+	users: AvatarGroupUser[];
 	/** How many avatars to show before the `+N` chip. */
 	max?: number;
 	/** Size of every avatar and the chip. */

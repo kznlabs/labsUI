@@ -21,8 +21,8 @@ import {
 import { useDisclosure } from "@/lib/use-disclosure";
 import { cn } from "@/lib/utils";
 
-type SiteLink = { label: string; href: string };
-type SiteGroup = {
+export type SiteLink = { label: string; href: string };
+export type SiteGroup = {
 	/** Trigger text for the panel. */
 	label: string;
 	/** Links in the panel, each with an optional description and icon. */

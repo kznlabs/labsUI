@@ -7,6 +7,8 @@ type FormValueProps = {
 	value: string;
 	/** An empty value blocks submit. */
 	required?: boolean;
+	/** Skips validation and leaves the value out of the submit, like a disabled input. */
+	disabled?: boolean;
 	/** The visible control that gets focus when the value is invalid. */
 	anchor: RefObject<HTMLElement | null>;
 	/** Called when a submit finds the value invalid. */
@@ -17,7 +19,7 @@ type FormValueProps = {
  * Submits a custom control's value and takes part in native validation, which a hidden input
  * can't: an empty `required` value blocks submit, shows the browser's message and focuses `anchor`.
  */
-export function FormValue({ name, value, required, anchor, onInvalid }: FormValueProps) {
+export function FormValue({ name, value, required, disabled, anchor, onInvalid }: FormValueProps) {
 	if (!name && !required) return null;
 
 	return (
@@ -27,6 +29,7 @@ export function FormValue({ name, value, required, anchor, onInvalid }: FormValu
 			name={name}
 			value={value}
 			required={required}
+			disabled={disabled}
 			onChange={() => undefined}
 			onInvalid={onInvalid}
 			onFocus={() => anchor.current?.focus()}

@@ -73,7 +73,7 @@ export function SidebarLayout({
 	);
 }
 
-type SidebarItem = {
+export type SidebarItem = {
 	/** What `current` and `onSelect` refer to. Default: `href`, else `label`. */
 	id?: string;
 	/** Visible text; the rail shows it as a tooltip. */
@@ -86,7 +86,7 @@ type SidebarItem = {
 	badge?: ReactNode;
 };
 
-type SidebarGroup = {
+export type SidebarGroup = {
 	/** Heading above the items; fades out in the rail. */
 	label?: string;
 	/** The group's entries. */

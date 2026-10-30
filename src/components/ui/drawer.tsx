@@ -24,9 +24,9 @@ export const DrawerClose = DialogClose;
 export const DrawerTitle = DialogTitle;
 export const DrawerDescription = DialogDescription;
 
-type Side = "left" | "right" | "top" | "bottom";
+export type DrawerSide = "left" | "right" | "top" | "bottom";
 
-const offscreen: Record<Side, { x?: string; y?: string }> = {
+const offscreen: Record<DrawerSide, { x?: string; y?: string }> = {
 	left: { x: "-100%" },
 	right: { x: "100%" },
 	top: { y: "-100%" },
@@ -35,7 +35,7 @@ const offscreen: Record<Side, { x?: string; y?: string }> = {
 
 // The `after:` bleed paints past the screen edge, so overshoot or dragging inward never shows a
 // gap.
-const placement: Record<Side, string> = {
+const placement: Record<DrawerSide, string> = {
 	left: "inset-y-0 left-0 h-full w-[min(20rem,85vw)] border-r after:right-full after:inset-y-0 after:w-[50vw]",
 	right:
 		"inset-y-0 right-0 h-full w-[min(24rem,90vw)] border-l after:left-full after:inset-y-0 after:w-[50vw]",
@@ -59,7 +59,7 @@ export function DrawerContent({
 	children,
 }: {
 	/** Edge it slides in from. */
-	side?: Side;
+	side?: DrawerSide;
 	/** Close button in the corner. On by default for side drawers. */
 	showClose?: boolean;
 	className?: string;

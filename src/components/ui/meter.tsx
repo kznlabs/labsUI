@@ -3,7 +3,7 @@ import { clamp, cn } from "@/lib/utils";
 
 /* Server-safe (no "use client"). */
 
-type Segment = {
+export type MeterSegment = {
 	/** Legend text for this part. */
 	label: string;
 	/** Amount this part uses. */
@@ -26,7 +26,7 @@ type MeterProps = {
 	/** Where good is: below low, between, or above high. Decides the color, like <meter>. */
 	optimum?: number;
 	/** Stacked parts with a legend (like a storage bar). Overrides the threshold color. */
-	segments?: Segment[];
+	segments?: MeterSegment[];
 	/** Visible name above the bar; also the accessible name. */
 	label?: ReactNode;
 	/** Text on the right and the accessible value, e.g. "48 GB of 100 GB". */

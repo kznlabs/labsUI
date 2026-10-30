@@ -213,7 +213,7 @@ export function AttachmentList({ className, children, ...props }: ComponentProps
 
 /* ---------- FileDropzone ---------- */
 
-type Rejection = { file: File; reason: "type" | "size" };
+export type FileRejection = { file: File; reason: "type" | "size" };
 
 type FileDropzoneProps = {
 	/** Same syntax as the input attribute: ".pdf,image/*". Enforced on drop and paste too. */
@@ -225,12 +225,12 @@ type FileDropzoneProps = {
 	/** Files that passed `accept` and `maxSize`, from a drop or the picker. */
 	onFiles?: (files: File[]) => void;
 	/** Files that failed `accept` or `maxSize`, each with a reason. */
-	onReject?: (rejected: Rejection[]) => void;
+	onReject?: (rejected: FileRejection[]) => void;
 	/** Form field name: picked and dropped files both submit with the form. */
 	name?: string;
 	/** Id of the file input; Field fills it in. */
 	id?: string;
-	/** Blocks drops and the picker. */
+	/** Blocks drops and the picker; no file is submitted. */
 	disabled?: boolean;
 	/** Form submit needs at least one file. */
 	required?: boolean;
@@ -269,7 +269,7 @@ export function FileDropzone(allProps: FileDropzoneProps) {
 		const all = [...list];
 		const picked = multiple ? all : all.slice(0, 1);
 		const ok: File[] = [];
-		const rejected: Rejection[] = [];
+		const rejected: FileRejection[] = [];
 
 		for (const file of picked) {
 			if (!accepts(file, accept)) rejected.push({ file, reason: "type" });
@@ -325,7 +325,7 @@ export function FileDropzone(allProps: FileDropzoneProps) {
 			}}
 			onDrop={onDrop}
 			onPaste={(event) =>
-				event.clipboardData.files.length > 0 && take(event.clipboardData.files, false)
+				!disabled && event.clipboardData.files.length > 0 && take(event.clipboardData.files, false)
 			}
 			className={cn(
 				"flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed bg-card p-6 text-center transition-colors has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50",

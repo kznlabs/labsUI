@@ -1,4 +1,4 @@
-type Theme = "light" | "dark";
+export type Theme = "light" | "dark";
 
 const KEY = "theme";
 const EVENT = "themechange";

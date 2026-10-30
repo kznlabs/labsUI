@@ -15,12 +15,12 @@ import { cn, material, spring } from "@/lib/utils";
 
 /* ---------- store (module-level, no provider needed) ---------- */
 
-type Variant = "default" | "success" | "error" | "info" | "loading";
-type ToastData = {
+export type ToastVariant = "default" | "success" | "error" | "info" | "loading";
+export type ToastData = {
 	id: number;
 	title: ReactNode;
 	description?: ReactNode;
-	variant: Variant;
+	variant: ToastVariant;
 	/** ms; Infinity = sticky. */
 	duration: number;
 	action?: { label: string; onClick: () => void };

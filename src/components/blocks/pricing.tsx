@@ -15,15 +15,15 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn, spring } from "@/lib/utils";
 
-type Period = "monthly" | "yearly";
+export type PricingPeriod = "monthly" | "yearly";
 
-type Plan = {
+export type PricingPlan = {
 	/** Plan name, the card's heading. */
 	name: string;
 	/** One line under the name. */
 	description?: string;
 	/** Price per month on each billing period, e.g. `{ monthly: 12, yearly: 10 }`. */
-	price: Record<Period, number>;
+	price: Record<PricingPeriod, number>;
 	features: string[];
 	/** Call to action, e.g. `<Button className="w-full">Start trial</Button>`. */
 	cta: ReactNode;
@@ -35,13 +35,13 @@ type Plan = {
 
 type PricingProps = {
 	/** Plans in display order. */
-	plans: Plan[];
+	plans: PricingPlan[];
 	/** ISO 4217 code for the price, e.g. "EUR". */
 	currency?: string;
 	/** BCP 47 locale for number formatting. */
 	locale?: string;
 	/** Billing period selected at first render. */
-	defaultPeriod?: Period;
+	defaultPeriod?: PricingPeriod;
 	/** Next to "Yearly", e.g. "−17%". */
 	yearlyNote?: string;
 	className?: string;
@@ -59,7 +59,7 @@ export function Pricing({
 	yearlyNote,
 	className,
 }: PricingProps) {
-	const [period, setPeriod] = useState<Period>(defaultPeriod);
+	const [period, setPeriod] = useState<PricingPeriod>(defaultPeriod);
 	const money = new Intl.NumberFormat(locale, {
 		style: "currency",
 		currency,
@@ -72,7 +72,7 @@ export function Pricing({
 			<ToggleGroup
 				aria-label="Billing period"
 				value={period}
-				onValueChange={(value) => value && setPeriod(value as Period)}
+				onValueChange={(value) => value && setPeriod(value as PricingPeriod)}
 			>
 				<ToggleGroupItem value="monthly">Monthly</ToggleGroupItem>
 				<ToggleGroupItem value="yearly">

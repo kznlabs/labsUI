@@ -155,6 +155,7 @@ function sourceOrder(type: string, decls: NodeHandle[], fallback: string) {
 }
 
 const api: Record<string, { entries: Entry[]; types: Record<string, string> }> = {};
+const unexported: string[] = [];
 
 for (const file of files) {
 	const source = program.getSourceFile(file);
@@ -258,11 +259,15 @@ for (const file of files) {
 		if (
 			isTypeAliasDeclaration(statement) &&
 			new RegExp(`\\b${statement.name.text}\\b`).test(mentioned)
-		)
+		) {
 			types[statement.name.text] = statement.type
 				.getText()
 				.replace(/\/\*[\s\S]*?\*\//g, "")
 				.replace(/\s+/g, " ");
+
+			if (!/^export\b/.test(statement.getText())) unexported.push(`${key}: ${statement.name.text}`);
+		}
+
 	api[key] = { entries, types };
 }
 
@@ -287,5 +292,12 @@ const undocumented = Object.entries(api).flatMap(([file, { entries }]) =>
 
 if (undocumented.length) {
 	console.error(`api: ${undocumented.length} props without JSDoc:\n  ${undocumented.join("\n  ")}`);
+	process.exit(1);
+}
+
+if (unexported.length) {
+	console.error(
+		`api: ${unexported.length} documented types not exported:\n  ${unexported.join("\n  ")}`,
+	);
 	process.exit(1);
 }

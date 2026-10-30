@@ -47,7 +47,7 @@ export const registry: Entry[] = [
 		file: "input.tsx · textarea.tsx · label.tsx · switch.tsx",
 		description:
 			"Input, Textarea, Label and Switch: smooth focus rings, native :user-invalid validation (red only after interaction), aria-invalid, auto-growing textarea with an optional character count, and a spring switch.",
-		usage: `<Label htmlFor="email">Email</Label><Input id="email" type="email" aria-invalid={err} />`,
+		usage: `<Label htmlFor="email">Email</Label><Input id="email" type="email" aria-invalid={err} /><Textarea aria-label="Bio" maxLength={280} showCount /><Switch aria-label="Notifications" checked={on} onCheckedChange={setOn} />`,
 	},
 	{
 		id: "card",
@@ -83,7 +83,7 @@ export const registry: Entry[] = [
 		file: "message-bubble.tsx",
 		description:
 			"User/assistant chat bubbles with avatar slot, streaming dots and copyable code blocks.",
-		usage: `<MessageBubble from="assistant" avatar={<Avatar … />} streaming>…<Code code={src} language="tsx" /></MessageBubble>`,
+		usage: `<MessageBubble from="assistant" avatar={<Avatar src={bot} alt="Assistant" />} streaming>…<Code code={src} language="tsx" /></MessageBubble>`,
 	},
 	{
 		id: "dialog",
@@ -325,7 +325,7 @@ export const registry: Entry[] = [
 		group: "Actions & inputs",
 		file: "select.tsx",
 		description:
-			"Single-choice listbox styled like Input, with groups, icons and disabled options. Native-select keyboard (arrows, typeahead even while closed), flips above the trigger near the viewport edge, submits via a hidden input.",
+			"Single-choice listbox styled like Input, with groups, icons and disabled options. Native-select keyboard (arrows, typeahead even while closed), flips above the trigger near the viewport edge, submits and validates with the form.",
 		usage: `<Select id="role" name="role" options={[{ value: "admin", label: "Admin" }]} value={v} onValueChange={setV} placeholder="Pick a role" />`,
 	},
 	{
@@ -549,7 +549,7 @@ export const registry: Entry[] = [
 		name: "Date Picker",
 		file: "date-picker.tsx",
 		description:
-			"Field-styled button that opens a Calendar in a Popover, focused on the picked day. Single or range, presets such as Last 7 days, closes once the pick is complete, and submits ISO dates through a hidden input. Works inside Field.",
+			"Field-styled button that opens a Calendar in a Popover, focused on the picked day. Single or range, presets such as Last 7 days, closes once the pick is complete, and submits ISO dates with the form. Works inside Field.",
 		usage: `<Field label="Report period"><DatePicker mode="range" name="period" presets={[{ label: "Last 7 days", value: { from, to } }]} /></Field>`,
 	},
 	{
@@ -649,7 +649,7 @@ export const registry: Entry[] = [
 		name: "Combobox",
 		file: "combobox.tsx",
 		description:
-			"A Select you can type into: the query filters by label and keywords (prefix matches first), arrows move, Enter picks. multiple keeps the list open and shows picks as removable tags. Submits through hidden inputs.",
+			"A Select you can type into: the query filters by label and keywords (prefix matches first), arrows move, Enter picks. multiple keeps the list open and shows picks as removable tags. Submits and validates with the form.",
 		usage: `<Combobox options={channels} value={channel} onValueChange={setChannel} placeholder="Pick a channel…" />`,
 	},
 	{
@@ -658,7 +658,7 @@ export const registry: Entry[] = [
 		name: "Tag Input",
 		file: "tag-input.tsx",
 		description:
-			"Free-form tags: Enter or a separator adds, Backspace removes the last, pasting a list adds them all. Duplicates, a max and a validate function keep bad tags in the input. One hidden input per tag.",
+			"Free-form tags: Enter or a separator adds, Backspace removes the last, pasting a list adds them all. Duplicates, a max and a validate function keep bad tags in the input. Submits one entry per tag; required needs one.",
 		usage: `<TagInput value={tags} onValueChange={setTags} max={5} validate={(t) => t.length <= 24} />`,
 	},
 	{
@@ -713,7 +713,7 @@ export const registry: Entry[] = [
 		file: "blocks/product-card.tsx",
 		description:
 			"Shop tile: photos in an AspectRatio (a swipeable Carousel with dots when there are several), sale price, Badge and add-to-cart Button.",
-		usage: `<ProductCard name="Clip camera" price={279} compareAt={349} badge="−20%" media={[<img … />, <img … />]} onAddToCart={add} />`,
+		usage: `<ProductCard name="Clip camera" price={279} compareAt={349} badge="−20%" media={[<img src={front} alt="Front" />, <img src={back} alt="Back" />]} onAddToCart={add} />`,
 	},
 	{
 		id: "clip-card",

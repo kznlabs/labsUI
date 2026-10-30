@@ -28,11 +28,11 @@ type SelectProps = {
 	onValueChange?: (value: string) => void;
 	/** Trigger text when nothing is picked. */
 	placeholder?: string;
-	/** Submits the value with a form, through a hidden input. */
+	/** Form field name for the picked value. */
 	name?: string;
 	/** Pair with <Label htmlFor>, or let <Field> fill it in. */
 	id?: string;
-	/** Blocks opening. */
+	/** Blocks opening; the value isn't submitted. */
 	disabled?: boolean;
 	/** Form submit needs a value. */
 	required?: boolean;
@@ -192,7 +192,8 @@ export function Select(allProps: SelectProps) {
 			<FormValue
 				name={name}
 				value={value}
-				required={required && !disabled}
+				required={required}
+				disabled={disabled}
 				anchor={trigger}
 				onInvalid={() => setInvalid(true)}
 			/>

@@ -14,7 +14,7 @@ import {
 } from "react";
 import { cn, spring } from "@/lib/utils";
 
-type Direction = "horizontal" | "vertical";
+export type ResizableDirection = "horizontal" | "vertical";
 type Limits = { min: number; max: number; collapsible: boolean; collapsed: number };
 
 type ResizablePanelProps = ComponentProps<"div"> & {
@@ -38,7 +38,7 @@ type Layout = {
 };
 
 type GroupCtx = {
-	direction: Direction;
+	direction: ResizableDirection;
 	id: string;
 	layout: Layout | null;
 	/** Panels report their limits here from a layout effect; the group's own effect reads them. */
@@ -140,7 +140,7 @@ export function ResizablePanelGroup({
 	...props
 }: ComponentProps<"div"> & {
 	/** "horizontal": panels side by side. "vertical": stacked. */
-	direction?: Direction;
+	direction?: ResizableDirection;
 	/** Final sizes after each drag, key or toggle, e.g. to save them in a cookie for SSR. */
 	onLayout?: (sizes: number[]) => void;
 	/** % per arrow key press. */

@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { type ComponentProps, type ReactNode, useRef, useState } from "react";
 import { useFieldControl } from "@/components/ui/field";
+import { FormValue } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
 
@@ -79,7 +80,7 @@ type TagInputProps = Omit<
 
 /**
  * Free-form tags: type and press Enter or a separator; paste a list to add many; Backspace in an
- * empty input removes the last tag. `name` submits one hidden input per tag.
+ * empty input removes the last tag. `name` submits one value per tag; `required` needs at least one.
  */
 export function TagInput({
 	value: valueProp,
@@ -96,7 +97,8 @@ export function TagInput({
 	onBlur,
 	...rest
 }: TagInputProps) {
-	const props = useFieldControl(rest);
+	const { required, ...props } = useFieldControl(rest);
+	const [invalid, setInvalid] = useState(false);
 	const input = useRef<HTMLInputElement>(null);
 	const [tags, set] = useControllableState(valueProp, defaultValue, onValueChange);
 	const [draft, setDraft] = useState("");
@@ -150,6 +152,8 @@ export function TagInput({
 				type="text"
 				data-slot="tag-input"
 				{...props}
+				aria-required={required}
+				aria-invalid={props["aria-invalid"] || (invalid && !tags.length) || undefined}
 				// readOnly, not disabled: Backspace still has to remove tags at the limit.
 				readOnly={full || props.readOnly}
 				placeholder={full ? undefined : placeholder}
@@ -184,7 +188,17 @@ export function TagInput({
 				}}
 				className="h-6 min-w-20 flex-1 bg-transparent px-1 outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed"
 			/>
-			{name && tags.map((tag) => <input key={tag} type="hidden" name={name} value={tag} />)}
+			{name &&
+				tags.map((tag) => (
+					<input key={tag} type="hidden" name={name} value={tag} disabled={props.disabled} />
+				))}
+			<FormValue
+				value={tags.join(",")}
+				required={required}
+				disabled={props.disabled}
+				anchor={input}
+				onInvalid={() => setInvalid(true)}
+			/>
 		</div>
 	);
 }

@@ -13,7 +13,9 @@ it.
   between statements, readable names; `.oxlintrc.json`) ·
   `bun run format` (both autofix)
 - `bun run check-dead-code` (Knip) · `bun test` (`tests/`, pure helpers). lint +
-  typecheck + knip + tests must pass (CI runs them).
+  typecheck + knip + tests must pass (CI runs them). `typecheck` also
+  compiles every registry example and `usage` line
+  (`scripts/check-snippets.ts`).
 - E2E (`tests/e2e/`, Playwright + axe): `bun run e2e:build`, then
   `bun run e2e [--project chromium-1280]`; `E2E_PAGES=dialog,select` limits
   pages, `bun run e2e:affected` lists those a diff reaches. Specs end in
@@ -21,7 +23,10 @@ it.
   Every page gets generic checks (`checks.ts`): controls a click can't reach,
   hairline scrollbars, dead wheel scrolling, `aria-expanded`/tab/slider
   contracts. A component that breaks one on purpose needs a reason, not an
-  exemption list. Runs in CI only (`e2e.yml`); trigger it by hand for a page.
+  exemption list. Behavior the docs promise is tested on probe pages,
+  `src/app/e2e/*/page.e2e.tsx`, built only by `e2e:build` (`E2E=1` adds the
+  `e2e.tsx` page extension). Runs in CI only (`e2e.yml`); trigger it by
+  hand for a page.
 - `bunx markdownlint-cli2` lints Markdown (`.markdownlint-cli2.jsonc`): blank
   lines around blocks, `-` bullets, `1.` ordered items, prose under 80 columns,
   bare URLs in `<>`.
@@ -69,7 +74,8 @@ it.
   into `src/site/api.generated.json`, shown as each section's API reference and
   in `/llms.txt`. **JSDoc on a prop is its public description**; own props only
   (inherited DOM props are summarized, `className` omitted). Every own prop
-  needs one: the script fails and lists the gaps otherwise. In a
+  needs one: the script fails and lists the gaps otherwise. Types the docs
+  print (`types`) must be exported, the script fails otherwise. In a
   discriminated union (`mode`, `multiple`, `type`), TS joins the docs of every
   branch, so document the first branch only, worded for both.
 - Originality: every component is written here. Demo images are drawn for
@@ -136,7 +142,9 @@ it.
   `data-slot` if InputGroup must find them. A control without a native
   input submits through `<FormValue>` from `@/lib/form-value`, never
   `type="hidden"`: browsers skip hidden inputs in validation, so `required`
-  would do nothing. Give it an e2e test that submits empty.
+  would do nothing. Pass it `disabled` too, so a disabled control submits
+  nothing. Test it on `/e2e/forms` (`forms.e2e.ts`): required blocks an
+  empty submit, a value submits, disabled submits nothing.
 - `cn()` from `@/lib/utils` for all class merging. Accept `className`, spread
   rest props.
 - Style: readable names (`event`, `element`, `option`, not `e`, `el`, `o`;
@@ -197,7 +205,8 @@ it.
   `src/app/layout.tsx`.
 - SEO/GEO: semantic tags, one `h1`, `section[aria-labelledby]`→`h2`; registry
   feeds JSON-LD (`<StructuredData />`) and `/llms.txt`.
-- Knip fails on unused exports: don't export internals.
+- Knip fails on unused exports: don't export internals. A type an exported
+  signature uses is exported (users import it); Knip allows that.
 
 ## Registry (`@/components/ui/*`)
 
@@ -236,7 +245,7 @@ toast("Title", { description, action: { label, onClick }, duration }); toast.suc
 <Field label="Email" description? error={err} required? disabled? orientation="vertical|horizontal"><Input name="email" /></Field>   // controls auto-wire id/aria via useFieldControl()
 <InputGroup><InputGroupAddon><AtSign /></InputGroupAddon><Input aria-label="User" /><InputGroupAddon align="end"><Button size="sm" variant="ghost">Copy</Button></InputGroupAddon></InputGroup>   // server-safe
 <Checkbox id checked? defaultChecked onCheckedChange indeterminate disabled />
-<RadioGroup legend="Plan" value? defaultValue onValueChange name orientation="vertical|horizontal"><RadioGroupItem value="pro" description? disabled>Pro</RadioGroupItem></RadioGroup>
+<RadioGroup legend="Plan" value? defaultValue onValueChange name required orientation="vertical|horizontal"><RadioGroupItem value="pro" description? disabled>Pro</RadioGroupItem></RadioGroup>
 <ContextMenu><ContextMenuTrigger aria-label="Clip">…</ContextMenuTrigger><ContextMenuContent>{/* same items as DropdownMenu */}<ContextMenuItem onSelect>Play</ContextMenuItem></ContextMenuContent></ContextMenu>   // opens at pointer; Shift+F10
 <Alert variant="default|info|success|warning|destructive" icon? action={<Button size="sm" />}><AlertTitle/><AlertDescription/></Alert>   // server-safe
 <Progress value? max label showValue size="sm|default" />   // no value = indeterminate
@@ -249,7 +258,7 @@ toast("Title", { description, action: { label, onClick }, duration }); toast.suc
 <NativeSelect name required><NativeSelectGroup label="Europe"><NativeSelectOption value>…</NativeSelectOption></NativeSelectGroup></NativeSelect>   // real <select>; base-select styling where supported
 <NumberInput value onValueChange min max step name />
 <Meter value max low high optimum label valueText segments={[{ label, value, className? }]} />   // server-safe
-<Rating value onValueChange max name label size="sm|default" readOnly />
+<Rating value onValueChange max name required disabled label size="sm|default" readOnly />
 <RelativeTime date={d} locale? />   // self-updating, SSR shows absolute date
 <Select id name options={[{ value, label, icon?, disabled? }] | [{ label, options }]} value? defaultValue? onValueChange placeholder disabled aria-invalid />
 <DropdownMenu open? onOpenChange?><DropdownMenuTrigger variant="outline">Open</DropdownMenuTrigger><DropdownMenuContent align="start|end"><DropdownMenuLabel/><DropdownMenuItem onSelect shortcut="⌘E" variant="destructive" disabled><Pencil />Edit</DropdownMenuItem><DropdownMenuCheckboxItem checked onCheckedChange/><DropdownMenuRadioGroup value onValueChange><DropdownMenuRadioItem value/></DropdownMenuRadioGroup><DropdownMenuSeparator/></DropdownMenuContent></DropdownMenu>
@@ -275,9 +284,9 @@ toast("Title", { description, action: { label, onClick }, duration }); toast.suc
 <AttachmentList><Attachment key name size type src? progress? error? href? onRemove /></AttachmentList>   // also exports formatBytes()
 <Stepper steps={[{ value, title, description? }]} value? onValueChange onSubmit|action><StepperList /><StepperStep value onNext={async () => ok}>…fields…</StepperStep><StepperFooter backLabel nextLabel submitLabel /></Stepper>   // a <form>; steps stay mounted; Continue checks the step's native constraints
 <Calendar mode="single|range" value onValueChange defaultMonth? month? onMonthChange min max isDisabled={(d) => bool} weekStartsOn={1} locale />   // APG date grid; today marked client-only (hydration-safe)
-<DatePicker mode="single|range" value onValueChange name presets={[{ label, value }]} min max isDisabled placeholder />   // Popover + Calendar; hidden input ISO "2026-10-21" or "from/to"; works in Field
+<DatePicker mode="single|range" value onValueChange name presets={[{ label, value }]} min max isDisabled placeholder />   // Popover + Calendar; submits ISO "2026-10-21" or "from/to"; works in Field
 <Combobox options={[{ value, label, icon?, keywords?, disabled? }]} value onValueChange placeholder emptyText name multiple? />   // typeable Select; multiple → value: string[], picks as tags
-<TagInput value={tags} onValueChange max separators={[","]} validate={(t) => bool} name placeholder />   // also exports <Tag onRemove>, tagFieldClass
+<TagInput value={tags} onValueChange max separators={[","]} validate={(t) => bool} name required disabled placeholder />   // also exports <Tag onRemove>, tagFieldClass
 <ScrollArea aria-label="Log" orientation="vertical|horizontal|both" className="h-64" viewportClassName="p-4">…</ScrollArea>   // overlay thumbs, native scroll; horizontal takes the mouse wheel
 <ResizablePanelGroup direction="horizontal|vertical" onLayout={(sizes) => …} keyboardStep={5}><ResizablePanel defaultSize={25} minSize={10} maxSize collapsible collapsedSize={0}>…</ResizablePanel><ResizableHandle withHandle aria-label="Resize nav" /><ResizablePanel>…</ResizablePanel></ResizablePanelGroup>   // panels/handles are direct children; sizes in %; APG splitter keys, Enter/dblclick collapses; groups nest
 <StructuredData />                                         // @/site/seo/structured-data

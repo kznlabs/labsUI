@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 type Change = { type: "new" | "improved" | "fixed"; text: ReactNode };
 
-type Release = {
+export type ChangelogRelease = {
 	version: string;
 	/** Release headline, shown beside the version. */
 	title: string;
@@ -34,7 +34,7 @@ export function Changelog({
 	className,
 }: {
 	/** Newest first; the first one is highlighted. */
-	releases: Release[];
+	releases: ChangelogRelease[];
 	className?: string;
 }) {
 	return (

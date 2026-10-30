@@ -21,7 +21,7 @@ type SliderProps = {
 	step?: number;
 	/** Submitted per thumb: `name` (one value) or `name` twice (range). */
 	name?: string;
-	/** Blocks dragging and keys. */
+	/** Blocks dragging and keys; the values aren't submitted. */
 	disabled?: boolean;
 	/** Accessible names per thumb; defaults to "Minimum" / "Maximum" for a range. */
 	labels?: string[];

@@ -18,9 +18,14 @@ import { useControllableState } from "@/lib/use-controllable-state";
 import { cn, spring } from "@/lib/utils";
 import { Button } from "./button";
 
-type Ctx = { open: boolean; setOpen: (open: boolean) => void; titleId: string; descId: string };
+export type DialogState = {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	titleId: string;
+	descId: string;
+};
 
-const DialogContext = createContext<Ctx | null>(null);
+const DialogContext = createContext<DialogState | null>(null);
 
 export function useDialog() {
 	const ctx = use(DialogContext);
