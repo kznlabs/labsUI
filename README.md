@@ -7,12 +7,13 @@ Hand-made, accessible, and copied into your project so you own the code.
 [npm](https://www.npmjs.com/package/@kznlabs/labsui) ·
 [JSR](https://jsr.io/@kznlabs/labsui) ·
 [MCP registry][mcp-registry] ·
-[Glama](https://glama.ai/mcp/servers/kznlabs/labsUI)
+[Glama][glama]
 
 [![Chromium][chromium]](#accessibility-and-browsers)
 [![Firefox][firefox]](#accessibility-and-browsers)
 [![WebKit][webkit]](#accessibility-and-browsers)
 [![WCAG 2.2 AA][wcag]](#accessibility-and-browsers)
+[![MCP server score on Glama][glama-score]][glama]
 
 <a href="https://kznlabs.github.io/labsUI">
   <picture>
@@ -69,6 +70,8 @@ daily (everything): all component pages, light and dark, at 390 px and
 [webkit]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Fwebkit.json
 [wcag]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Fwcag.json
 [mcp-registry]: https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.kznlabs/labsui
+[glama]: https://glama.ai/mcp/servers/kznlabs/labsUI
+[glama-score]: https://glama.ai/mcp/servers/kznlabs/labsUI/badges/score.svg
 
 Minimum versions come from Tailwind CSS v4: Chrome 111, Safari 16.4,
 Firefox 128. Two features enhance where supported and fall back cleanly:
@@ -103,7 +106,7 @@ Coding agents get the same through `npx @kznlabs/labsui mcp`, an MCP server
 with search, view, add, init, diff, update and doctor tools plus the
 library's coding rules, or through `--json` on any command. It's listed in the
 [MCP registry][mcp-registry] as `io.github.kznlabs/labsui` and on
-[Glama](https://glama.ai/mcp/servers/kznlabs/labsUI):
+[Glama][glama]:
 
 ```json
 {
