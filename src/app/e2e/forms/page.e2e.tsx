@@ -62,6 +62,10 @@ export default function FormsProbe() {
 				<TagInput name="tags" required aria-label="Tags" />
 			</Probe>
 
+			<Probe id="tags-keys">
+				<TagInput name="tags" defaultValue={["alpha", "beta", "gamma"]} aria-label="Keyed tags" />
+			</Probe>
+
 			<Probe id="tags-validate">
 				<TagInput validate={(tag) => tag.length <= 5} aria-label="Short tags" />
 			</Probe>
@@ -229,6 +233,7 @@ function StepperProbe() {
 
 function ActionProbe() {
 	const [sent, setSent] = useState<string[]>([]);
+	const [score, setScore] = useState(0);
 
 	return (
 		<form
@@ -238,6 +243,8 @@ function ActionProbe() {
 			className="grid gap-3 rounded-xl border bg-card p-4"
 		>
 			<Rating name="rating" />
+
+			<Rating name="score" label="Controlled rating" value={score} onValueChange={setScore} />
 
 			<TagInput name="topics" aria-label="Topics" />
 

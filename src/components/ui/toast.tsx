@@ -10,7 +10,9 @@ import {
 	useState,
 	useSyncExternalStore,
 } from "react";
+import { tabbables } from "@/lib/focus";
 import { useDismiss } from "@/lib/use-dismiss";
+import { useHotkey } from "@/lib/use-hotkey";
 import { cn, material, spring } from "@/lib/utils";
 
 /* ---------- store (module-level, no provider needed) ---------- */
@@ -129,7 +131,10 @@ const icons = {
 	loading: <Loader2 className="size-4 animate-spin text-muted-foreground" aria-hidden="true" />,
 };
 
-/** Mount once (root layout). Stacked toasts: hover, focus or a tap expands, swipe dismisses. */
+/**
+ * Mount once (root layout). Stacked toasts: hover, focus or a tap expands, swipe dismisses. F8
+ * jumps to the newest toast's buttons (timers pause while focus is there), Esc goes back.
+ */
 export function Toaster({ className }: { className?: string }) {
 	const items = useSyncExternalStore(
 		subscribe,
@@ -137,6 +142,20 @@ export function Toaster({ className }: { className?: string }) {
 		() => EMPTY,
 	);
 	const section = useRef<HTMLElement>(null);
+	const back = useRef<HTMLElement | null>(null);
+
+	useHotkey(
+		"F8",
+		() => {
+			const first = tabbables(section.current)[0];
+
+			if (!first) return false;
+			back.current = document.activeElement as HTMLElement | null;
+			first.focus();
+		},
+		{ skipInFields: false },
+	);
+
 	const [expanded, setExpanded] = useState(false);
 	const [heights, setHeights] = useState<Record<number, number>>({});
 	const onHeight = useCallback(
@@ -156,15 +175,20 @@ export function Toaster({ className }: { className?: string }) {
 	let offset = 0;
 
 	return (
-		// biome-ignore lint/a11y/useKeyWithClickEvents: keyboard focus already expands the stack
 		<section
 			aria-label="Notifications"
+			aria-keyshortcuts="F8"
 			className={cn("fixed right-4 bottom-4 z-[100] w-[min(360px,calc(100vw-2rem))]", className)}
 			ref={section}
 			onPointerEnter={(event) => event.pointerType !== "touch" && setExpanded(true)}
 			onPointerLeave={(event) => event.pointerType !== "touch" && setExpanded(false)}
 			onClick={() => setExpanded(true)}
 			onFocus={() => setExpanded(true)}
+			onKeyDown={(event) => {
+				if (event.key !== "Escape" || !back.current) return;
+				back.current.focus();
+				back.current = null;
+			}}
 			onBlur={(event) => {
 				if (!event.currentTarget.contains(event.relatedTarget)) setExpanded(false);
 			}}

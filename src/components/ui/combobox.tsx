@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useFieldControl } from "@/components/ui/field";
-import { Tag, tagFieldClass } from "@/components/ui/tag-input";
+import { Tag, tagFieldClass, useTagKeys } from "@/components/ui/tag-input";
 import { FormValue, useFormReset } from "@/lib/form-value";
 import { listKeyTarget, scrollIntoList } from "@/lib/list";
 import { useMounted } from "@/lib/platform";
@@ -54,7 +54,7 @@ type BaseProps = {
 type ComboboxProps = BaseProps &
 	(
 		| {
-				/** Picks stay open and show as removable tags; Backspace removes the last one. */
+				/** Picks stay open and show as removable tags; Backspace removes the last one, ← walks onto them. */
 				multiple?: false;
 				/** Controlled value, or values when `multiple`; pair with `onValueChange`. */
 				value?: string;
@@ -152,6 +152,12 @@ export function Combobox(allProps: ComboboxProps) {
 		}
 	};
 
+	const keys = useTagKeys(
+		selected.map((option) => option.value),
+		input,
+		(value) => commit(values.filter((other) => other !== value)),
+	);
+
 	const show = () => {
 		if (open || disabled) return;
 		setActive(values[0]);
@@ -172,6 +178,8 @@ export function Combobox(allProps: ComboboxProps) {
 	});
 
 	const onKey = (event: KeyboardEvent<HTMLInputElement>) => {
+		if (multiple && !query && keys.fromInput(event)) return setOpen(false);
+
 		const i = enabled.findIndex((option) => option.value === current);
 		const step = listKeyTarget(enabled, i, event, {
 			orientation: "vertical",
@@ -212,20 +220,28 @@ export function Combobox(allProps: ComboboxProps) {
 
 	return (
 		<>
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: forwards pointer clicks to the input; keyboard users focus it directly */}
-			{/* biome-ignore lint/a11y/useKeyWithClickEvents: same as above */}
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: field wrapper: clicks go to the input, keys from the tags bubble here */}
 			<div
 				ref={box}
 				onClick={() => {
 					input.current?.focus();
 					show();
 				}}
+				onKeyDown={keys.onKeyDown}
 				className={cn(tagFieldClass, !multiple && "h-9 flex-nowrap py-0 pl-3", "pr-2", className)}
 			>
 				{multiple && (
 					<AnimatePresence initial={false} mode="popLayout">
 						{selected.map((option) => (
-							<Tag key={option.value} disabled={disabled} onRemove={() => pick(option.value)}>
+							<Tag
+								key={option.value}
+								disabled={disabled}
+								removeRef={keys.tagRef(option.value)}
+								onRemove={() => {
+									keys.removed();
+									pick(option.value);
+								}}
+							>
 								{option.label}
 							</Tag>
 						))}

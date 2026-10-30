@@ -166,11 +166,29 @@ test.describe("tooltip", () => {
 	only("tooltip");
 	test("opens on keyboard focus, Esc dismisses", async ({ page }) => {
 		await open(page, "e2e/overlays");
-		await page.getByRole("button", { name: "Menu" }).focus();
+		await page.getByRole("button", { name: "Archive" }).focus();
 		await page.keyboard.press("Tab");
 		await expect(page.getByRole("button", { name: "Bold" })).toBeFocused();
 		await expect(page.locator("[role=tooltip]")).toBeVisible();
 		await page.keyboard.press("Escape");
 		await expect(page.locator("[role=tooltip]")).toHaveCount(0);
+	});
+});
+
+test.describe("toast", () => {
+	only("toast");
+	test("F8 reaches the newest toast, Esc goes back", async ({ page }) => {
+		await open(page, "e2e/overlays");
+
+		const archive = page.getByRole("button", { name: "Archive" });
+
+		await archive.click();
+		await expect(page.getByText("Archived")).toBeVisible();
+		await page.keyboard.press("F8");
+		await expect(page.getByRole("region", { name: "Notifications" }).locator(":focus")).toHaveCount(
+			1,
+		);
+		await page.keyboard.press("Escape");
+		await expect(archive).toBeFocused();
 	});
 });

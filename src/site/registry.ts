@@ -99,7 +99,8 @@ export const registry: Entry[] = [
 		group: "Overlays & feedback",
 		name: "Toast",
 		file: "toast.tsx",
-		description: "Stacked notifications. Hover to expand, swipe to dismiss, timers pause on hover.",
+		description:
+			"Stacked notifications. Hover to expand, swipe to dismiss, timers pause on hover or focus, and F8 jumps to the newest toast from the keyboard.",
 		usage: `toast.success("Saved", { description: "All changes synced", action: { label: "Undo", onClick } })`,
 		mount: "<Toaster />",
 	},
@@ -658,7 +659,7 @@ export const registry: Entry[] = [
 		name: "Tag Input",
 		file: "tag-input.tsx",
 		description:
-			"Free-form tags: Enter or a separator adds, Backspace removes the last, pasting a list adds them all. Duplicates, a max and a validate function keep bad tags in the input. Submits one entry per tag; required needs one.",
+			"Free-form tags: Enter or a separator adds, Backspace removes the last, ← walks onto the tags and Delete removes one, pasting a list adds them all. Duplicates, a max and a validate function keep bad tags in the input. Submits one entry per tag; required needs one.",
 		usage: `<TagInput value={tags} onValueChange={setTags} max={5} validate={(t) => t.length <= 24} />`,
 	},
 	{

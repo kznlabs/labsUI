@@ -234,7 +234,7 @@ buttonVariants({ variant, size, className })            // button-variants.ts: s
 <Dialog open? onOpenChange?><DialogTrigger variant="outline">Open</DialogTrigger><DialogContent alert? showClose?><DialogHeader><DialogTitle/><DialogDescription/></DialogHeader>…<DialogFooter><DialogClose>Cancel</DialogClose></DialogFooter></DialogContent></Dialog>
 if (await confirm({ title, description?, confirmLabel?, cancelLabel?, destructive })) …   // <Confirmer /> mounted in layout; resolves false on cancel/Esc
 const d = useDisclosure(); <Dialog|Drawer|Popover|DropdownMenu {...d.props}> · d.show() d.hide() d.toggle() d.open   // @/lib/use-disclosure
-toast("Title", { description, action: { label, onClick }, duration }); toast.success|error|info|loading(…); toast.promise(p, { loading, success: (v) => …, error }); toast.dismiss(id?)
+toast("Title", { description, action: { label, onClick }, duration }); toast.success|error|info|loading(…); toast.promise(p, { loading, success: (v) => …, error }); toast.dismiss(id?)   // F8 focuses the newest toast, Esc goes back
 <AppWindow title="App" header={<SegmentedTabs label="Views" items={views} value={view} onChange={setView} />} actions={<Button/>} onClose onMinimize onMaximize glass bodyClassName="p-5">…</AppWindow>   // SegmentedTabs: compact title-bar nav (aria-current), not a tablist
 <ThemeToggle /> · <AccentPicker />                     // setAccent("red|orange|yellow|green|blue|purple|pink|slate") in @/lib/theme
 {enabled && <CustomCursor />}                             // opt-in; auto-off on touch/reduced-motion
@@ -294,7 +294,7 @@ toast("Title", { description, action: { label, onClick }, duration }); toast.suc
 <Calendar mode="single|range" value onValueChange defaultMonth? month? onMonthChange min max isDisabled={(d) => bool} weekStartsOn={1} locale />   // APG date grid; today marked client-only (hydration-safe)
 <DatePicker mode="single|range" value onValueChange name presets={[{ label, value }]} min max isDisabled placeholder />   // Popover + Calendar; submits ISO "2026-10-21" or "from/to"; works in Field
 <Combobox options={[{ value, label, icon?, keywords?, disabled? }]} value onValueChange placeholder emptyText name multiple? />   // typeable Select; multiple → value: string[], picks as tags
-<TagInput value={tags} onValueChange max separators={[","]} validate={(t) => bool} name required disabled placeholder />   // also exports <Tag onRemove>, tagFieldClass
+<TagInput value={tags} onValueChange max separators={[","]} validate={(t) => bool} name required disabled placeholder />   // ← walks the tags, Delete removes; also exports <Tag onRemove removeRef>, tagFieldClass, useTagKeys()
 <ScrollArea aria-label="Log" orientation="vertical|horizontal|both" className="h-64" viewportClassName="p-4">…</ScrollArea>   // overlay thumbs, native scroll; horizontal takes the mouse wheel
 <ResizablePanelGroup direction="horizontal|vertical" onLayout={(sizes) => …} keyboardStep={5}><ResizablePanel defaultSize={25} minSize={10} maxSize collapsible collapsedSize={0}>…</ResizablePanel><ResizableHandle withHandle aria-label="Resize nav" /><ResizablePanel>…</ResizablePanel></ResizablePanelGroup>   // panels/handles are direct children; sizes in %; APG splitter keys, Enter/dblclick collapses; groups nest
 <StructuredData />                                         // @/site/seo/structured-data

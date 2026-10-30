@@ -40,7 +40,8 @@ export function FormValue({ name, value, required, disabled, anchor, onInvalid }
 
 /**
  * Calls `onReset` when the control's form resets: a reset button, or React after a `<form action>`
- * succeeds. Custom state goes back to its default there, as a native control's does.
+ * succeeds. Custom state goes back to its default there, as a native control's does; a controlled
+ * control reports the default through its `onValueChange`, so the parent's state resets too.
  */
 export function useFormReset(field: RefObject<HTMLElement | null>, onReset: () => void) {
 	const reset = useEffectEvent(onReset);

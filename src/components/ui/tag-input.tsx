@@ -2,7 +2,16 @@
 
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { type ComponentProps, type ReactNode, useRef, useState } from "react";
+import {
+	type ComponentProps,
+	type KeyboardEvent,
+	type ReactNode,
+	type Ref,
+	type RefObject,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { useFieldControl } from "@/components/ui/field";
 import { FormValue, useFormReset } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
@@ -16,6 +25,7 @@ export const tagFieldClass =
 export function Tag({
 	children,
 	onRemove,
+	removeRef,
 	disabled,
 	className,
 }: {
@@ -23,6 +33,8 @@ export function Tag({
 	children: ReactNode;
 	/** Shows a remove button; its accessible name is "Remove <children>". */
 	onRemove?: () => void;
+	/** The remove button, for `useTagKeys`. */
+	removeRef?: Ref<HTMLButtonElement>;
 	/** Hides the remove button. */
 	disabled?: boolean;
 	className?: string;
@@ -44,6 +56,7 @@ export function Tag({
 
 			{onRemove && (
 				<button
+					ref={removeRef}
 					type="button"
 					tabIndex={-1}
 					disabled={disabled}
@@ -52,13 +65,77 @@ export function Tag({
 						onRemove();
 					}}
 					aria-label={typeof children === "string" ? `Remove ${children}` : "Remove"}
-					className="grid size-5 shrink-0 place-items-center rounded text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
+					className="grid size-5 shrink-0 place-items-center rounded text-muted-foreground outline-none transition-colors hover:bg-foreground/10 hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
 				>
 					<X className="size-3" aria-hidden="true" />
 				</button>
 			)}
 		</motion.span>
 	);
+}
+
+/**
+ * Keyboard reach for a field's tags, which stay out of the Tab order: ← from the empty input walks
+ * onto them, ← → move, Backspace, Delete, Enter or Space removes the focused one and Esc returns to
+ * the input. Put `onKeyDown` on the field, `tagRef(tag)` on each Tag's `removeRef`, and call
+ * `fromInput` first in the input's keydown.
+ */
+export function useTagKeys(
+	tags: string[],
+	input: RefObject<HTMLInputElement | null>,
+	remove: (tag: string) => void,
+) {
+	const buttons = useRef(new Map<string, HTMLButtonElement>());
+	// The tag to focus once a removal renders; "" = the input.
+	const after = useRef<string | null>(null);
+	const focus = (tag: string | undefined) =>
+		(tag ? buttons.current.get(tag) : input.current)?.focus();
+
+	useEffect(() => {
+		const target = after.current;
+
+		if (target === null || !tags) return;
+		after.current = null;
+		(target ? buttons.current.get(target) : input.current)?.focus();
+	}, [tags, input]);
+
+	return {
+		tagRef: (tag: string) => (element: HTMLButtonElement | null) => {
+			if (element) buttons.current.set(tag, element);
+			else buttons.current.delete(tag);
+		},
+		fromInput: (event: KeyboardEvent<HTMLInputElement>) => {
+			if (event.key !== "ArrowLeft" || event.currentTarget.value || !tags.length) return false;
+			event.preventDefault();
+			focus(tags.at(-1));
+
+			return true;
+		},
+		onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+			const at = tags.findIndex((tag) => buttons.current.get(tag) === event.target);
+			const tag = tags[at];
+
+			if (tag === undefined) return;
+
+			if (event.key === "ArrowLeft") focus(tags[Math.max(at - 1, 0)]);
+			else if (event.key === "ArrowRight") focus(tags[at + 1]);
+			else if (event.key === "Escape") focus(undefined);
+			else if (["Backspace", "Delete", "Enter", " "].includes(event.key)) {
+				const rest = tags.filter((other) => other !== tag);
+
+				after.current =
+					(event.key === "Backspace" ? (rest[at - 1] ?? rest[at]) : (rest[at] ?? rest[at - 1])) ??
+					"";
+				remove(tag);
+			} else return;
+
+			event.preventDefault();
+		},
+		/** A pointer removal: focus goes back to the input. */
+		removed: () => {
+			after.current = "";
+		},
+	};
 }
 
 type TagInputProps = Omit<
@@ -81,7 +158,8 @@ type TagInputProps = Omit<
 
 /**
  * Free-form tags: type and press Enter or a separator; paste a list to add many; Backspace in an
- * empty input removes the last tag. `name` submits one value per tag; `required` needs at least one.
+ * empty input removes the last tag, ← walks onto the tags (Backspace or Delete removes one). `name`
+ * submits one value per tag; `required` needs at least one.
  */
 export function TagInput({
 	value: valueProp,
@@ -111,6 +189,7 @@ export function TagInput({
 	});
 
 	const full = max !== undefined && tags.length >= max;
+	const keys = useTagKeys(tags, input, (tag) => set(tags.filter((other) => other !== tag)));
 
 	const add = (raw: string[]) => {
 		const next = [...tags];
@@ -141,15 +220,22 @@ export function TagInput({
 		);
 
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: forwards pointer clicks to the input; keyboard users focus it directly
-		// biome-ignore lint/a11y/useKeyWithClickEvents: same as above
-		<div className={cn(tagFieldClass, className)} onClick={() => input.current?.focus()}>
+		// biome-ignore lint/a11y/noStaticElementInteractions: field wrapper: clicks go to the input, keys from the tags bubble here
+		<div
+			className={cn(tagFieldClass, className)}
+			onClick={() => input.current?.focus()}
+			onKeyDown={keys.onKeyDown}
+		>
 			<AnimatePresence initial={false} mode="popLayout">
 				{tags.map((tag) => (
 					<Tag
 						key={tag}
 						disabled={props.disabled}
-						onRemove={() => set(tags.filter((x) => x !== tag))}
+						removeRef={keys.tagRef(tag)}
+						onRemove={() => {
+							keys.removed();
+							set(tags.filter((other) => other !== tag));
+						}}
 					>
 						{tag}
 					</Tag>
@@ -170,7 +256,7 @@ export function TagInput({
 				onChange={(event) => setDraft(event.target.value)}
 				onKeyDown={(event) => {
 					onKeyDown?.(event);
-					if (event.defaultPrevented) return;
+					if (event.defaultPrevented || keys.fromInput(event)) return;
 
 					if (event.key === "Enter" || separators.includes(event.key)) {
 						// Enter with an empty draft still submits the form.

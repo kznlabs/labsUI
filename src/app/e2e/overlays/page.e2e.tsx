@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select } from "@/components/ui/select";
 import { TagInput } from "@/components/ui/tag-input";
+import { toast } from "@/components/ui/toast";
 import { Tooltip } from "@/components/ui/tooltip";
 
 export default function OverlaysProbe() {
@@ -129,6 +130,15 @@ export default function OverlaysProbe() {
 					</CommandItem>
 				</CommandList>
 			</CommandDialog>
+
+			<Button
+				variant="outline"
+				onClick={() =>
+					toast("Archived", { action: { label: "Undo", onClick: () => note("undo") } })
+				}
+			>
+				Archive
+			</Button>
 
 			<Tooltip content="Bold">
 				<Button variant="ghost">Bold</Button>

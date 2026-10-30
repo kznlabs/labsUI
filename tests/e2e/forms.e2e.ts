@@ -287,6 +287,7 @@ test.describe("form reset", () => {
 		await send(1);
 
 		await form.locator("fieldset label").nth(2).click();
+		await form.getByRole("group", { name: "Controlled rating" }).locator("label").nth(3).click();
 		await form.getByRole("textbox", { name: "Topics" }).fill("ui");
 		await form.getByRole("textbox", { name: "Topics" }).press("Enter");
 		await form.getByRole("combobox", { name: "Plan" }).click();
@@ -333,5 +334,44 @@ test.describe("field label on groups", () => {
 
 		await expect(form.getByRole("group", { name: "How was it?" })).toBeVisible();
 		await expect(form.getByRole("group", { name: "Billing" })).toBeVisible();
+	});
+});
+
+test.describe("tag keys", () => {
+	only("tag-input", "combobox");
+	test("arrows walk the tags, Delete and Backspace remove one", async ({ page }) => {
+		const form = await probe(page, "tags-keys");
+		const remove = (tag: string) => form.getByRole("button", { name: `Remove ${tag}` });
+
+		await form.getByRole("textbox", { name: "Keyed tags" }).focus();
+		await page.keyboard.press("ArrowLeft");
+		await expect(remove("gamma")).toBeFocused();
+		await page.keyboard.press("ArrowLeft");
+		await expect(remove("beta")).toBeFocused();
+		await page.keyboard.press("Delete");
+		await expect(remove("beta")).toHaveCount(0);
+		await expect(remove("gamma")).toBeFocused();
+		await page.keyboard.press("Backspace");
+		await expect(remove("alpha")).toBeFocused();
+		await page.keyboard.press("Escape");
+		await expect(form.getByRole("textbox", { name: "Keyed tags" })).toBeFocused();
+		await submit(form);
+		await expect(sent(form)).toHaveText('[["tags","alpha"]]');
+	});
+
+	test("combobox picks are reachable the same way", async ({ page }) => {
+		const form = await probe(page, "combobox-multiple");
+		const box = form.getByRole("combobox", { name: "Channels" });
+
+		await box.click();
+		await page.getByRole("option", { name: "Alpha" }).click();
+		await page.getByRole("option", { name: "Beta" }).click();
+		await box.press("Escape");
+		await box.press("ArrowLeft");
+		await expect(form.getByRole("button", { name: "Remove Beta" })).toBeFocused();
+		await page.keyboard.press("Enter");
+		await expect(form.getByRole("button", { name: "Remove Alpha" })).toBeFocused();
+		await submit(form);
+		await expect(sent(form)).toHaveText('[["many","alpha"]]');
 	});
 });
