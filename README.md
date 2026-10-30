@@ -12,6 +12,17 @@ Hand-made, accessible, and copied into your project so you own the code.
 [![WebKit][webkit]](#accessibility-and-browsers)
 [![WCAG 2.2 AA][wcag]](#accessibility-and-browsers)
 
+<a href="https://kznlabs.github.io/labsUI">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/hero-dark.gif">
+    <img
+      src=".github/assets/hero-light.gif"
+      width="720"
+      alt="Tabs, accordion, select, pagination, toasts and a drawer, one spring"
+    >
+  </picture>
+</a>
+
 ## Why labsUI
 
 - **One spring.** Every animation shares
