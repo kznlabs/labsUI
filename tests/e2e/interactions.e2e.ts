@@ -36,6 +36,63 @@ test.describe("select", () => {
 	});
 });
 
+test.describe("select required", () => {
+	only("select", "desktop");
+	test("blocks submit until a value is picked", async ({ page }) => {
+		await open(page, "components/select");
+
+		const role = page.locator("#sel-role");
+		const save = page.locator("#select").getByRole("button", { name: "Save", exact: true });
+
+		await save.click();
+		await expect(role).toBeFocused();
+		await expect(role).toHaveAttribute("aria-invalid", "true");
+		await expect(page.getByText("Saved", { exact: true })).toHaveCount(0);
+
+		// Firefox's validation popup swallows the next click, even for a native input.
+		await role.press("Enter");
+		await page.getByRole("option", { name: "Admin" }).click();
+		await expect(role).not.toHaveAttribute("aria-invalid", "true");
+		await save.click();
+		await expect(page.getByText("Saved", { exact: true })).toBeVisible();
+	});
+});
+
+test.describe("combobox required", () => {
+	only("combobox", "desktop");
+	test("blocks submit until a value is picked", async ({ page }) => {
+		await open(page, "components/combobox");
+
+		const channel = page.locator("#combobox input[role=combobox]").first();
+		const save = page.locator("#combobox").getByRole("button", { name: "Save", exact: true });
+
+		await save.click();
+		await expect(channel).toBeFocused();
+		await expect(channel).toHaveAttribute("aria-invalid", "true");
+		await expect(page.getByText("Saved", { exact: true })).toHaveCount(0);
+
+		await channel.fill("clips");
+		await page.getByRole("option", { name: "clips" }).click();
+		await save.click();
+		await expect(page.getByText("Saved", { exact: true })).toBeVisible();
+	});
+});
+
+test.describe("date-picker required", () => {
+	only("date-picker", "desktop");
+	test("blocks submit without a date", async ({ page }) => {
+		await open(page, "components/date-picker");
+
+		const form = page.locator("#date-picker form").first();
+		const delivery = form.getByRole("button").first();
+
+		await form.getByRole("button", { name: "Submit", exact: true }).click();
+		await expect(delivery).toBeFocused();
+		await expect(delivery).toHaveAttribute("aria-invalid", "true");
+		await expect(page.getByText("Submitted", { exact: true })).toHaveCount(0);
+	});
+});
+
 test.describe("forms", () => {
 	only("forms", "desktop");
 	test("textarea grows with its content", async ({ page }) => {

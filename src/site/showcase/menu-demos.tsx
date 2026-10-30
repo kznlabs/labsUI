@@ -251,7 +251,7 @@ export function SelectDemo() {
 			</div>
 			<div className="grid gap-2">
 				<Label htmlFor="sel-role">Role</Label>
-				<Select id="sel-role" name="role" options={roles} placeholder="Pick a role" />
+				<Select id="sel-role" name="role" options={roles} placeholder="Pick a role" required />
 			</div>
 			<div className="flex items-center justify-between">
 				<Badge variant="secondary" shape="pill">

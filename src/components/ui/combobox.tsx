@@ -6,6 +6,7 @@ import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState 
 import { createPortal } from "react-dom";
 import { useFieldControl } from "@/components/ui/field";
 import { Tag, tagFieldClass } from "@/components/ui/tag-input";
+import { FormValue } from "@/lib/form-value";
 import { listKeyTarget, scrollIntoList } from "@/lib/list";
 import { useMounted } from "@/lib/platform";
 import { useAnchor } from "@/lib/use-anchor";
@@ -109,6 +110,7 @@ export function Combobox(allProps: ComboboxProps) {
 	const box = useRef<HTMLDivElement>(null);
 	const input = useRef<HTMLInputElement>(null);
 	const list = useRef<HTMLDivElement>(null);
+	const [invalid, setInvalid] = useState(false);
 	// Public shape (string or string[]), "" = nothing picked.
 	const [raw, setRaw] = useControllableState<string | string[] | undefined>(
 		valueProp,
@@ -240,6 +242,7 @@ export function Combobox(allProps: ComboboxProps) {
 					aria-required={required}
 					disabled={disabled}
 					{...aria}
+					aria-invalid={aria["aria-invalid"] || (invalid && !values.length) || undefined}
 					value={text}
 					placeholder={hint}
 					onChange={(event) => {
@@ -261,6 +264,12 @@ export function Combobox(allProps: ComboboxProps) {
 				(multiple ? values : values.slice(0, 1)).map((picked) => (
 					<input key={picked} type="hidden" name={name} value={picked} />
 				))}
+			<FormValue
+				value={values.join(",")}
+				required={required && !disabled}
+				anchor={input}
+				onInvalid={() => setInvalid(true)}
+			/>
 			{mounted &&
 				createPortal(
 					<AnimatePresence>

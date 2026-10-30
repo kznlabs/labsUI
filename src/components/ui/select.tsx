@@ -6,6 +6,7 @@ import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState 
 import { createPortal } from "react-dom";
 import { useFieldControl } from "@/components/ui/field";
 import { fieldClass } from "@/components/ui/input";
+import { FormValue } from "@/lib/form-value";
 import { listKeyTarget, scrollIntoList } from "@/lib/list";
 import { useMounted } from "@/lib/platform";
 import { useAnchor } from "@/lib/use-anchor";
@@ -70,6 +71,7 @@ export function Select(allProps: SelectProps) {
 	const list = useRef<HTMLDivElement>(null);
 	const [value, setValue] = useControllableState(valueProp, defaultValue, onValueChange);
 	const [open, setOpen] = useState(false);
+	const [invalid, setInvalid] = useState(false);
 	const [active, setActive] = useState<string>();
 	const pos = useAnchor(open, trigger, list);
 	const mounted = useMounted();
@@ -174,6 +176,7 @@ export function Select(allProps: SelectProps) {
 					className,
 				)}
 				{...aria}
+				aria-invalid={aria["aria-invalid"] || (invalid && !value) || undefined}
 			>
 				<span
 					className={cn(
@@ -186,7 +189,13 @@ export function Select(allProps: SelectProps) {
 				</span>
 				<ChevronsUpDown className="text-muted-foreground" aria-hidden="true" />
 			</button>
-			{name && <input type="hidden" name={name} value={value} />}
+			<FormValue
+				name={name}
+				value={value}
+				required={required && !disabled}
+				anchor={trigger}
+				onInvalid={() => setInvalid(true)}
+			/>
 			{mounted &&
 				createPortal(
 					<AnimatePresence>

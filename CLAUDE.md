@@ -133,7 +133,10 @@ it.
   `const [v, setV] = useControllableState(value, defaultValue, onChange)` from
   `@/lib/use-controllable-state`; never hand-roll `prop ?? inner`.
 - New form controls call `useFieldControl(props)` from `field.tsx` and set
-  `data-slot` if InputGroup must find them.
+  `data-slot` if InputGroup must find them. A control without a native
+  input submits through `<FormValue>` from `@/lib/form-value`, never
+  `type="hidden"`: browsers skip hidden inputs in validation, so `required`
+  would do nothing. Give it an e2e test that submits empty.
 - `cn()` from `@/lib/utils` for all class merging. Accept `className`, spread
   rest props.
 - Style: readable names (`event`, `element`, `option`, not `e`, `el`, `o`;

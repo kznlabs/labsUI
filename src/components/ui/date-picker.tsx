@@ -1,11 +1,12 @@
 "use client";
 
 import { CalendarDays } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Calendar, type DateRange, key } from "@/components/ui/calendar";
 import { useFieldControl } from "@/components/ui/field";
 import { fieldClass } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { FormValue } from "@/lib/form-value";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn } from "@/lib/utils";
 
@@ -82,9 +83,12 @@ export function DatePicker(allProps: DatePickerProps) {
 		weekStartsOn,
 		locale = "en-US",
 		name,
+		required,
 		className,
 		...trigger
 	} = useFieldControl(allProps);
+	const anchor = useRef<HTMLButtonElement>(null);
+	const [invalid, setInvalid] = useState(false);
 	const range = mode === "range";
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useControllableState<Date | DateRange | null>(
@@ -123,6 +127,7 @@ export function DatePicker(allProps: DatePickerProps) {
 		<>
 			<Popover open={open} onOpenChange={setOpen}>
 				<PopoverTrigger
+					ref={anchor}
 					variant="outline"
 					className={cn(
 						fieldClass,
@@ -131,6 +136,7 @@ export function DatePicker(allProps: DatePickerProps) {
 						className,
 					)}
 					{...trigger}
+					aria-invalid={trigger["aria-invalid"] || (invalid && !iso) || undefined}
 				>
 					<CalendarDays />
 					<span className="truncate">{label ?? placeholder}</span>
@@ -170,7 +176,13 @@ export function DatePicker(allProps: DatePickerProps) {
 					)}
 				</PopoverContent>
 			</Popover>
-			{name && <input type="hidden" name={name} value={iso} />}
+			<FormValue
+				name={name}
+				value={iso}
+				required={required && !trigger.disabled}
+				anchor={anchor}
+				onInvalid={() => setInvalid(true)}
+			/>
 		</>
 	);
 }

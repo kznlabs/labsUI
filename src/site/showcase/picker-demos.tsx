@@ -36,12 +36,18 @@ const roles: ComboboxOption[] = [
 ];
 
 export function ComboboxDemo() {
-	const [channel, setChannel] = useState("clips");
+	const [channel, setChannel] = useState("");
 	const [picked, setPicked] = useState(["moderator", "bot"]);
 
 	return (
-		<div className="grid w-full max-w-sm gap-6">
-			<Field label="Post clips to" description="Type to filter 10 channels.">
+		<form
+			className="grid w-full max-w-sm gap-6"
+			onSubmit={(event) => {
+				event.preventDefault();
+				toast.success("Saved", { description: `#${channel} · ${picked.join(", ")}` });
+			}}
+		>
+			<Field label="Post clips to" description="Type to filter 10 channels." required>
 				<Combobox
 					options={channels}
 					value={channel}
@@ -59,7 +65,10 @@ export function ComboboxDemo() {
 					placeholder="Add roles…"
 				/>
 			</Field>
-		</div>
+			<Button type="submit" className="justify-self-start">
+				Save
+			</Button>
+		</form>
 	);
 }
 

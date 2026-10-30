@@ -1,0 +1,36 @@
+import type { RefObject } from "react";
+
+type FormValueProps = {
+	/** Form field name; without it the value only takes part in validation. */
+	name?: string;
+	/** The value to submit, "" when nothing is picked. */
+	value: string;
+	/** An empty value blocks submit. */
+	required?: boolean;
+	/** The visible control that gets focus when the value is invalid. */
+	anchor: RefObject<HTMLElement | null>;
+	/** Called when a submit finds the value invalid. */
+	onInvalid?: () => void;
+};
+
+/**
+ * Submits a custom control's value and takes part in native validation, which a hidden input
+ * can't: an empty `required` value blocks submit, shows the browser's message and focuses `anchor`.
+ */
+export function FormValue({ name, value, required, anchor, onInvalid }: FormValueProps) {
+	if (!name && !required) return null;
+
+	return (
+		<input
+			aria-hidden="true"
+			tabIndex={-1}
+			name={name}
+			value={value}
+			required={required}
+			onChange={() => undefined}
+			onInvalid={onInvalid}
+			onFocus={() => anchor.current?.focus()}
+			className="pointer-events-none absolute size-px opacity-0"
+		/>
+	);
+}
