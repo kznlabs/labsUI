@@ -48,8 +48,9 @@ it.
   release. `bun run cli:build` (runs on Node 22+ or Deno).
   `src/index.ts` parses args;
   `commands/{init,add,list,search,view,diff,update,doctor}.ts` return data
-  and print separately (`--json`, and `mcp.ts`, a stdio MCP server, reuse
-  them; nothing in a command writes to stdout); `merge.ts` (three-way line
+  and print separately (`--json`, and `mcp.ts` + `tools.ts`, a stdio MCP
+  server, reuse them; nothing in a command writes to stdout); `merge.ts`
+  (three-way line
   merge for `update`), `rules.ts` (coding rules for agents, MCP
   instructions), `project.ts` (tsconfig, package.json, CSS, `labsui.json`
   with `installed` versions, the merge base `update` fetches from JSR),
@@ -94,9 +95,11 @@ it.
   (`io.github.kznlabs/labsui`, OIDC; it checks `mcpName` in the published
   npm package, so npm goes first), then creates the GitHub release that
   Glama's Auto-Release builds from (Glama installs the npm package). MCP
-  tools in `mcp.ts`: every parameter has a `description` (a test fails
-  otherwise); shared ones (`names`, `installed`, `dryRun`) are reused, not
-  redefined.
+  tool definitions live in `tools.ts` (`mcp.ts` handles the protocol):
+  every parameter has a `description`, and each tool description says what
+  it returns and names the tool to use before or instead of it (a test
+  fails otherwise). Glama scores these (TDQS); shared parameters and
+  annotations are reused, not redefined.
 
 ## Rules
 

@@ -242,7 +242,7 @@ describe("mcp", () => {
 		expect(await call("nope")).toMatchObject({ error: { code: -32601 } });
 	});
 
-	test("every tool and parameter is described", async () => {
+	test("every tool and parameter is described, tools point to each other", async () => {
 		const listed = (await call("tools/list")) as {
 			result: {
 				tools: {
@@ -253,8 +253,17 @@ describe("mcp", () => {
 			};
 		};
 
+		const tools = listed.result.tools.map((tool) => tool.name);
+
 		for (const tool of listed.result.tools) {
+			const others = tools.filter((name) => name !== tool.name);
+
 			expect(tool.description, tool.name).toBeTruthy();
+			expect(
+				others.some((name) => new RegExp(`\\b${name}\\b`).test(tool.description)),
+				`${tool.name} names no other tool`,
+			).toBe(true);
+			expect(tool.description, tool.name).not.toMatch(/\blabsui\b(?!\.)/);
 
 			for (const [key, schema] of Object.entries(tool.inputSchema.properties))
 				expect(schema.description, `${tool.name}.${key}`).toBeTruthy();

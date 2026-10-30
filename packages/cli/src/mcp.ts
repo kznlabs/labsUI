@@ -9,6 +9,7 @@ import { CliError } from "./log.ts";
 import { readConfig } from "./project.ts";
 import { fetchIndex } from "./registry.ts";
 import { rules } from "./rules.ts";
+import { TOOLS } from "./tools.ts";
 
 /** Newest first; an unknown client version gets the newest. */
 const PROTOCOLS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
@@ -16,137 +17,6 @@ const PROTOCOLS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
 type Json = Record<string, unknown>;
 type Request = { jsonrpc: "2.0"; id?: string | number | null; method: string; params?: Json };
 type Context = { cwd: string; registry?: string; version: string };
-
-const names = {
-	type: "array",
-	items: { type: "string", pattern: "^[a-z0-9][a-z0-9-]*$" },
-	minItems: 1,
-	maxItems: 20,
-	description: "Item names as search lists them, e.g. button or date-picker.",
-};
-
-const installed = {
-	...names,
-	minItems: 0,
-	description: "Installed item names, e.g. button. Empty: every installed item.",
-};
-
-const dryRun = {
-	type: "boolean",
-	default: false,
-	description: "Report what would change, write nothing.",
-};
-
-const TOOLS = [
-	{
-		name: "search",
-		title: "Search labsUI",
-		description:
-			"Find components, blocks, hooks and helpers by name, export (useModal) or intent (date range, toast promise). All words must match; best first. No query lists everything.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				query: { type: "string", description: "Words to match. Empty lists everything." },
-				kind: {
-					type: "string",
-					enum: ["component", "block", "hook", "helper", "setup"],
-					description: "Only items of this kind.",
-				},
-				limit: {
-					type: "integer",
-					minimum: 1,
-					maximum: 200,
-					default: 12,
-					description: "Most results to return.",
-				},
-			},
-		},
-		annotations: { readOnlyHint: true, openWorldHint: false },
-	},
-	{
-		name: "view",
-		title: "View labsUI items",
-		description:
-			"Exact props and types, a usage line, full examples, what it brings along and which npm packages it installs. Call before writing code with a component.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				names: { ...names, maxItems: 10 },
-				source: { type: "boolean", default: false, description: "Include the source files." },
-			},
-			required: ["names"],
-		},
-		annotations: { readOnlyHint: true, openWorldHint: false },
-	},
-	{
-		name: "add",
-		title: "Add labsUI items",
-		description:
-			"Copy items and everything they import into the project and install their npm packages. Keeps files that already exist. Reports what to mount in the root layout.",
-		inputSchema: {
-			type: "object",
-			properties: { names, dryRun },
-			required: ["names"],
-		},
-		annotations: {
-			readOnlyHint: false,
-			destructiveHint: false,
-			idempotentHint: true,
-			openWorldHint: true,
-		},
-	},
-	{
-		name: "init",
-		title: "Set up labsUI",
-		description:
-			"One-time setup: styles, theme, utils and motion provider; imports labsui.css into the Tailwind stylesheet and writes labsui.json. Returns the root layout code to add.",
-		inputSchema: {
-			type: "object",
-			properties: { dryRun },
-		},
-		annotations: {
-			readOnlyHint: false,
-			destructiveHint: false,
-			idempotentHint: true,
-			openWorldHint: true,
-		},
-	},
-	{
-		name: "diff",
-		title: "Diff installed labsUI items",
-		description:
-			"How installed items differ from this labsui version, as unified patches from the registry file to the project's. No names: every item that differs.",
-		inputSchema: {
-			type: "object",
-			properties: { names: installed },
-		},
-		annotations: { readOnlyHint: true, openWorldHint: false },
-	},
-	{
-		name: "update",
-		title: "Update labsUI items",
-		description:
-			"Bring installed items to this labsui version. Unedited files are replaced; edited ones are merged three ways from the version that installed them, with conflict markers where both sides changed the same lines. No names: everything installed.",
-		inputSchema: {
-			type: "object",
-			properties: { names: installed, dryRun },
-		},
-		annotations: {
-			readOnlyHint: false,
-			destructiveHint: true,
-			idempotentHint: true,
-			openWorldHint: true,
-		},
-	},
-	{
-		name: "doctor",
-		title: "Check the labsUI setup",
-		description:
-			"Checks React 19, Tailwind v4, the path alias, the stylesheet import, MotionProvider and themeScript wiring, mounted Toaster/Confirmer, missing npm packages or files, and local edits. Each problem comes with its fix.",
-		inputSchema: { type: "object", properties: {} },
-		annotations: { readOnlyHint: true, openWorldHint: false },
-	},
-];
 
 const text = (text: string, structured?: unknown) => ({
 	content: [{ type: "text", text: text }],
