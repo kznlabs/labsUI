@@ -42,6 +42,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 export function Save() {
   return <Button successLabel="Saved!">Save</Button>;
 }`,
+	mcp: `{
+  "mcpServers": {
+    "labsui": { "command": "npx", "args": ["-y", "@kznlabs/labsui", "mcp"] }
+  }
+}`,
 	theming: `import { setAccent, setTheme } from "@/lib/theme";
 
 setTheme("dark"); // or "light"; follows the OS until set, then remembered

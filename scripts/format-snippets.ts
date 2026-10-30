@@ -48,6 +48,7 @@ const statics: [code: string, language: string][] = [
 	[guide.add, "bash"],
 	[guide.layout, "tsx"],
 	[guide.usage, "tsx"],
+	[guide.mcp, "json"],
 	[guide.theming, "ts"],
 ];
 

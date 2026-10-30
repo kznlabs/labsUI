@@ -5,7 +5,9 @@ Hand-made, accessible, and copied into your project so you own the code.
 
 [Docs and live demos](https://kznlabs.github.io/labsUI) ·
 [npm](https://www.npmjs.com/package/@kznlabs/labsui) ·
-[JSR](https://jsr.io/@kznlabs/labsui)
+[JSR](https://jsr.io/@kznlabs/labsui) ·
+[MCP registry][mcp-registry] ·
+[Glama](https://glama.ai/mcp/servers/kznlabs/labsUI)
 
 [![Chromium][chromium]](#accessibility-and-browsers)
 [![Firefox][firefox]](#accessibility-and-browsers)
@@ -66,6 +68,7 @@ daily (everything): all component pages, light and dark, at 390 px and
 [firefox]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Ffirefox.json
 [webkit]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Fwebkit.json
 [wcag]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkznlabs%2FlabsUI%2Fbadges%2Fwcag.json
+[mcp-registry]: https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.kznlabs/labsui
 
 Minimum versions come from Tailwind CSS v4: Chrome 111, Safari 16.4,
 Firefox 128. Two features enhance where supported and fall back cleanly:
@@ -96,9 +99,19 @@ Any package manager works: `bunx`, `pnpm dlx`, `yarn dlx` and
 one your lockfile shows. Bun is recommended: labsUI is built with it.
 See the [CLI reference](packages/cli/README.md) for every option.
 
-Coding agents get the same through `npx @kznlabs/labsui mcp` (an MCP server with
-search, view, add, init and doctor tools, plus the library's coding rules) or
-through `--json` on any command.
+Coding agents get the same through `npx @kznlabs/labsui mcp`, an MCP server
+with search, view, add, init, diff, update and doctor tools plus the
+library's coding rules, or through `--json` on any command. It's listed in the
+[MCP registry][mcp-registry] as `io.github.kznlabs/labsui` and on
+[Glama](https://glama.ai/mcp/servers/kznlabs/labsUI):
+
+```json
+{
+	"mcpServers": {
+		"labsui": { "command": "npx", "args": ["-y", "@kznlabs/labsui", "mcp"] }
+	}
+}
+```
 
 ```tsx
 import { Button } from "@/components/ui/button";

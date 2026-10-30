@@ -23,6 +23,8 @@ function Step({ n: step, title, children }: { n: number; title: string; children
 const text = "max-w-2xl text-muted-foreground text-sm leading-relaxed";
 const inline =
 	"rounded bg-foreground/[0.06] px-1 py-0.5 font-mono text-[0.8125rem] whitespace-nowrap";
+const link =
+	"rounded-sm font-medium text-foreground underline decoration-border underline-offset-4 outline-none hover:decoration-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 /** Install and setup, above the component sections. Server-rendered. */
 export function GettingStarted() {
@@ -100,7 +102,28 @@ export function GettingStarted() {
 						files={[{ name: "save.tsx", code: guide.usage, tokens: tokensFor(guide.usage, "tsx") }]}
 					/>
 				</Step>
-				<Step n={5} title="Make it yours">
+				<Step n={5} title="Or let your agent do it">
+					<p className={text}>
+						<code className={inline}>npx @kznlabs/labsui mcp</code> is an MCP server: coding agents
+						search, view, add, diff and update components with it, and get the library's coding
+						rules. It's listed in the{" "}
+						<a
+							href="https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.kznlabs/labsui"
+							className={link}
+						>
+							MCP registry
+						</a>{" "}
+						and on{" "}
+						<a href="https://glama.ai/mcp/servers/kznlabs/labsUI" className={link}>
+							Glama
+						</a>
+						.
+					</p>
+					<CodePanel
+						files={[{ name: ".mcp.json", code: guide.mcp, tokens: tokensFor(guide.mcp, "json") }]}
+					/>
+				</Step>
+				<Step n={6} title="Make it yours">
 					<p className={text}>
 						Colors are CSS variables in <code className={inline}>labsui.css</code>; set an accent on{" "}
 						<code className={inline}>{'<html data-accent="purple">'}</code> or at runtime. Every
