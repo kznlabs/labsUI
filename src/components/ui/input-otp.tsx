@@ -134,6 +134,7 @@ export function InputOTP({
 							className="h-px w-2.5 shrink-0 bg-muted-foreground/50"
 						/>
 					)}
+
 					<div className="flex min-w-0 gap-1.5" aria-hidden="true">
 						{Array.from({ length: count }, (_, slot) => {
 							const i = starts[group] + slot;
@@ -188,6 +189,7 @@ export function InputOTP({
 											)
 										)}
 									</AnimatePresence>
+
 									{isActive && !char && (
 										<span className="absolute h-4 w-px animate-caret-blink bg-foreground motion-reduce:animate-none" />
 									)}
@@ -197,6 +199,7 @@ export function InputOTP({
 					</div>
 				</Fragment>
 			))}
+
 			<AnimatePresence>
 				{merge && (
 					// Slots fold into one bar of the same size: a finished field, not a new widget.
@@ -215,6 +218,7 @@ export function InputOTP({
 								transition={{ ...spring, stiffness: 120, delay: 0.15 }}
 								className="absolute inset-0 rounded-full border-2 border-success"
 							/>
+
 							<motion.span
 								initial={{ scale: 0 }}
 								animate={{ scale: 1 }}
@@ -235,6 +239,7 @@ export function InputOTP({
 								</svg>
 							</motion.span>
 						</span>
+
 						<motion.span
 							initial={{ opacity: 0, x: -6 }}
 							animate={{ opacity: 1, x: 0 }}
@@ -246,9 +251,11 @@ export function InputOTP({
 					</motion.div>
 				)}
 			</AnimatePresence>
+
 			<span role="status" className="sr-only">
 				{verified ? verifiedLabel : null}
 			</span>
+
 			<input
 				type="text"
 				autoComplete="one-time-code"

@@ -48,6 +48,7 @@ export function Textarea({ className, showCount, onChange, ...rest }: TextareaPr
 	return (
 		<span className="relative block w-full min-w-0">
 			{textarea}
+
 			<span
 				id={countId}
 				className={cn(

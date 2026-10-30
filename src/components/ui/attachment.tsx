@@ -154,6 +154,7 @@ export function Attachment({
 					<Icon className="size-5" aria-hidden="true" />
 				)}
 			</span>
+
 			<span className="grid min-w-0 flex-1">
 				{href ? (
 					<a
@@ -166,6 +167,7 @@ export function Attachment({
 				) : (
 					<span className="truncate font-medium text-sm">{name}</span>
 				)}
+
 				<span
 					className={cn(
 						"truncate text-xs tabular-nums",
@@ -175,6 +177,7 @@ export function Attachment({
 					{meta || " "}
 				</span>
 			</span>
+
 			{onRemove && (
 				<button
 					type="button"
@@ -185,6 +188,7 @@ export function Attachment({
 					<X className="size-3.5" aria-hidden="true" />
 				</button>
 			)}
+
 			{uploading && (
 				<motion.span
 					aria-hidden="true"
@@ -345,15 +349,18 @@ export function FileDropzone(allProps: FileDropzoneProps) {
 				className="sr-only"
 				{...input}
 			/>
+
 			{children ?? (
 				<>
 					<span className="grid size-10 place-items-center rounded-full bg-muted text-muted-foreground">
 						<CloudUpload className="size-5" aria-hidden="true" />
 					</span>
+
 					<span className="text-sm">
 						<span className="font-medium">Drop {multiple ? "files" : "a file"}</span> or{" "}
 						<span className="font-medium text-primary-ink">browse</span>
 					</span>
+
 					{hint && <span className="text-muted-foreground text-xs">{hint}</span>}
 				</>
 			)}

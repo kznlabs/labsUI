@@ -70,6 +70,7 @@ export function SearchInput({
 				aria-hidden="true"
 				className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 size-4 text-muted-foreground"
 			/>
+
 			<Input
 				ref={(element) => {
 					input.current = element;
@@ -96,6 +97,7 @@ export function SearchInput({
 				)}
 				{...props}
 			/>
+
 			<span className="-translate-y-1/2 absolute top-1/2 right-2 flex">
 				<AnimatePresence mode="popLayout" initial={false}>
 					{value ? (

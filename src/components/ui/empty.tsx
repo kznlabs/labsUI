@@ -41,12 +41,15 @@ export function Empty({
 					{icon}
 				</span>
 			)}
+
 			<div className="grid max-w-sm gap-1.5">
 				<p className="font-semibold text-base tracking-tight">{title}</p>
+
 				{description && (
 					<p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
 				)}
 			</div>
+
 			{children && <div className="flex flex-wrap justify-center gap-2">{children}</div>}
 		</div>
 	);

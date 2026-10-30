@@ -32,52 +32,73 @@ export default function OverlaysProbe() {
 	return (
 		<main className="mx-auto grid max-w-xl justify-items-start gap-4 p-4">
 			<h1>Overlay probes</h1>
+
 			<output>{log.join(",")}</output>
+
 			<Dialog>
 				<DialogTrigger>Plain dialog</DialogTrigger>
+
 				<DialogContent>
 					<DialogTitle>Plain</DialogTitle>
+
 					<Input aria-label="Plain field" />
+
 					<DialogClose>Cancel</DialogClose>
 				</DialogContent>
 			</Dialog>
+
 			<Dialog>
 				<DialogTrigger>Alert dialog</DialogTrigger>
+
 				<DialogContent alert>
 					<DialogTitle>Delete?</DialogTitle>
+
 					<DialogClose>Cancel</DialogClose>
 				</DialogContent>
 			</Dialog>
+
 			<Popover>
 				<PopoverTrigger variant="outline">Filters</PopoverTrigger>
+
 				<PopoverContent>
 					<Input aria-label="First filter" />
+
 					<Input aria-label="Last filter" />
 				</PopoverContent>
 			</Popover>
+
 			<Button variant="ghost">After popover</Button>
+
 			<DropdownMenu>
 				<DropdownMenuTrigger variant="outline">Menu</DropdownMenuTrigger>
+
 				<DropdownMenuContent>
 					<DropdownMenuItem onSelect={() => note("edit")}>Edit</DropdownMenuItem>
+
 					<DropdownMenuCheckboxItem checked={wrap} onCheckedChange={setWrap}>
 						Wrap
 					</DropdownMenuCheckboxItem>
+
 					<DropdownMenuRadioGroup value={size} onValueChange={setSize}>
 						<DropdownMenuRadioItem value="s">Small</DropdownMenuRadioItem>
+
 						<DropdownMenuRadioItem value="l">Large</DropdownMenuRadioItem>
 					</DropdownMenuRadioGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
+
 			<CommandDialog>
 				<CommandInput />
+
 				<CommandList>
 					<CommandItem onSelect={() => note("home")}>Home</CommandItem>
+
 					<CommandItem keepOpen onSelect={() => note("theme")}>
 						Toggle theme
 					</CommandItem>
 				</CommandList>
 			</CommandDialog>
+
 			<Tooltip content="Bold">
 				<Button variant="ghost">Bold</Button>
 			</Tooltip>

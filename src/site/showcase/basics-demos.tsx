@@ -32,30 +32,37 @@ export function TabsDemo() {
 			<Tabs defaultValue="overview">
 				<TabsList aria-label="Dashboard">
 					<TabsTrigger value="overview">Overview</TabsTrigger>
+
 					<TabsTrigger value="analytics">
 						<BarChart3 aria-hidden="true" />
 						Analytics
 					</TabsTrigger>
+
 					<TabsTrigger value="reports">Reports</TabsTrigger>
+
 					<TabsTrigger value="archive" disabled>
 						Archive
 					</TabsTrigger>
 				</TabsList>
+
 				<TabsContent value="overview" className="grid grid-cols-3 gap-2">
 					{stats.map((stat) => (
 						<Card key={stat.label} className="gap-1 p-3">
 							<CardContent>
 								<p className="text-muted-foreground text-xs">{stat.label}</p>
+
 								<CountTo to={stat.value} className="font-semibold text-lg tabular-nums" />
 							</CardContent>
 						</Card>
 					))}
 				</TabsContent>
+
 				<TabsContent value="analytics">
 					<p className="text-muted-foreground text-sm">
 						Command usage is up 18% this week, led by <code className="font-mono">/clip</code>.
 					</p>
 				</TabsContent>
+
 				<TabsContent value="reports">
 					<p className="text-muted-foreground text-sm">3 reports waiting for review.</p>
 				</TabsContent>
@@ -67,25 +74,33 @@ export function TabsDemo() {
 						<User aria-hidden="true" />
 						Account
 					</TabsTrigger>
+
 					<TabsTrigger value="password">
 						<KeyRound aria-hidden="true" />
 						Password
 					</TabsTrigger>
+
 					<TabsTrigger value="notifications">
 						<Bell aria-hidden="true" />
 						Notifications
 					</TabsTrigger>
 				</TabsList>
+
 				<TabsContent value="account" className="grid gap-2">
 					<Label htmlFor="tabs-name">Display name</Label>
+
 					<Input id="tabs-name" defaultValue="Jane Doe" />
 				</TabsContent>
+
 				<TabsContent value="password" className="grid gap-2">
 					<Label htmlFor="tabs-pw">New password</Label>
+
 					<Input id="tabs-pw" type="password" />
 				</TabsContent>
+
 				<TabsContent value="notifications" className="flex items-center justify-between">
 					<Label htmlFor="tabs-mail">Email me about mentions</Label>
+
 					<Switch id="tabs-mail" defaultChecked />
 				</TabsContent>
 			</Tabs>
@@ -107,10 +122,12 @@ export function KbdDemo() {
 				{shortcuts.map((shortcut) => (
 					<li key={shortcut.label} className="flex items-center justify-between">
 						<span className="text-muted-foreground">{shortcut.label}</span>
+
 						<KbdGroup keys={shortcut.keys} />
 					</li>
 				))}
 			</ul>
+
 			<Button
 				variant="outline"
 				className="justify-between text-muted-foreground"
@@ -129,23 +146,32 @@ export function SeparatorDemo() {
 		<div className="grid w-full max-w-xs gap-4">
 			<div className="grid gap-1">
 				<p className="font-medium text-sm">labsUI</p>
+
 				<p className="text-muted-foreground text-sm">Clean primitives, smooth springs.</p>
 			</div>
+
 			<Separator />
+
 			<div className="flex h-5 items-center gap-3 text-sm">
 				<a href="#tabs" className="hover:underline">
 					Docs
 				</a>
+
 				<Separator orientation="vertical" />
+
 				<a href="#kbd" className="hover:underline">
 					Source
 				</a>
+
 				<Separator orientation="vertical" />
+
 				<a href={withBase("/llms.txt")} className="hover:underline">
 					llms.txt
 				</a>
 			</div>
+
 			<Separator label="or" />
+
 			<Button variant="outline" onClick={() => toast("Demo mode: GitHub sign-in is turned off")}>
 				Continue with GitHub
 			</Button>
@@ -160,29 +186,37 @@ export function SkeletonDemo() {
 		<div className="grid w-full max-w-sm gap-4">
 			<div className="flex items-center gap-2">
 				<Switch id="sk-loading" checked={loading} onCheckedChange={setLoading} />
+
 				<Label htmlFor="sk-loading">Loading</Label>
 			</div>
+
 			<Card className="gap-4">
 				{loading ? (
 					<SkeletonGroup label="Loading profile" className="grid gap-4 px-6">
 						<div className="flex items-center gap-3">
 							<Skeleton className="size-10 rounded-full" />
+
 							<div className="grid flex-1 gap-2">
 								<Skeleton className="h-4 w-32" />
+
 								<Skeleton className="h-3 w-20" />
 							</div>
 						</div>
+
 						<Skeleton className="h-16 w-full" />
 					</SkeletonGroup>
 				) : (
 					<>
 						<CardHeader className="flex items-center gap-3">
 							<Avatar alt="Jane Doe" status="online" />
+
 							<div className="grid gap-1">
 								<CardTitle>Jane Doe</CardTitle>
+
 								<CardDescription>Design lead</CardDescription>
 							</div>
 						</CardHeader>
+
 						<CardContent className="text-muted-foreground text-sm">
 							Ships spring-perfect interfaces and reviews every pixel twice.
 						</CardContent>
@@ -208,13 +242,16 @@ export function SearchInputDemo() {
 				label="Search members"
 				placeholder="Search members…"
 			/>
+
 			<ul aria-live="polite" className="grid gap-1">
 				{found.map((name) => (
 					<li key={name} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm">
 						<Avatar alt={name} size="sm" />
+
 						{name}
 					</li>
 				))}
+
 				{found.length === 0 && (
 					<li className="py-4 text-center text-muted-foreground text-sm">No one matches.</li>
 				)}
@@ -228,21 +265,30 @@ export function AccentPickerDemo() {
 		<Card className="w-full max-w-sm gap-0 p-0">
 			<div className="flex items-center justify-between gap-4 px-4 py-3">
 				<span className="text-sm">Appearance</span>
+
 				<ThemeToggle />
 			</div>
+
 			<Separator />
+
 			<div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
 				<span className="text-sm">Accent color</span>
+
 				<AccentPicker />
 			</div>
+
 			<Separator />
+
 			<div className="flex items-center justify-between gap-4 px-4 py-3">
 				<Label htmlFor="ap-switch" className="font-normal">
 					Preview
 				</Label>
+
 				<div className="flex items-center gap-3">
 					<Checkbox defaultChecked aria-label="Sample checkbox" />
+
 					<Switch id="ap-switch" defaultChecked />
+
 					<Button size="sm" onClick={() => toast.success("Appearance saved")}>
 						Save
 					</Button>

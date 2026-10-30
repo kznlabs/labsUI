@@ -42,8 +42,10 @@ export function PopoverDemo() {
 					</Badge>
 				)}
 			</PopoverTrigger>
+
 			<PopoverContent align="start" className="grid gap-4">
 				<p className="font-medium text-sm">Filter clips</p>
+
 				<div className="grid gap-2.5">
 					{tags.map((tag) => (
 						<Field key={tag} orientation="horizontal" label={tag}>
@@ -56,7 +58,9 @@ export function PopoverDemo() {
 						</Field>
 					))}
 				</div>
+
 				<Separator />
+
 				<Field label="Sort by">
 					<Select
 						value={sort}
@@ -67,10 +71,12 @@ export function PopoverDemo() {
 						]}
 					/>
 				</Field>
+
 				<div className="flex justify-between">
 					<Button variant="ghost" size="sm" onClick={() => setPicked([])}>
 						Clear
 					</Button>
+
 					<Button size="sm" onClick={() => setOpen(false)}>
 						Apply
 					</Button>
@@ -101,6 +107,7 @@ export function TooltipDemo() {
 						content={
 							<span className="flex items-center gap-2">
 								{tool.label}
+
 								<span className="opacity-60">{tool.keys}</span>
 							</span>
 						}
@@ -123,6 +130,7 @@ export function TooltipDemo() {
 					</Tooltip>
 				))}
 			</ButtonGroup>
+
 			<p className="text-muted-foreground text-xs">
 				Hover one, then slide across: the rest open instantly.
 			</p>
@@ -139,18 +147,23 @@ export function HoverCardDemo() {
 					<div className="grid gap-3">
 						<div className="flex items-center gap-3">
 							<Avatar alt="Jane Doe" status="online" />
+
 							<div className="grid">
 								<span className="font-semibold text-sm">Jane Doe</span>
+
 								<span className="text-muted-foreground text-xs">@jane</span>
 							</div>
 						</div>
+
 						<p className="text-sm">
 							Design lead. Ships interfaces that feel native on every platform.
 						</p>
+
 						<p className="flex items-center gap-1.5 text-muted-foreground text-xs">
 							<CalendarDays className="size-3.5" aria-hidden="true" />
 							Joined March 2024 · 128 clips
 						</p>
+
 						<Button
 							size="sm"
 							variant="outline"

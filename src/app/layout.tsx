@@ -60,6 +60,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 			<head>
 				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: static pre-paint theme script */}
 				<script dangerouslySetInnerHTML={{ __html: themeScript }} />
+
 				<noscript>
 					<style>
 						{`
@@ -86,10 +87,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 					</style>
 				</noscript>
 			</head>
+
 			<body className="min-h-dvh">
 				<MotionProvider>
 					{children}
+
 					<Toaster />
+
 					<Confirmer />
 				</MotionProvider>
 			</body>

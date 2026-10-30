@@ -86,28 +86,36 @@ export function DrawerDemo() {
 					<ShoppingBag aria-hidden="true" />
 					Cart
 				</DrawerTrigger>
+
 				<DrawerContent side="right">
 					<DrawerHeader>
 						<DrawerTitle>Your cart</DrawerTitle>
+
 						<DrawerDescription>{cart.length} items · swipe right to close</DrawerDescription>
 					</DrawerHeader>
+
 					<DrawerBody>
 						<ul className="grid gap-3">
 							{cart.map((i) => (
 								<li key={i.name} className="flex items-center justify-between text-sm">
 									<span>{i.name}</span>
+
 									<span className="text-muted-foreground tabular-nums">${i.price}</span>
 								</li>
 							))}
 						</ul>
+
 						<Separator className="my-4" />
+
 						<p className="flex justify-between font-medium text-sm">
 							Total
 							<span className="tabular-nums">${cart.reduce((sum, i) => sum + i.price, 0)}</span>
 						</p>
 					</DrawerBody>
+
 					<DrawerFooter>
 						<DrawerClose>Keep shopping</DrawerClose>
+
 						<DrawerClose variant="default" onClick={() => toast.success("Order placed")}>
 							Checkout
 						</DrawerClose>
@@ -117,17 +125,23 @@ export function DrawerDemo() {
 
 			<Drawer>
 				<DrawerTrigger variant="outline">Edit clip</DrawerTrigger>
+
 				<DrawerContent side="bottom" className="mx-auto max-w-lg">
 					<DrawerHeader>
 						<DrawerTitle>Edit clip</DrawerTitle>
+
 						<DrawerDescription>Drag the handle down to dismiss.</DrawerDescription>
 					</DrawerHeader>
+
 					<DrawerBody className="grid gap-2">
 						<Label htmlFor="clip-title">Title</Label>
+
 						<Input id="clip-title" defaultValue="Insane 1v4 clutch" />
 					</DrawerBody>
+
 					<DrawerFooter>
 						<DrawerClose>Cancel</DrawerClose>
+
 						<DrawerClose variant="default" onClick={() => toast.success("Clip saved")}>
 							Save
 						</DrawerClose>
@@ -149,20 +163,26 @@ export function DropdownMenuDemo() {
 					<Avatar alt="Jane Doe" size="sm" className="-ml-1.5 size-6 text-[10px]" />
 					Jane Doe
 				</DropdownMenuTrigger>
+
 				<DropdownMenuContent>
 					<DropdownMenuLabel>My account</DropdownMenuLabel>
+
 					<DropdownMenuItem shortcut="⇧⌘P" onSelect={() => toast("Profile")}>
 						<User aria-hidden="true" />
 						Profile
 					</DropdownMenuItem>
+
 					<DropdownMenuItem shortcut="⌘," onSelect={() => toast("Settings")}>
 						<Settings aria-hidden="true" />
 						Settings
 					</DropdownMenuItem>
+
 					<DropdownMenuCheckboxItem checked={status} onCheckedChange={setStatus}>
 						Show online status
 					</DropdownMenuCheckboxItem>
+
 					<DropdownMenuSeparator />
+
 					<DropdownMenuItem variant="destructive" onSelect={() => toast("Signed out")}>
 						<LogOut aria-hidden="true" />
 						Sign out
@@ -174,25 +194,34 @@ export function DropdownMenuDemo() {
 				<DropdownMenuTrigger variant="ghost" size="icon" aria-label="Clip actions">
 					<MoreHorizontal aria-hidden="true" />
 				</DropdownMenuTrigger>
+
 				<DropdownMenuContent align="end">
 					<DropdownMenuItem onSelect={() => toast("Renaming")}>
 						<Pencil aria-hidden="true" />
 						Rename
 					</DropdownMenuItem>
+
 					<DropdownMenuItem shortcut="⌘C" onSelect={() => toast.success("Link copied")}>
 						<Copy aria-hidden="true" />
 						Copy link
 					</DropdownMenuItem>
+
 					<DropdownMenuSeparator />
+
 					<DropdownMenuLabel>Sort by</DropdownMenuLabel>
+
 					<DropdownMenuRadioGroup value={sort} onValueChange={setSort}>
 						<DropdownMenuRadioItem value="newest">Newest</DropdownMenuRadioItem>
+
 						<DropdownMenuRadioItem value="views">Most viewed</DropdownMenuRadioItem>
+
 						<DropdownMenuRadioItem value="length" disabled>
 							Length
 						</DropdownMenuRadioItem>
 					</DropdownMenuRadioGroup>
+
 					<DropdownMenuSeparator />
+
 					<DropdownMenuItem variant="destructive" onSelect={() => toast.error("Clip deleted")}>
 						<Trash2 aria-hidden="true" />
 						Delete
@@ -247,16 +276,21 @@ export function SelectDemo() {
 					<Globe className="size-4 text-muted-foreground" aria-hidden="true" />
 					Timezone
 				</Label>
+
 				<Select id="sel-zone" name="zone" options={zones} value={zone} onValueChange={setZone} />
 			</div>
+
 			<div className="grid gap-2">
 				<Label htmlFor="sel-role">Role</Label>
+
 				<Select id="sel-role" name="role" options={roles} placeholder="Pick a role" required />
 			</div>
+
 			<div className="flex items-center justify-between">
 				<Badge variant="secondary" shape="pill">
 					{zone}
 				</Badge>
+
 				<Button type="submit" size="sm">
 					Save
 				</Button>
@@ -275,68 +309,92 @@ export function MenubarDemo() {
 		<Menubar aria-label="Editor">
 			<MenubarMenu>
 				<MenubarTrigger>File</MenubarTrigger>
+
 				<MenubarContent>
 					<MenubarItem shortcut="⌘N" onSelect={run("New clip")}>
 						<FilePlus />
 						New clip
 					</MenubarItem>
+
 					<MenubarItem shortcut="⌘O" onSelect={run("Open…")}>
 						<FolderOpen />
 						Open…
 					</MenubarItem>
+
 					<MenubarSeparator />
+
 					<MenubarItem shortcut="⌘E" onSelect={run("Exporting…")}>
 						<Share />
 						Export
 					</MenubarItem>
+
 					<MenubarItem disabled>Print…</MenubarItem>
 				</MenubarContent>
 			</MenubarMenu>
+
 			<MenubarMenu>
 				<MenubarTrigger>Edit</MenubarTrigger>
+
 				<MenubarContent>
 					<MenubarItem shortcut="⌘Z" onSelect={run("Undo")}>
 						Undo
 					</MenubarItem>
+
 					<MenubarItem shortcut="⇧⌘Z" onSelect={run("Redo")}>
 						Redo
 					</MenubarItem>
+
 					<MenubarSeparator />
+
 					<MenubarItem shortcut="⌘X" onSelect={run("Cut")}>
 						Cut
 					</MenubarItem>
+
 					<MenubarItem shortcut="⌘C" onSelect={run("Copied")}>
 						Copy
 					</MenubarItem>
+
 					<MenubarItem shortcut="⌘V" onSelect={run("Pasted")}>
 						Paste
 					</MenubarItem>
+
 					<MenubarSeparator />
+
 					<MenubarItem variant="destructive" shortcut="⌫" onSelect={run("Deleted")}>
 						Delete
 					</MenubarItem>
 				</MenubarContent>
 			</MenubarMenu>
+
 			<MenubarMenu>
 				<MenubarTrigger>View</MenubarTrigger>
+
 				<MenubarContent>
 					<MenubarCheckboxItem checked={sidebar} onCheckedChange={setSidebar}>
 						Show sidebar
 					</MenubarCheckboxItem>
+
 					<MenubarCheckboxItem checked={ruler} onCheckedChange={setRuler}>
 						Show ruler
 					</MenubarCheckboxItem>
+
 					<MenubarSeparator />
+
 					<MenubarLabel>Sort clips by</MenubarLabel>
+
 					<MenubarRadioGroup value={sort} onValueChange={setSort}>
 						<MenubarRadioItem value="date">Date</MenubarRadioItem>
+
 						<MenubarRadioItem value="name">Name</MenubarRadioItem>
+
 						<MenubarRadioItem value="length">Length</MenubarRadioItem>
 					</MenubarRadioGroup>
 				</MenubarContent>
 			</MenubarMenu>
+
 			<MenubarMenu>
 				<MenubarTrigger>Help</MenubarTrigger>
+
 				<MenubarContent>
 					<MenubarItem onSelect={run("Opening docs…")}>
 						<BookOpen />
@@ -402,6 +460,7 @@ export function NavigationMenuDemo() {
 				<NavigationMenuList>
 					<NavigationMenuItem>
 						<NavigationMenuTrigger>Products</NavigationMenuTrigger>
+
 						<NavigationMenuContent>
 							<ul className="grid w-[min(32rem,calc(100vw-5rem))] gap-0.5 sm:grid-cols-2">
 								{products.map((product) => (
@@ -416,8 +475,10 @@ export function NavigationMenuDemo() {
 							</ul>
 						</NavigationMenuContent>
 					</NavigationMenuItem>
+
 					<NavigationMenuItem>
 						<NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+
 						<NavigationMenuContent>
 							<div className="grid w-[min(30rem,calc(100vw-5rem))] gap-2 sm:grid-cols-[11rem_1fr]">
 								<NavigationMenuLink
@@ -427,10 +488,12 @@ export function NavigationMenuDemo() {
 									className="flex-col justify-end gap-1 bg-muted p-4"
 								>
 									<span className="font-semibold text-foreground">labsUI 0.1</span>
+
 									<span className="text-muted-foreground text-xs leading-snug">
 										Every component, one spring. Read the release notes.
 									</span>
 								</NavigationMenuLink>
+
 								<ul className="flex flex-col gap-0.5">
 									{resources.map((resource) => (
 										<li key={resource.href}>
@@ -445,11 +508,13 @@ export function NavigationMenuDemo() {
 							</div>
 						</NavigationMenuContent>
 					</NavigationMenuItem>
+
 					<NavigationMenuItem className="max-sm:hidden">
 						<NavigationMenuLink href="#blog" active={page === "#blog"} onClick={go("#blog")}>
 							Blog
 						</NavigationMenuLink>
 					</NavigationMenuItem>
+
 					<NavigationMenuItem>
 						<NavigationMenuLink
 							href="#pricing"

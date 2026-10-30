@@ -118,6 +118,7 @@ export function TabsList({ className, children, ...props }: ComponentProps<"div"
 					)}
 				/>
 			)}
+
 			{children}
 		</div>
 	);

@@ -51,6 +51,7 @@ export function Changelog({
 							<Badge variant="secondary" className="font-mono">
 								{release.version}
 							</Badge>
+
 							{release.title}
 						</span>
 					}
@@ -62,10 +63,12 @@ export function Changelog({
 								<Badge variant={kinds[change.type].variant} className="mt-px w-16 justify-center">
 									{kinds[change.type].label}
 								</Badge>
+
 								<span>{change.text}</span>
 							</li>
 						))}
 					</ul>
+
 					{release.shortcut && (
 						<p className="mt-3 flex items-center gap-2 text-muted-foreground text-xs">
 							Try it <KbdGroup keys={release.shortcut} />

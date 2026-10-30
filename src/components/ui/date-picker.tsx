@@ -139,8 +139,10 @@ export function DatePicker(allProps: DatePickerProps) {
 					aria-invalid={trigger["aria-invalid"] || (invalid && !iso) || undefined}
 				>
 					<CalendarDays />
+
 					<span className="truncate">{label ?? placeholder}</span>
 				</PopoverTrigger>
+
 				<PopoverContent align="start" className="flex w-auto flex-col gap-3 p-3 sm:flex-row">
 					{presets && presets.length > 0 && (
 						// No room beside the calendar on phones.
@@ -164,6 +166,7 @@ export function DatePicker(allProps: DatePickerProps) {
 							))}
 						</ul>
 					)}
+
 					{range ? (
 						<Calendar key={shown} mode="range" {...shared} value={span} onValueChange={commit} />
 					) : (
@@ -176,6 +179,7 @@ export function DatePicker(allProps: DatePickerProps) {
 					)}
 				</PopoverContent>
 			</Popover>
+
 			<FormValue
 				name={name}
 				value={iso}

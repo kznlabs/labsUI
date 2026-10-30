@@ -46,9 +46,11 @@ export function Testimonial({
 			>
 				{children}
 			</Quote>
+
 			{others && others.length > 0 && (
 				<div className="flex flex-wrap items-center gap-3 border-t pt-5">
 					<AvatarGroup users={others} max={5} size="sm" />
+
 					{othersLabel && <p className="text-muted-foreground text-sm">{othersLabel}</p>}
 				</div>
 			)}

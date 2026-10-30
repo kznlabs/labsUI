@@ -108,6 +108,7 @@ export function DrawerContent({
 						transition={spring}
 						onClick={() => setOpen(false)}
 					/>
+
 					<motion.div
 						ref={ref}
 						role="dialog"
@@ -141,8 +142,11 @@ export function DrawerContent({
 						)}
 					>
 						{side === "bottom" && <Handle />}
+
 						{children}
+
 						{side === "top" && <Handle />}
+
 						{showClose && (
 							<button
 								type="button"
@@ -151,6 +155,7 @@ export function DrawerContent({
 								className="absolute top-4 right-4 cursor-pointer rounded-md p-1 text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
 							>
 								<X className="size-4" aria-hidden="true" />
+
 								<span className="sr-only">Close</span>
 							</button>
 						)}

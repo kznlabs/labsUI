@@ -70,6 +70,7 @@ export function HoverCard({
 			}}
 		>
 			{children}
+
 			{mounted &&
 				createPortal(
 					<AnimatePresence>

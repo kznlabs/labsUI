@@ -41,6 +41,7 @@ export function Tag({
 			)}
 		>
 			<span className="truncate">{children}</span>
+
 			{onRemove && (
 				<button
 					type="button"
@@ -147,6 +148,7 @@ export function TagInput({
 					</Tag>
 				))}
 			</AnimatePresence>
+
 			<input
 				ref={input}
 				type="text"
@@ -188,10 +190,12 @@ export function TagInput({
 				}}
 				className="h-6 min-w-20 flex-1 bg-transparent px-1 outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed"
 			/>
+
 			{name &&
 				tags.map((tag) => (
 					<input key={tag} type="hidden" name={name} value={tag} disabled={props.disabled} />
 				))}
+
 			<FormValue
 				value={tags.join(",")}
 				required={required}

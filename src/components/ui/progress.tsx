@@ -43,11 +43,13 @@ export function Progress({
 			{(label || showValue) && (
 				<div className="flex items-center justify-between gap-3 text-xs">
 					{label && <span className="font-medium">{label}</span>}
+
 					{showValue && determinate && (
 						<span className="ml-auto text-muted-foreground tabular-nums">{pct}%</span>
 					)}
 				</div>
 			)}
+
 			<div
 				role="progressbar"
 				aria-label={label ?? ariaLabel}

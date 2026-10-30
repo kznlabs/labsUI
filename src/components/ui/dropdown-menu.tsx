@@ -286,6 +286,7 @@ export function DropdownMenuItem({
 			)}
 		>
 			{children}
+
 			<Shortcut>{shortcut}</Shortcut>
 		</div>
 	);
@@ -316,7 +317,9 @@ export function DropdownMenuCheckboxItem({
 			<span className="absolute left-2 flex size-4 items-center justify-center">
 				{checked && <Check className="!text-current" aria-hidden="true" />}
 			</span>
+
 			{children}
+
 			<Shortcut>{shortcut}</Shortcut>
 		</div>
 	);
@@ -373,6 +376,7 @@ export function DropdownMenuRadioItem({
 			<span className="absolute left-2 flex size-4 items-center justify-center">
 				{checked && <Circle className="!size-2 !text-current fill-current" aria-hidden="true" />}
 			</span>
+
 			{children}
 		</div>
 	);

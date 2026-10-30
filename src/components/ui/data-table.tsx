@@ -181,6 +181,7 @@ export function DataTable<T>({
 							className="w-full sm:max-w-64"
 						/>
 					)}
+
 					{toolbar && (
 						<div className="ml-auto flex items-center gap-2">
 							{toolbar(data.filter((row) => selected.includes(getRowId(row))))}
@@ -210,6 +211,7 @@ export function DataTable<T>({
 									/>
 								</TableHead>
 							)}
+
 							{columns.map((column) => (
 								<TableHead
 									key={column.id}
@@ -233,6 +235,7 @@ export function DataTable<T>({
 									{column.header}
 								</TableHead>
 							))}
+
 							{rowActions && (
 								<TableHead className="w-px">
 									<span className="sr-only">Actions</span>
@@ -240,6 +243,7 @@ export function DataTable<T>({
 							)}
 						</TableRow>
 					</TableHeader>
+
 					<TableBody>
 						{rows.length === 0 ? (
 							<TableRow className="hover:bg-transparent">
@@ -275,11 +279,13 @@ export function DataTable<T>({
 												/>
 											</TableCell>
 										)}
+
 										{columns.map((column) => (
 											<TableCell key={column.id} className={column.className}>
 												{column.cell ? column.cell(row) : column.accessor?.(row)}
 											</TableCell>
 										))}
+
 										{rowActions && (
 											<TableCell className="py-1 pr-2">
 												<DropdownMenu>
@@ -291,6 +297,7 @@ export function DataTable<T>({
 													>
 														<MoreHorizontal />
 													</DropdownMenuTrigger>
+
 													<DropdownMenuContent align="end">{rowActions(row)}</DropdownMenuContent>
 												</DropdownMenu>
 											</TableCell>
@@ -307,10 +314,12 @@ export function DataTable<T>({
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<p className="text-muted-foreground text-xs tabular-nums" aria-live="polite">
 					{selectable && selected.length > 0 && `${selected.length} selected · `}
+
 					{sorted.length === 0
 						? "0 results"
 						: `${from}–${from + rows.length - 1} of ${sorted.length}`}
 				</p>
+
 				{pages > 1 && (
 					<Pagination
 						page={page}

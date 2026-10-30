@@ -49,6 +49,7 @@ function DemoGroup({ label, children }: { label: string; children: ReactNode }) 
 	return (
 		<div className="grid w-full gap-3">
 			<p className="text-muted-foreground text-xs uppercase tracking-wide">{label}</p>
+
 			<div className="flex flex-wrap items-center gap-3">{children}</div>
 		</div>
 	);
@@ -63,27 +64,35 @@ export function ButtonDemo() {
 		<div className="grid w-full max-w-2xl gap-8">
 			<DemoGroup label="Variants">
 				<Button onClick={() => toast.success("Saved")}>Default</Button>
+
 				<Button variant="secondary" onClick={() => toast("Draft kept")}>
 					Secondary
 				</Button>
+
 				<Button variant="outline" onClick={() => toast("Exported as CSV")}>
 					Outline
 				</Button>
+
 				<Button variant="ghost" onClick={() => toast("Dismissed")}>
 					Ghost
 				</Button>
+
 				<Button variant="destructive" onClick={() => toast.error("Demo mode: nothing was deleted")}>
 					Destructive
 				</Button>
 			</DemoGroup>
+
 			<DemoGroup label="Sizes">
 				<Button size="sm" variant="outline" onClick={() => toast("Small button")}>
 					Small
 				</Button>
+
 				<Button onClick={() => toast("Default button")}>Default</Button>
+
 				<Button size="lg" onClick={() => toast("Large button")}>
 					Large
 				</Button>
+
 				<Button
 					size="icon"
 					variant="outline"
@@ -93,17 +102,21 @@ export function ButtonDemo() {
 					<Plus />
 				</Button>
 			</DemoGroup>
+
 			<DemoGroup label="With icons">
 				<Button variant="outline" onClick={() => toast("Demo mode: no email was sent")}>
 					<Mail /> Email
 				</Button>
+
 				<Button variant="secondary" onClick={() => toast.success("We'll let you know")}>
 					<Bell /> Notify me
 				</Button>
+
 				<a href="#toast" className={buttonVariants({ variant: "ghost" })}>
 					Link as button <ArrowUpRight />
 				</a>
 			</DemoGroup>
+
 			<DemoGroup label="Async feedback">
 				<Button
 					loading={loading}
@@ -116,10 +129,12 @@ export function ButtonDemo() {
 				>
 					Click to load
 				</Button>
+
 				<Button disabled variant="secondary">
 					Disabled
 				</Button>
 			</DemoGroup>
+
 			<DemoGroup label="Two-step confirm & swap">
 				<div className="grid w-full gap-3">
 					<div className="flex flex-wrap items-center gap-3">
@@ -150,6 +165,7 @@ export function ButtonDemo() {
 						>
 							<Trash2 /> Delete account
 						</Button>
+
 						<Button
 							variant="outline"
 							confirmLabel="Sure? Click again"
@@ -160,6 +176,7 @@ export function ButtonDemo() {
 							Log out
 						</Button>
 					</div>
+
 					<fieldset aria-label="Swap direction" className="flex flex-wrap gap-1.5">
 						{(["left", "right", "up", "down"] as const).map((dir) => (
 							<Button
@@ -202,8 +219,10 @@ export function BadgeDemo() {
 						onChange={(event) => setShape(event.target.checked ? "pill" : "badge")}
 						className="accent-primary"
 					/>
+
 					<span className="text-muted-foreground">Pill shape</span>
 				</label>
+
 				<label className="flex items-center gap-1.5 cursor-pointer">
 					<input
 						type="checkbox"
@@ -211,8 +230,10 @@ export function BadgeDemo() {
 						onChange={(event) => setDot(event.target.checked)}
 						className="accent-primary"
 					/>
+
 					<span className="text-muted-foreground">Status dot</span>
 				</label>
+
 				<label className="flex items-center gap-1.5 cursor-pointer">
 					<input
 						type="checkbox"
@@ -220,6 +241,7 @@ export function BadgeDemo() {
 						onChange={(event) => setPulse(event.target.checked)}
 						className="accent-primary"
 					/>
+
 					<span className="text-muted-foreground">Pulse animation</span>
 				</label>
 			</div>
@@ -228,15 +250,19 @@ export function BadgeDemo() {
 				<Badge shape={shape} variant="default" dot={dot} pulse={pulse}>
 					Default
 				</Badge>
+
 				<Badge shape={shape} variant="secondary" dot={dot} pulse={pulse}>
 					Secondary
 				</Badge>
+
 				<Badge shape={shape} variant="outline" dot={dot} pulse={pulse}>
 					Draft
 				</Badge>
+
 				<Badge shape={shape} variant="success" dot={dot} pulse={pulse}>
 					Live
 				</Badge>
+
 				<Badge shape={shape} variant="destructive" dot={dot} pulse={pulse}>
 					Failed
 				</Badge>
@@ -268,16 +294,21 @@ export function FormDemo() {
 		<Card className="w-full max-w-sm">
 			<CardHeader>
 				<CardTitle>Create account</CardTitle>
+
 				<CardDescription>Focus, invalid and disabled states.</CardDescription>
 			</CardHeader>
+
 			<form onSubmit={submit} noValidate className="contents">
 				<CardContent className="flex flex-col gap-4">
 					<div className="grid gap-2">
 						<Label htmlFor="f-name">Name</Label>
+
 						<Input id="f-name" placeholder="Jane Doe" autoComplete="name" />
 					</div>
+
 					<div className="grid gap-2">
 						<Label htmlFor="f-email">Email</Label>
+
 						<Input
 							id="f-email"
 							type="email"
@@ -288,16 +319,19 @@ export function FormDemo() {
 							aria-invalid={invalid || undefined}
 							aria-describedby={invalid ? "f-email-err" : undefined}
 						/>
+
 						{invalid && (
 							<p id="f-email-err" className="text-destructive-ink text-xs">
 								Please enter a valid email address.
 							</p>
 						)}
 					</div>
+
 					<div className="grid gap-2">
 						<div className="flex items-center justify-between">
 							<Label htmlFor="f-bio">Bio</Label>
 						</div>
+
 						<Textarea
 							id="f-bio"
 							placeholder="Grows as you type…"
@@ -308,12 +342,16 @@ export function FormDemo() {
 							className="max-h-40"
 						/>
 					</div>
+
 					<div className="flex items-center justify-between gap-4">
 						<Label htmlFor="f-news">Product updates</Label>
+
 						<Switch id="f-news" defaultChecked />
 					</div>
+
 					<Input disabled placeholder="Disabled input" aria-label="Disabled example" />
 				</CardContent>
+
 				<CardFooter className="pt-6">
 					<Button type="submit" status={status} successLabel="Created!" className="w-full">
 						Create account
@@ -330,26 +368,33 @@ export function CardDemo() {
 			<Card>
 				<CardHeader>
 					<CardDescription>Monthly revenue</CardDescription>
+
 					<CardTitle className="text-3xl tabular-nums">
 						<CountTo to={48290} prefix="$" />
 					</CardTitle>
 				</CardHeader>
+
 				<CardFooter>
 					<Badge variant="success" shape="pill">
 						+12.4%
 					</Badge>
+
 					<span className="text-muted-foreground text-xs">vs last month</span>
 				</CardFooter>
 			</Card>
+
 			<Card glass>
 				<CardHeader>
 					<CardTitle>Notifications</CardTitle>
+
 					<CardDescription>Glass variant · backdrop blur.</CardDescription>
 				</CardHeader>
+
 				<CardContent className="flex items-center justify-between gap-3">
 					<span className="flex items-center gap-2 text-sm">
 						<Bell className="size-4 text-muted-foreground" /> Push alerts
 					</span>
+
 					<Switch aria-label="Push alerts" />
 				</CardContent>
 			</Card>
@@ -362,10 +407,14 @@ export function AvatarDemo() {
 		<div className="flex flex-col items-center gap-6">
 			<div className="flex items-end gap-4">
 				<Avatar size="sm" alt="Ana Silva" status="online" />
+
 				<Avatar src={withBase("/avatar-demo.svg")} alt="Robin Park" status="busy" />
+
 				<Avatar size="lg" alt="Kai Moreno" status="away" />
+
 				<Avatar size="lg" src="/broken-image.png" alt="Broken Image" status="offline" />
 			</div>
+
 			<AvatarGroup users={team.slice(0, 6)} max={4} size="sm" />
 		</div>
 	);
@@ -377,34 +426,45 @@ export function AccordionDemo() {
 			<Accordion type="single" defaultValue="what" className="rounded-xl border bg-card px-4">
 				<AccordionItem value="what">
 					<AccordionTrigger>What is labsUI?</AccordionTrigger>
+
 					<AccordionContent>
 						React primitives you copy into your project and own, with smooth spring motion.
 					</AccordionContent>
 				</AccordionItem>
+
 				<AccordionItem value="motion">
 					<AccordionTrigger>How is it animated?</AccordionTrigger>
+
 					<AccordionContent>
 						Every interaction uses one spring from motion: stiffness 400, damping 30.
 					</AccordionContent>
 				</AccordionItem>
+
 				<AccordionItem value="a11y">
 					<AccordionTrigger>Is it accessible?</AccordionTrigger>
+
 					<AccordionContent>
 						Yes. Native buttons, aria-expanded/controls, inert closed panels, reduced-motion aware.
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>
+
 			<Accordion type="multiple" className="rounded-xl border bg-card px-4">
 				<AccordionItem value="1">
 					<AccordionTrigger>Multiple mode</AccordionTrigger>
+
 					<AccordionContent>Open as many panels as you like.</AccordionContent>
 				</AccordionItem>
+
 				<AccordionItem value="2">
 					<AccordionTrigger>Independent panels</AccordionTrigger>
+
 					<AccordionContent>Each item toggles on its own.</AccordionContent>
 				</AccordionItem>
+
 				<AccordionItem value="3">
 					<AccordionTrigger>SEO friendly</AccordionTrigger>
+
 					<AccordionContent>
 						Closed content stays in the DOM so crawlers can read it.
 					</AccordionContent>
@@ -418,6 +478,7 @@ export function ThemeDemo() {
 	return (
 		<div className="flex items-center gap-3 rounded-full border bg-card py-1 pr-4 pl-1 shadow-xs">
 			<ThemeToggle />
+
 			<span className="text-muted-foreground text-sm">Toggle light / dark</span>
 		</div>
 	);
@@ -430,8 +491,10 @@ export function CursorDemo() {
 		<div className="flex flex-col items-center gap-4">
 			<div className="flex items-center gap-3">
 				<Switch id="cursor-toggle" checked={on} onCheckedChange={setOn} />
+
 				<Label htmlFor="cursor-toggle">Enable custom cursor</Label>
 			</div>
+
 			<div className="flex gap-2">
 				<Button
 					variant="outline"
@@ -440,6 +503,7 @@ export function CursorDemo() {
 				>
 					Hover me
 				</Button>
+
 				<a
 					href="mailto:hello@example.com"
 					className={buttonVariants({ variant: "ghost", size: "sm" })}
@@ -447,9 +511,11 @@ export function CursorDemo() {
 					<Mail /> Or this link
 				</a>
 			</div>
+
 			<p className="text-muted-foreground text-xs">
 				Mouse/trackpad only. Disabled on touch & reduced motion.
 			</p>
+
 			{on && <CustomCursor />}
 		</div>
 	);
@@ -467,6 +533,7 @@ export function CountToDemo() {
 					<Card>
 						<CardHeader>
 							<CardDescription>{stat.label}</CardDescription>
+
 							<CardTitle className="text-3xl tabular-nums">{stat.node}</CardTitle>
 						</CardHeader>
 					</Card>
@@ -516,6 +583,7 @@ export function AvatarGroupDemo() {
 			<div className="flex flex-wrap items-center justify-center gap-5 text-xs">
 				<label className="flex items-center gap-2">
 					<span className="text-muted-foreground">Max visible:</span>
+
 					<input
 						type="range"
 						min={2}
@@ -525,10 +593,13 @@ export function AvatarGroupDemo() {
 						onChange={(event) => setMax(Number(event.target.value))}
 						className="accent-primary w-20"
 					/>
+
 					<span className="font-mono tabular-nums">{max}</span>
 				</label>
+
 				<div className="flex items-center gap-1.5">
 					<span className="mr-0.5 text-muted-foreground">Size:</span>
+
 					{(["sm", "default", "lg"] as const).map((option) => (
 						<button
 							key={option}
@@ -565,6 +636,7 @@ export function QuoteDemo() {
 				Lithuania, my country, thou art like health; how much thou shouldst be prized only he can
 				learn who has lost thee.
 			</Quote>
+
 			<Quote
 				variant="card"
 				author="Adam Mickiewicz"
@@ -574,6 +646,7 @@ export function QuoteDemo() {
 				Born in slavery and chained in my swaddling bands, I have had but one such spring in my
 				whole life.
 			</Quote>
+
 			<div className="sm:col-span-2">
 				<Quote
 					variant="large"
@@ -608,6 +681,7 @@ export function BreadcrumbDemo() {
 					{ label: "Breadcrumb" },
 				]}
 			/>
+
 			<Breadcrumb
 				separator="/"
 				items={[
@@ -642,8 +716,10 @@ export function ButtonGroupDemo() {
 						onChange={(event) => setOrientation(event.target.checked ? "vertical" : "horizontal")}
 						className="accent-primary"
 					/>
+
 					<span className="text-muted-foreground">Vertical layout</span>
 				</label>
+
 				<label className="flex cursor-pointer items-center gap-1.5">
 					<input
 						type="checkbox"
@@ -651,6 +727,7 @@ export function ButtonGroupDemo() {
 						onChange={(event) => setAttached(event.target.checked)}
 						className="accent-primary"
 					/>
+
 					<span className="text-muted-foreground">Fused borders (attached)</span>
 				</label>
 			</div>
@@ -688,6 +765,7 @@ export function TypewriterDemo() {
 			<div className="flex flex-wrap items-center justify-center gap-5 text-xs">
 				<label className="flex items-center gap-2">
 					<span className="text-muted-foreground">Speed:</span>
+
 					<input
 						type="range"
 						min={15}
@@ -697,10 +775,13 @@ export function TypewriterDemo() {
 						onChange={(event) => setSpeed(Number(event.target.value))}
 						className="accent-primary w-20"
 					/>
+
 					<span className="font-mono tabular-nums">{speed}ms</span>
 				</label>
+
 				<label className="flex items-center gap-2">
 					<span className="text-muted-foreground">Pause:</span>
+
 					<input
 						type="range"
 						min={800}
@@ -710,8 +791,10 @@ export function TypewriterDemo() {
 						onChange={(event) => setPauseDuration(Number(event.target.value))}
 						className="accent-primary w-20"
 					/>
+
 					<span className="font-mono tabular-nums">{pauseDuration}ms</span>
 				</label>
+
 				<label className="flex cursor-pointer items-center gap-1.5">
 					<input
 						type="checkbox"
@@ -719,6 +802,7 @@ export function TypewriterDemo() {
 						onChange={(event) => setCursor(event.target.checked)}
 						className="accent-primary"
 					/>
+
 					<span className="text-muted-foreground">Cursor</span>
 				</label>
 			</div>
@@ -758,6 +842,7 @@ export function TextSwapDemo() {
 			<div className="flex flex-wrap items-center justify-center gap-5 text-xs">
 				<div className="flex items-center gap-1.5">
 					<span className="mr-0.5 text-muted-foreground">Direction:</span>
+
 					{(["up", "down", "fade"] as const).map((option) => (
 						<button
 							key={option}
@@ -774,8 +859,10 @@ export function TextSwapDemo() {
 						</button>
 					))}
 				</div>
+
 				<label className="flex items-center gap-2">
 					<span className="text-muted-foreground">Interval:</span>
+
 					<input
 						type="range"
 						min={1500}
@@ -785,12 +872,14 @@ export function TextSwapDemo() {
 						onChange={(event) => setIntervalTime(Number(event.target.value))}
 						className="accent-primary w-20"
 					/>
+
 					<span className="font-mono tabular-nums">{interval}ms</span>
 				</label>
 			</div>
 
 			<div className="flex items-center gap-2 font-medium text-base sm:text-lg">
 				<span className="text-muted-foreground">Crafted with</span>
+
 				<span className="rounded-md border bg-accent/40 px-2.5 py-1 text-foreground">
 					<TextSwap
 						key={`${direction}-${interval}`}
@@ -823,7 +912,9 @@ export function CollapsibleDemo() {
 					<span className="text-muted-foreground">starred {starred.length} repositories</span>
 				</span>
 			</CollapsibleTrigger>
+
 			<div className="rounded-lg border px-4 py-2.5 font-mono text-sm">{starred[0]}</div>
+
 			<CollapsibleContent className="grid gap-2">
 				{starred.slice(1).map((repo) => (
 					<div key={repo} className="rounded-lg border px-4 py-2.5 font-mono text-sm">
@@ -843,6 +934,7 @@ export function PaginationDemo() {
 	return (
 		<div className="flex flex-col items-center gap-3">
 			<Pagination page={page} total={12} onPageChange={setPage} siblings={wide ? 1 : 0} />
+
 			<p className="text-muted-foreground text-xs tabular-nums">Page {page} of 12</p>
 		</div>
 	);

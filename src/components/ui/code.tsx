@@ -369,9 +369,11 @@ function CodeLines({
 											)}
 										/>
 									)}
+
 									{numbered && <span style={{ minWidth: `${digits}ch` }}>{lineNumber}</span>}
 								</span>
 							)}
+
 							{note ? (
 								<Tooltip content={note} side="top" align="start" delay={150} touch="tap">
 									<span
@@ -415,8 +417,10 @@ export function Code({
 			>
 				<div className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap rounded-sm font-mono text-xs outline-none [scrollbar-width:none] focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-scrollbar]:hidden">
 					<CodeLines text={code} lines={lines} marks={annotations.marks} inline />
+
 					<OverflowFocus />
 				</div>
+
 				<CopyButton code={code} />
 			</div>
 		);
@@ -431,10 +435,13 @@ export function Code({
 		>
 			<div className="flex h-8 items-center justify-between border-b px-3">
 				<span className="font-mono text-muted-foreground text-xs">{language}</span>
+
 				<CopyButton code={code} />
 			</div>
+
 			<div className="overflow-x-auto font-mono text-xs leading-5 outline-none [--code-px:--spacing(3)] focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset">
 				<CodeLines text={code} lines={lines} {...annotations} />
+
 				<OverflowFocus />
 			</div>
 		</div>
@@ -489,8 +496,10 @@ export function CodePanel({ files, format, collapse, className }: CodePanelProps
 						</TabsTrigger>
 					))}
 				</TabsList>
+
 				<CopyButton code={copyText} />
 			</div>
+
 			{files.map((tab) => (
 				<TabsContent
 					key={tab.name}
@@ -508,6 +517,7 @@ export function CodePanel({ files, format, collapse, className }: CodePanelProps
 					</div>
 				</TabsContent>
 			))}
+
 			{foldable && (
 				<button
 					type="button"

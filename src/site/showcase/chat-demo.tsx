@@ -116,11 +116,13 @@ export function ChatDemo() {
 							streaming={message.streaming}
 						>
 							{message.text && <p>{renderInlineCode(message.text)}</p>}
+
 							{message.code && <Code code={message.code} language="tsx" />}
 						</MessageBubble>
 					</li>
 				))}
 			</ol>
+
 			<form onSubmit={send} className="border-t p-3">
 				<div className="flex items-end gap-2 rounded-xl border bg-background p-1.5 shadow-xs transition-shadow focus-within:ring-[3px] focus-within:ring-ring/50">
 					<Textarea
@@ -134,10 +136,12 @@ export function ChatDemo() {
 						aria-label="Message"
 						className="max-h-32 min-h-9 border-0 bg-transparent shadow-none focus-visible:ring-0"
 					/>
+
 					<Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim() || busy}>
 						<ArrowUp />
 					</Button>
 				</div>
+
 				<p className="mt-2 flex items-center gap-1.5 px-1 text-muted-foreground text-xs">
 					<Sparkles className="size-3" /> Simulated streaming reply
 				</p>

@@ -80,6 +80,7 @@ export function Rating(allProps: RatingProps) {
 								fill="currentColor"
 								strokeWidth={0}
 							/>
+
 							<span
 								className="absolute inset-0 overflow-hidden"
 								style={{ width: `${fill * 100}%` }}
@@ -108,6 +109,7 @@ export function Rating(allProps: RatingProps) {
 			className={cn("inline-flex items-center gap-0.5", disabled && "opacity-50", className)}
 		>
 			<legend className="sr-only">{label}</legend>
+
 			{stars.map((star) => (
 				<label
 					key={star}
@@ -124,9 +126,11 @@ export function Rating(allProps: RatingProps) {
 						onChange={() => setValue(star)}
 						className="peer sr-only"
 					/>
+
 					<span className="sr-only">
 						{star} {star === 1 ? "star" : "stars"}
 					</span>
+
 					<motion.span
 						aria-hidden="true"
 						// whileTap would make the star focusable, the radio underneath is the tab stop.

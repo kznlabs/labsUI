@@ -43,6 +43,7 @@ export function SidebarDemo() {
 					header={
 						<div className="flex h-8 items-center gap-2.5 px-0.5">
 							<Avatar size="sm" alt="Labs Guild" className="size-7 shrink-0 text-[10px]" />
+
 							<span className="truncate font-semibold">Labs Guild</span>
 						</div>
 					}
@@ -51,10 +52,13 @@ export function SidebarDemo() {
 					current={active}
 					onSelect={setActive}
 				/>
+
 				<section aria-label={active} className="flex min-w-0 flex-1 flex-col">
 					<div className="flex h-11 items-center gap-2 border-b px-2">
 						<SidebarTrigger />
+
 						<p className="truncate font-medium text-sm">{active}</p>
+
 						<Avatar
 							size="sm"
 							alt="Jane Doe"
@@ -62,6 +66,7 @@ export function SidebarDemo() {
 							className="ml-auto size-6 text-[10px]"
 						/>
 					</div>
+
 					<div className="grid flex-1 place-items-center p-6 text-center text-muted-foreground text-sm">
 						<p>
 							Press <Kbd>⌘B</Kbd> or the panel button to collapse the sidebar to an icon rail.

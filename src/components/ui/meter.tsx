@@ -64,11 +64,13 @@ export function Meter({
 			{(label || valueText) && (
 				<div className="flex items-baseline justify-between gap-3 text-sm">
 					{label && <span className="font-medium">{label}</span>}
+
 					{valueText && (
 						<span className="ml-auto text-muted-foreground text-xs tabular-nums">{valueText}</span>
 					)}
 				</div>
 			)}
+
 			{/* The real <meter> carries the semantics; the drawn bar below is decoration. */}
 			<meter
 				className="sr-only"
@@ -82,6 +84,7 @@ export function Meter({
 			>
 				{valueText ?? value}
 			</meter>
+
 			<div
 				aria-hidden="true"
 				className="flex h-2 w-full gap-px overflow-hidden rounded-full bg-foreground/10"
@@ -101,6 +104,7 @@ export function Meter({
 					<span style={{ width: pct(value) }} className={cn("h-full rounded-full", tone)} />
 				)}
 			</div>
+
 			{segments && (
 				<ul className="flex flex-wrap gap-x-4 gap-y-1 text-muted-foreground text-xs">
 					{segments.map((segment, i) => (
@@ -112,6 +116,7 @@ export function Meter({
 									segment.className ?? palette[i % palette.length],
 								)}
 							/>
+
 							{segment.label}
 						</li>
 					))}

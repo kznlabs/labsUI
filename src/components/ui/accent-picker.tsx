@@ -26,6 +26,7 @@ export function AccentPicker({ className }: { className?: string }) {
 	return (
 		<fieldset className={cn("flex items-center gap-1.5", className)}>
 			<legend className="sr-only">Accent color</legend>
+
 			{accents.map((accent) => (
 				<label
 					key={accent}
@@ -40,12 +41,15 @@ export function AccentPicker({ className }: { className?: string }) {
 						onChange={() => setAccent(accent)}
 						className="peer sr-only"
 					/>
+
 					<span className="sr-only">{accent}</span>
+
 					<span
 						aria-hidden="true"
 						style={{ backgroundColor: swatch[accent] }}
 						className="size-4 rounded-full ring-1 ring-foreground/10 ring-inset transition-transform duration-200 peer-hover:scale-110 peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50"
 					/>
+
 					{current === accent && (
 						<motion.span
 							aria-hidden="true"

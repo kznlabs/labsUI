@@ -35,6 +35,7 @@ export function ConfirmDemo() {
 			>
 				Delete project
 			</Button>
+
 			<Button
 				variant="outline"
 				onClick={async () => {
@@ -55,13 +56,16 @@ export function DialogDemo() {
 		<>
 			<Dialog {...profile.props}>
 				<DialogTrigger variant="outline">Edit profile</DialogTrigger>
+
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Edit profile</DialogTitle>
+
 						<DialogDescription>
 							Make changes to your profile. Click save when you're done.
 						</DialogDescription>
 					</DialogHeader>
+
 					<form
 						id="profile-form"
 						className="grid gap-4"
@@ -73,15 +77,20 @@ export function DialogDemo() {
 					>
 						<div className="grid gap-2">
 							<Label htmlFor="d-name">Name</Label>
+
 							<Input id="d-name" defaultValue="Jane Doe" />
 						</div>
+
 						<div className="grid gap-2">
 							<Label htmlFor="d-user">Username</Label>
+
 							<Input id="d-user" defaultValue="@jane" />
 						</div>
 					</form>
+
 					<DialogFooter>
 						<DialogClose>Cancel</DialogClose>
+
 						<Button type="submit" form="profile-form">
 							Save changes
 						</Button>
@@ -91,15 +100,19 @@ export function DialogDemo() {
 
 			<Dialog>
 				<DialogTrigger variant="destructive">Delete project</DialogTrigger>
+
 				<DialogContent alert className="max-w-md">
 					<DialogHeader>
 						<DialogTitle>Delete “Atlas”?</DialogTitle>
+
 						<DialogDescription>
 							This permanently removes the project and its deployments. This cannot be undone.
 						</DialogDescription>
 					</DialogHeader>
+
 					<DialogFooter>
 						<DialogClose>Cancel</DialogClose>
+
 						<DialogClose
 							variant="destructive"
 							onClick={() =>
@@ -130,18 +143,22 @@ export function ToastDemo() {
 				>
 					Default
 				</Button>
+
 				<Button variant="outline" onClick={() => toast.success("Changes saved")}>
 					Success
 				</Button>
+
 				<Button
 					variant="outline"
 					onClick={() => toast.error("Upload failed", { description: "File exceeds 10 MB." })}
 				>
 					Error
 				</Button>
+
 				<Button variant="outline" onClick={() => toast.info("New version available")}>
 					Info
 				</Button>
+
 				<Button
 					variant="outline"
 					onClick={() =>
@@ -153,6 +170,7 @@ export function ToastDemo() {
 				>
 					With action
 				</Button>
+
 				<Button
 					variant="outline"
 					onClick={() =>
@@ -165,6 +183,7 @@ export function ToastDemo() {
 				>
 					Promise
 				</Button>
+
 				<Button
 					onClick={() => {
 						for (let i = 0; i < 3; i++)
@@ -174,6 +193,7 @@ export function ToastDemo() {
 					Stack 3
 				</Button>
 			</div>
+
 			<p className="text-muted-foreground text-xs">
 				Hover the stack to expand · swipe sideways to dismiss
 			</p>

@@ -197,6 +197,7 @@ export function DialogContent({
 						transition={spring}
 						onClick={alert ? undefined : () => setOpen(false)}
 					/>
+
 					<motion.div
 						ref={ref}
 						role={alert ? "alertdialog" : "dialog"}
@@ -214,6 +215,7 @@ export function DialogContent({
 						)}
 					>
 						{children}
+
 						{showClose && (
 							<button
 								type="button"
@@ -221,6 +223,7 @@ export function DialogContent({
 								className="absolute top-4 right-4 cursor-pointer rounded-md p-1 text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
 							>
 								<X className="size-4" aria-hidden="true" />
+
 								<span className="sr-only">Close</span>
 							</button>
 						)}

@@ -33,6 +33,7 @@ export function Spinner({
 			{...props}
 		>
 			{label && <span className="sr-only">{label}</span>}
+
 			{spokes.map((i) => (
 				<span
 					key={i}

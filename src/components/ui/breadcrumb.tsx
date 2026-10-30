@@ -36,6 +36,7 @@ export function Breadcrumb({
 								{separator ?? <ChevronRight />}
 							</span>
 						)}
+
 						{i === items.length - 1 ? (
 							<span aria-current="page" className="text-foreground">
 								{item.label}

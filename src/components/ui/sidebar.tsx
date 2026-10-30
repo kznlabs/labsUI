@@ -150,6 +150,7 @@ export function Sidebar({
 	const body = (
 		<nav aria-label={label} className="flex min-h-0 flex-1 flex-col">
 			{header && <div className="border-b p-2">{header}</div>}
+
 			<div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden p-2">
 				{groups.map((group, i) =>
 					group.collapsible && group.label ? (
@@ -158,6 +159,7 @@ export function Sidebar({
 							<CollapsibleTrigger className={cn("px-2.5 pb-1 text-muted-foreground text-xs", fade)}>
 								{group.label}
 							</CollapsibleTrigger>
+
 							<CollapsibleContent>{list(group.items)}</CollapsibleContent>
 						</Collapsible>
 					) : (
@@ -173,11 +175,13 @@ export function Sidebar({
 									{group.label}
 								</p>
 							)}
+
 							{list(group.items)}
 						</div>
 					),
 				)}
 			</div>
+
 			{footer?.length ? <div className="border-t p-2">{list(footer)}</div> : null}
 		</nav>
 	);
@@ -187,6 +191,7 @@ export function Sidebar({
 			<Drawer open={openMobile} onOpenChange={setOpenMobile}>
 				<DrawerContent side="left" className={cn("bg-background pt-12 text-sm", className)}>
 					<DrawerTitle className="sr-only">{label}</DrawerTitle>
+
 					{body}
 				</DrawerContent>
 			</Drawer>
@@ -228,7 +233,9 @@ function Entry({
 	const body = (
 		<>
 			{item.icon}
+
 			<span className="min-w-0 flex-1 truncate">{item.label}</span>
+
 			{item.badge != null && (
 				<span className="ml-auto text-muted-foreground text-xs tabular-nums">{item.badge}</span>
 			)}

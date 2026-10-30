@@ -52,6 +52,7 @@ export function Avatar({ src, alt, fallback, status, size = "default", className
 				className="relative flex size-full select-none items-center justify-center overflow-hidden rounded-full bg-muted font-medium text-muted-foreground ring-1 ring-border"
 			>
 				<span aria-hidden="true">{fallback ?? initials(alt)}</span>
+
 				{showImg && (
 					// biome-ignore lint/performance/noImgElement: arbitrary remote avatars; no next/image loader config
 					<img
@@ -72,6 +73,7 @@ export function Avatar({ src, alt, fallback, status, size = "default", className
 					/>
 				)}
 			</span>
+
 			{status && (
 				<span
 					className={cn(

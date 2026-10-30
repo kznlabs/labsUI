@@ -305,8 +305,10 @@ export function NavigationMenu({
 							className="-z-10 absolute inset-y-0 left-0 rounded-lg bg-foreground/[0.06]"
 						/>
 					)}
+
 					{children}
 				</div>
+
 				<motion.div
 					ref={setViewport}
 					data-floating=""
@@ -424,6 +426,7 @@ export function NavigationMenuTrigger({
 			{...props}
 		>
 			{children}
+
 			<motion.span
 				aria-hidden="true"
 				animate={{ rotate: open ? 180 : 0 }}
@@ -469,6 +472,7 @@ export function NavigationMenuContent({
 	return (
 		<InPanel value>
 			{!open && <div hidden>{children}</div>}
+
 			{nav.viewport &&
 				createPortal(
 					<AnimatePresence custom={nav.dir} initial={false}>
@@ -644,8 +648,10 @@ export function NavigationMenuLink({
 							{icon}
 						</span>
 					)}
+
 					<span className="flex min-w-0 flex-col gap-0.5">
 						<span className="font-medium text-foreground">{title}</span>
+
 						{description && (
 							<span className="line-clamp-2 text-muted-foreground text-xs leading-snug">
 								{description}

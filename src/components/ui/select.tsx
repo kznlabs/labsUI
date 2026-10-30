@@ -185,10 +185,13 @@ export function Select(allProps: SelectProps) {
 					)}
 				>
 					{selected?.icon}
+
 					{selected?.label ?? placeholder}
 				</span>
+
 				<ChevronsUpDown className="text-muted-foreground" aria-hidden="true" />
 			</button>
+
 			<FormValue
 				name={name}
 				value={value}
@@ -197,6 +200,7 @@ export function Select(allProps: SelectProps) {
 				anchor={trigger}
 				onInvalid={() => setInvalid(true)}
 			/>
+
 			{mounted &&
 				createPortal(
 					<AnimatePresence>
@@ -237,6 +241,7 @@ export function Select(allProps: SelectProps) {
 										{groupIndex > 0 && (
 											<div aria-hidden="true" className="-mx-1 my-1 h-px bg-border" />
 										)}
+
 										{group.label && (
 											<div
 												aria-hidden="true"
@@ -245,6 +250,7 @@ export function Select(allProps: SelectProps) {
 												{group.label}
 											</div>
 										)}
+
 										{group.options.map((option) => (
 											// biome-ignore lint/a11y/useKeyWithClickEvents: keys handled on the listbox (aria-activedescendant)
 											<div
@@ -268,7 +274,9 @@ export function Select(allProps: SelectProps) {
 												)}
 											>
 												{option.icon}
+
 												{option.label}
+
 												{option.value === value && (
 													<Check className="!text-current absolute right-2" aria-hidden="true" />
 												)}

@@ -39,6 +39,7 @@ export function SegmentedTabs({ label, items, value, onChange, className }: Segm
 				transition={spring}
 				className="-z-10 absolute inset-y-1 left-0 rounded-md bg-raised shadow-sm ring-[0.5px] ring-raised-ring"
 			/>
+
 			{items.map((item) => (
 				<button
 					key={item}
@@ -57,6 +58,7 @@ export function SegmentedTabs({ label, items, value, onChange, className }: Segm
 					{item}
 				</button>
 			))}
+
 			<OverflowFocus />
 		</nav>
 	);

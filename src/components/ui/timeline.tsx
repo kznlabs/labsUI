@@ -52,6 +52,7 @@ export function TimelineItem({
 				aria-hidden="true"
 				className="absolute top-7 bottom-1 left-3 w-px -translate-x-1/2 bg-border group-last/item:hidden"
 			/>
+
 			<span
 				aria-hidden="true"
 				className={cn(
@@ -63,6 +64,7 @@ export function TimelineItem({
 			>
 				{icon}
 			</span>
+
 			<div className="grid min-w-0 gap-1 pt-0.5">
 				{time &&
 					(dateTime ? (
@@ -72,7 +74,9 @@ export function TimelineItem({
 					) : (
 						<span className="text-muted-foreground text-xs tabular-nums">{time}</span>
 					))}
+
 				<p className="font-medium text-sm leading-snug">{title}</p>
+
 				{children && (
 					<div className="text-muted-foreground text-sm leading-relaxed">{children}</div>
 				)}

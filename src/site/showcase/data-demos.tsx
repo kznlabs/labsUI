@@ -91,6 +91,7 @@ export function TableDemo() {
 	return (
 		<Table striped containerClassName="max-w-2xl">
 			<TableCaption>Guild members · {selected.length} selected</TableCaption>
+
 			<TableHeader>
 				<TableRow>
 					<TableHead>
@@ -101,16 +102,21 @@ export function TableDemo() {
 							onCheckedChange={(on) => setSelected(on ? members.map((member) => member.name) : [])}
 						/>
 					</TableHead>
+
 					<TableHead {...head("name")}>Member</TableHead>
+
 					<TableHead>Role</TableHead>
+
 					<TableHead {...head("messages")} className="text-right">
 						Messages
 					</TableHead>
+
 					<TableHead {...head("joined")} className="hidden sm:table-cell">
 						Joined
 					</TableHead>
 				</TableRow>
 			</TableHeader>
+
 			<TableBody>
 				{rows.map((row) => {
 					const on = selected.includes(row.name);
@@ -130,6 +136,7 @@ export function TableDemo() {
 									}
 								/>
 							</TableCell>
+
 							<TableCell>
 								<div className="flex items-center gap-2.5">
 									<Avatar
@@ -137,9 +144,11 @@ export function TableDemo() {
 										size="sm"
 										fallback={row.role === "Bot" ? <Bot /> : undefined}
 									/>
+
 									<span className="font-medium">{row.name}</span>
 								</div>
 							</TableCell>
+
 							<TableCell>
 								<Badge
 									variant={
@@ -149,9 +158,11 @@ export function TableDemo() {
 									{row.role}
 								</Badge>
 							</TableCell>
+
 							<TableCell className="text-right tabular-nums">
 								{row.messages.toLocaleString("en-US")}
 							</TableCell>
+
 							<TableCell className="hidden text-muted-foreground tabular-nums sm:table-cell">
 								{row.joined}
 							</TableCell>
@@ -159,10 +170,13 @@ export function TableDemo() {
 					);
 				})}
 			</TableBody>
+
 			<TableFooter>
 				<TableRow>
 					<TableCell colSpan={3}>Total</TableCell>
+
 					<TableCell className="text-right tabular-nums">{total.toLocaleString("en-US")}</TableCell>
+
 					<TableCell className="hidden sm:table-cell" />
 				</TableRow>
 			</TableFooter>
@@ -197,6 +211,7 @@ const guildColumns: DataTableColumn<GuildMember>[] = [
 					size="sm"
 					fallback={member.role === "Bot" ? <Bot /> : undefined}
 				/>
+
 				<span className="max-w-28 truncate font-medium sm:max-w-none">{member.name}</span>
 			</div>
 		),
@@ -275,7 +290,9 @@ export function DataTableDemo() {
 						<Copy />
 						Copy ID
 					</DropdownMenuItem>
+
 					<DropdownMenuSeparator />
+
 					<DropdownMenuItem variant="destructive" onSelect={() => kick([member.id])}>
 						<UserX />
 						Kick
@@ -312,15 +329,19 @@ export function ChartDemo() {
 			<div className="flex flex-wrap items-center gap-4">
 				<ToggleGroup size="sm" aria-label="Chart type" value={type} onValueChange={setType}>
 					<ToggleGroupItem value="line">Line</ToggleGroupItem>
+
 					<ToggleGroupItem value="area">Area</ToggleGroupItem>
+
 					<ToggleGroupItem value="bar">Bar</ToggleGroupItem>
 				</ToggleGroup>
+
 				{type === "bar" && (
 					<Field label="Stacked" orientation="horizontal">
 						<Switch checked={stacked} onCheckedChange={setStacked} />
 					</Field>
 				)}
 			</div>
+
 			<Chart
 				type={type as "line" | "area" | "bar"}
 				stacked={stacked}
@@ -341,14 +362,20 @@ export function SpinnerDemo() {
 		<div className="flex flex-col items-center gap-6">
 			<div className="flex items-end gap-6">
 				<Spinner size="sm" />
+
 				<Spinner />
+
 				<Spinner size="lg" />
+
 				<Spinner size="lg" className="text-primary-ink" />
 			</div>
+
 			<div className="flex items-center gap-2 text-muted-foreground text-sm">
 				<Spinner label="" />
+
 				<span role="status">Syncing 3 servers…</span>
 			</div>
+
 			<Button
 				variant="outline"
 				loading={saving}
@@ -394,6 +421,7 @@ export function InputOTPDemo() {
 						}}
 					/>
 				</Field>
+
 				{verified && (
 					<Button
 						size="sm"
@@ -407,6 +435,7 @@ export function InputOTPDemo() {
 					</Button>
 				)}
 			</div>
+
 			<Field label="Gift card" description="Letters and digits, uppercased as you type.">
 				<InputOTP charset="alphanumeric" length={8} groups={[4, 4]} />
 			</Field>
@@ -431,6 +460,7 @@ export function AspectRatioDemo() {
 					>
 						<Film className="size-5" aria-hidden="true" />
 					</AspectRatio>
+
 					<figcaption className="mt-2 text-center text-muted-foreground text-xs tabular-nums">
 						{clipThumb.label}
 					</figcaption>
@@ -452,6 +482,7 @@ export function TimelineDemo() {
 			>
 				Table, Input OTP, Timeline, Spinner and Aspect ratio.
 			</TimelineItem>
+
 			<TimelineItem
 				icon={<GitMerge />}
 				time="Oct 18, 2026"
@@ -460,6 +491,7 @@ export function TimelineDemo() {
 			>
 				Command palette keyword matching.
 			</TimelineItem>
+
 			<TimelineItem
 				icon={<ShieldAlert />}
 				variant="warning"
@@ -467,7 +499,9 @@ export function TimelineDemo() {
 				dateTime="2026-10-12"
 				title="Rate limit raised"
 			/>
+
 			<TimelineItem icon={<Tag />} variant="success" time="Sep 30, 2026" title="v0.2 tagged" />
+
 			<TimelineItem time="Sep 2, 2026" title="Project started" />
 		</Timeline>
 	);
@@ -510,13 +544,17 @@ export function CarouselDemo() {
 							<AspectRatio ratio={4 / 3} className={`grid place-items-center ${product.tint}`}>
 								<product.icon className="size-10" aria-hidden="true" />
 							</AspectRatio>
+
 							<div className="flex items-center justify-between gap-2 p-3">
 								<div className="min-w-0">
 									<h3 className="truncate font-medium text-sm">{product.name}</h3>
+
 									<p className="text-muted-foreground text-sm tabular-nums">${product.price}</p>
 								</div>
+
 								{product.tag && <Badge variant="secondary">{product.tag}</Badge>}
 							</div>
+
 							<div className="px-3 pb-3">
 								<Button
 									size="sm"
@@ -531,8 +569,11 @@ export function CarouselDemo() {
 					</CarouselItem>
 				))}
 			</CarouselContent>
+
 			<CarouselPrevious />
+
 			<CarouselNext />
+
 			<CarouselDots />
 		</Carousel>
 	);
@@ -591,12 +632,15 @@ export function TerminalDemo() {
 	return (
 		<div className="grid w-full max-w-2xl gap-6">
 			<Terminal title="zsh — clips" typing lines={install} />
+
 			<div className="grid gap-2">
 				<Terminal title="clipper.log" log lines={lines} copyText={false} bodyClassName="h-56" />
+
 				<div className="flex gap-2">
 					<Button size="sm" variant="outline" onClick={() => setRunning((current) => !current)}>
 						{running ? "Pause" : "Resume"}
 					</Button>
+
 					<Button size="sm" variant="ghost" onClick={() => setLines((lines) => lines.slice(-1))}>
 						Clear
 					</Button>
@@ -638,6 +682,7 @@ export function MarkerDemo() {
 				</Marker>
 				.
 			</p>
+
 			<div className="grid gap-3">
 				<div className="flex items-center gap-3">
 					<SearchInput
@@ -647,10 +692,12 @@ export function MarkerDemo() {
 						onValueChange={setQuery}
 						className="flex-1"
 					/>
+
 					<p aria-live="polite" className="shrink-0 text-muted-foreground text-sm tabular-nums">
 						{needle ? `${count} match${count === 1 ? "" : "es"}` : ""}
 					</p>
 				</div>
+
 				<ol className="grid gap-1.5 text-sm">
 					{transcript.map((line) => {
 						const hit = !needle || line.text.toLowerCase().includes(needle);
@@ -661,6 +708,7 @@ export function MarkerDemo() {
 								className={`flex gap-3 transition-opacity ${hit ? "" : "opacity-40"}`}
 							>
 								<time className="w-8 shrink-0 text-muted-foreground tabular-nums">{line.t}</time>
+
 								<span>
 									<Highlight text={line.text} query={query} />
 								</span>
@@ -704,10 +752,14 @@ export function CodeDemo() {
 				className="justify-self-start"
 			>
 				<ToggleGroupItem value="numbers">Numbers</ToggleGroupItem>
+
 				<ToggleGroupItem value="lines">Lines</ToggleGroupItem>
+
 				<ToggleGroupItem value="words">Words</ToggleGroupItem>
+
 				<ToggleGroupItem value="notes">Notes</ToggleGroupItem>
 			</ToggleGroup>
+
 			<Code
 				code={server}
 				language="ts"

@@ -135,6 +135,7 @@ export function AccordionTrigger({
 				)}
 			>
 				{children}
+
 				<motion.span
 					animate={{ rotate: open ? 180 : 0 }}
 					transition={spring}

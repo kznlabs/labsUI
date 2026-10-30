@@ -79,7 +79,9 @@ function ShowcaseSectionInner({
 					name
 				)}
 			</Title>
+
 			<p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
+
 			<Code
 				code={install}
 				tokens={installTokens}
@@ -110,24 +112,31 @@ function ShowcaseSectionInner({
 			{layout === "stacked" ? (
 				<>
 					<header>{heading}</header>
+
 					<Reveal className={surface}>{preview}</Reveal>
+
 					{code}
 				</>
 			) : (
 				<Tabs defaultValue="preview" className="gap-4">
 					<header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
 						{heading}
+
 						<TabsList aria-label={`${name} view`}>
 							<TabsTrigger value="preview">Preview</TabsTrigger>
+
 							<TabsTrigger value="code">Code</TabsTrigger>
 						</TabsList>
 					</header>
+
 					<TabsContent value="preview">
 						<Reveal className={surface}>{preview}</Reveal>
 					</TabsContent>
+
 					<TabsContent value="code">{code}</TabsContent>
 				</Tabs>
 			)}
+
 			{api}
 		</section>
 	);

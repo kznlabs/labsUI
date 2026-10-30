@@ -68,7 +68,9 @@ export function Alert({
 					{glyph}
 				</span>
 			)}
+
 			<div className="grid min-w-0 flex-1 gap-1">{children}</div>
+
 			{action && <div className="-my-1 shrink-0 self-center">{action}</div>}
 		</div>
 	);

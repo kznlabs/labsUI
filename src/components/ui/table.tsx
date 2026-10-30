@@ -30,6 +30,7 @@ export function Table({ striped = false, className, containerClassName, ...props
 				)}
 				{...props}
 			/>
+
 			<OverflowFocus />
 		</div>
 	);
@@ -92,6 +93,7 @@ export function TableHead({ sort, onSort, className, children, ...props }: Table
 					className="group -mx-1.5 inline-flex h-7 items-center gap-1 rounded-md px-1.5 outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 in-[.text-right]:flex-row-reverse"
 				>
 					{children}
+
 					<ArrowUp
 						aria-hidden="true"
 						className={cn(

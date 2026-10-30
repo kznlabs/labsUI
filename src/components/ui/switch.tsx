@@ -41,6 +41,7 @@ export function Switch({
 				className="peer absolute inset-x-0 -inset-y-1 z-10 cursor-pointer appearance-none rounded-full outline-none disabled:cursor-not-allowed"
 				{...props}
 			/>
+
 			<span
 				aria-hidden="true"
 				className={cn(

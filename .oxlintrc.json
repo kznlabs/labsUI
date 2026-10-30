@@ -1,7 +1,7 @@
 {
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
 	"categories": { "correctness": "off" },
-	"jsPlugins": ["@stylistic/eslint-plugin"],
+	"jsPlugins": ["@stylistic/eslint-plugin", "./scripts/oxlint-plugin.js"],
 	"ignorePatterns": [".next/**", "out/**", "public/**", "packages/cli/dist/**", "**/*.generated.*"],
 	"rules": {
 		"@stylistic/padding-line-between-statements": [
@@ -14,6 +14,7 @@
 			{ "blankLine": "always", "prev": "multiline-block-like", "next": "*" },
 			{ "blankLine": "always", "prev": "directive", "next": "*" }
 		],
+		"labsui/jsx-newline": "error",
 		"id-length": [
 			"error",
 			{ "min": 2, "properties": "never", "exceptions": ["i", "j", "x", "y", "a", "b", "T", "_"] }

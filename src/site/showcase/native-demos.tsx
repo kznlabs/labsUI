@@ -28,16 +28,21 @@ export function NativeSelectDemo() {
 					<NativeSelectOption value="" disabled>
 						Pick a timezone
 					</NativeSelectOption>
+
 					<NativeSelectGroup label="Europe">
 						<NativeSelectOption value="Europe/Warsaw">Warsaw (CET)</NativeSelectOption>
+
 						<NativeSelectOption value="Europe/London">London (GMT)</NativeSelectOption>
 					</NativeSelectGroup>
+
 					<NativeSelectGroup label="Americas">
 						<NativeSelectOption value="America/New_York">New York (ET)</NativeSelectOption>
+
 						<NativeSelectOption value="America/Los_Angeles">Los Angeles (PT)</NativeSelectOption>
 					</NativeSelectGroup>
 				</NativeSelect>
 			</Field>
+
 			<Field
 				label="Email"
 				required
@@ -45,6 +50,7 @@ export function NativeSelectDemo() {
 			>
 				<Input name="email" type="email" placeholder="jane@example.com" />
 			</Field>
+
 			<Button type="submit">Save</Button>
 		</form>
 	);
@@ -58,6 +64,7 @@ export function NumberInputDemo() {
 			<Field label="Quantity" description={`$${(qty * 29).toFixed(2)} · max 10 per order`}>
 				<NumberInput value={qty} onValueChange={setQty} min={1} max={10} name="qty" />
 			</Field>
+
 			<Field label="Cooldown (seconds)">
 				<NumberInput defaultValue={2.5} min={0} max={60} step={0.5} />
 			</Field>
@@ -87,7 +94,9 @@ export function MeterDemo() {
 					{ label: "Backups", value: 14 },
 				]}
 			/>
+
 			<Meter label="Bot server CPU" value={82} low={50} high={75} optimum={20} valueText="82%" />
+
 			<div className="grid gap-2">
 				<Field label="Password">
 					<Input
@@ -96,6 +105,7 @@ export function MeterDemo() {
 						onChange={(event) => setPassword(event.target.value)}
 					/>
 				</Field>
+
 				<Meter
 					value={strength}
 					max={4}
@@ -116,11 +126,15 @@ export function RatingDemo() {
 		<div className="grid justify-items-center gap-6">
 			<div className="grid justify-items-center gap-2">
 				<Rating value={stars} onValueChange={setStars} label="Rate this keyboard" name="stars" />
+
 				<p className="text-muted-foreground text-xs">You rated {stars} of 5</p>
 			</div>
+
 			<div className="flex items-center gap-2 text-sm">
 				<Rating readOnly value={4.6} size="sm" />
+
 				<span className="font-medium">4.6</span>
+
 				<span className="text-muted-foreground">· 1,284 reviews</span>
 			</div>
 		</div>
@@ -151,7 +165,9 @@ export function RelativeTimeDemo() {
 					<span className="text-muted-foreground" aria-hidden="true">
 						{entry.icon}
 					</span>
+
 					<span className="min-w-0 flex-1 truncate">{entry.text}</span>
+
 					<RelativeTime
 						date={now - entry.ago * 1000}
 						className="shrink-0 text-muted-foreground text-xs"

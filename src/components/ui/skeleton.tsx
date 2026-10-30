@@ -30,6 +30,7 @@ export function SkeletonGroup({
 	return (
 		<div role="status" aria-busy="true" className={className} {...props}>
 			<span className="sr-only">{label}</span>
+
 			{children}
 		</div>
 	);

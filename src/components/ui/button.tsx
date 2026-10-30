@@ -158,14 +158,19 @@ export function Button({
 			{/* Hidden copies of every label reserve the widest one, so swaps never resize the button. */}
 			<span className="inline-grid justify-items-center">
 				{children !== undefined && <SizerLabel>{children}</SizerLabel>}
+
 				{loadingLabel !== undefined && <SizerLabel>{loadingLabel}</SizerLabel>}
+
 				{confirmLabel !== undefined && <SizerLabel>{confirmLabel}</SizerLabel>}
+
 				{successLabel !== undefined && (
 					<SizerLabel>
 						<Check />
+
 						{successLabel}
 					</SizerLabel>
 				)}
+
 				<AnimatePresence mode="wait" initial={false}>
 					{phase === "success" && (
 						<motion.span
@@ -183,9 +188,11 @@ export function Button({
 							>
 								<Check aria-hidden="true" />
 							</motion.span>
+
 							{successLabel ?? "Done"}
 						</motion.span>
 					)}
+
 					{phase === "armed" && (
 						<motion.span
 							key="armed"
@@ -197,6 +204,7 @@ export function Button({
 							{confirmLabel}
 						</motion.span>
 					)}
+
 					{phase === "loading" && (
 						<motion.span
 							key="loading"
@@ -216,9 +224,11 @@ export function Button({
 									<Loader2 className="animate-spin" aria-hidden="true" />
 								</motion.span>
 							</AnimatePresence>
+
 							{loadingLabel ?? children}
 						</motion.span>
 					)}
+
 					{phase === "idle" && (
 						<motion.span
 							key="idle"

@@ -223,6 +223,7 @@ export function CommandGroup({
 					{heading}
 				</div>
 			)}
+
 			{children}
 		</div>
 	);
@@ -336,6 +337,7 @@ export function CommandDialog({
 				)}
 			>
 				<DialogTitle className="sr-only">{title}</DialogTitle>
+
 				<Command close={() => setOpen(false)} className="rounded-none border-0 bg-transparent">
 					{children}
 				</Command>

@@ -87,6 +87,7 @@ export function SiteHeader({
 	return (
 		<>
 			<span ref={sentinel} aria-hidden="true" className="block h-px" />
+
 			<header
 				ref={header}
 				className={cn(
@@ -103,6 +104,7 @@ export function SiteHeader({
 								isGroup(link) ? (
 									<NavigationMenuItem key={link.label}>
 										<NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
+
 										<NavigationMenuContent>
 											<ul
 												className={cn(
@@ -144,6 +146,7 @@ export function SiteHeader({
 
 					<div className="ml-auto flex items-center gap-2">
 						{actions}
+
 						<Button
 							variant="ghost"
 							size="icon"
@@ -163,6 +166,7 @@ export function SiteHeader({
 					<DrawerHeader>
 						<DrawerTitle>Menu</DrawerTitle>
 					</DrawerHeader>
+
 					<DrawerBody>
 						<nav aria-label={label} className="flex flex-col gap-5">
 							{nav.map((link) =>
@@ -171,6 +175,7 @@ export function SiteHeader({
 										<h2 className="px-2.5 font-medium text-muted-foreground text-xs">
 											{link.label}
 										</h2>
+
 										<ul className="flex flex-col">
 											{link.items.map((i) => (
 												<li key={i.href}>
@@ -232,6 +237,7 @@ function MobileLink({
 			className="flex h-10 items-center gap-3 rounded-lg px-2.5 font-medium text-sm outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-[current=page]:bg-foreground/[0.08] [&_svg]:size-4 [&_svg]:text-primary-ink"
 		>
 			{icon && <span aria-hidden="true">{icon}</span>}
+
 			{children}
 		</a>
 	);

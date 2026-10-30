@@ -10,7 +10,8 @@ it.
 
 - `bun dev` · `bun run build` · `bun run typecheck`
 - `bun run lint` (Biome, then Oxlint for what Biome lacks: blank lines
-  between statements, readable names; `.oxlintrc.json`) ·
+  between statements and between JSX siblings outside prose
+  (`scripts/oxlint-plugin.js`), readable names; `.oxlintrc.json`) ·
   `bun run format` (both autofix)
 - `bun run check-dead-code` (Knip) · `bun test` (`tests/`, pure helpers). lint +
   typecheck + knip + tests must pass (CI runs them). `typecheck` also

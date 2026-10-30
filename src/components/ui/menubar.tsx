@@ -146,6 +146,7 @@ export function Menubar({ className, children, ...props }: ComponentProps<"div">
 						className="-z-10 absolute inset-y-1 left-0 rounded-md bg-foreground/[0.08]"
 					/>
 				)}
+
 				{children}
 			</div>
 		</BarContext>

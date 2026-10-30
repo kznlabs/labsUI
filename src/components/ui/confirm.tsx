@@ -76,10 +76,13 @@ export function Confirmer() {
 			<DialogContent alert className="max-w-md">
 				<DialogHeader>
 					<DialogTitle>{title}</DialogTitle>
+
 					{description && <DialogDescription>{description}</DialogDescription>}
 				</DialogHeader>
+
 				<DialogFooter>
 					<DialogClose>{cancelLabel}</DialogClose>
+
 					<Button variant={destructive ? "destructive" : "default"} onClick={() => settle(true)}>
 						{options.confirmLabel ?? (destructive ? "Delete" : "Continue")}
 					</Button>

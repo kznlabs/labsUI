@@ -141,9 +141,11 @@ export function Tooltip({
 			{...touchHandlers}
 		>
 			{children}
+
 			<span id={id} hidden>
 				{content}
 			</span>
+
 			{mounted &&
 				createPortal(
 					<AnimatePresence>

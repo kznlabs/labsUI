@@ -46,6 +46,7 @@ export function Checkbox({
 				className="peer absolute -inset-1 z-10 cursor-pointer appearance-none rounded-[5px] outline-none disabled:cursor-not-allowed"
 				{...props}
 			/>
+
 			<span
 				aria-hidden="true"
 				className={cn(

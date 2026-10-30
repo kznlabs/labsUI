@@ -43,7 +43,9 @@ function Probe({ id, children }: { id: string; children: ReactNode }) {
 			className="grid gap-3 rounded-xl border bg-card p-4"
 		>
 			{children}
+
 			<button type="submit">Submit</button>
+
 			<output data-count={count}>{sent}</output>
 		</form>
 	);
@@ -53,62 +55,82 @@ export default function FormsProbe() {
 	return (
 		<main className="mx-auto grid max-w-xl gap-4 p-4">
 			<h1>Form probes</h1>
+
 			<Probe id="tags-required">
 				<TagInput name="tags" required aria-label="Tags" />
 			</Probe>
+
 			<Probe id="tags-validate">
 				<TagInput validate={(tag) => tag.length <= 5} aria-label="Short tags" />
 			</Probe>
+
 			<Probe id="button-loading">
 				<Input name="query" aria-label="Query" />
+
 				<Button type="submit" loading>
 					Send
 				</Button>
 			</Probe>
+
 			<Probe id="button-pending">
 				<Button type="submit" onClick={() => new Promise((done) => setTimeout(done, 1000))}>
 					Send
 				</Button>
 			</Probe>
+
 			<Probe id="combobox-multiple">
 				<Combobox name="many" multiple options={options} aria-label="Channels" />
 			</Probe>
+
 			<Probe id="tags-disabled">
 				<TagInput name="tags" defaultValue={["alpha"]} disabled aria-label="Tags" />
 			</Probe>
+
 			<Probe id="rating-required">
 				<Rating name="rating" required />
 			</Probe>
+
 			<Probe id="rating-disabled">
 				<Rating name="rating" defaultValue={3} disabled />
 			</Probe>
+
 			<Probe id="slider">
 				<Slider name="volume" defaultValue={[30]} labels={["Volume"]} />
+
 				<Slider name="price" defaultValue={[10, 90]} />
 			</Probe>
+
 			<Probe id="slider-disabled">
 				<Slider name="volume" defaultValue={[30]} labels={["Volume"]} disabled />
 			</Probe>
+
 			<Probe id="otp-required">
 				<InputOTP name="code" required aria-label="Code" />
 			</Probe>
+
 			<Probe id="otp-disabled">
 				<InputOTP name="code" defaultValue="123456" disabled aria-label="Code" />
 			</Probe>
+
 			<Probe id="file-required">
 				<FileDropzone name="file" required />
 			</Probe>
+
 			<Probe id="file-disabled">
 				<FileDropzone name="file" disabled />
 			</Probe>
+
 			<Probe id="radio-required">
 				<RadioGroup legend="Plan" name="plan" required>
 					<RadioGroupItem value="free">Free</RadioGroupItem>
+
 					<RadioGroupItem value="pro">Pro</RadioGroupItem>
 				</RadioGroup>
 			</Probe>
+
 			<Probe id="pickers-disabled">
 				<Select name="select" options={options} defaultValue="alpha" disabled aria-label="Select" />
+
 				<Combobox
 					name="combobox"
 					options={options}
@@ -116,6 +138,7 @@ export default function FormsProbe() {
 					disabled
 					aria-label="Combobox"
 				/>
+
 				<Combobox
 					name="many"
 					multiple
@@ -124,9 +147,12 @@ export default function FormsProbe() {
 					disabled
 					aria-label="Many"
 				/>
+
 				<DatePicker name="date" defaultValue={new Date(2026, 9, 21)} disabled aria-label="Date" />
 			</Probe>
+
 			<StepperProbe />
+
 			<Stepper
 				id="stepper-guard"
 				aria-label="stepper-guard"
@@ -141,9 +167,11 @@ export default function FormsProbe() {
 				>
 					<input name="guarded" aria-label="Guarded" />
 				</StepperStep>
+
 				<StepperStep value="done">
 					<input name="after" aria-label="After" />
 				</StepperStep>
+
 				<StepperFooter />
 			</Stepper>
 		</main>
@@ -169,10 +197,13 @@ function StepperProbe() {
 			<StepperStep value="account">
 				<input name="email" type="email" required aria-label="Email" />
 			</StepperStep>
+
 			<StepperStep value="plan">
 				<Select name="plan" options={options} required aria-label="Plan" />
 			</StepperStep>
+
 			<StepperFooter />
+
 			<output>{sent}</output>
 		</Stepper>
 	);

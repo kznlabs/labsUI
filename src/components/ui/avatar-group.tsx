@@ -59,6 +59,7 @@ export function AvatarGroup({ users, max = 4, size = "default", className }: Ava
 					<Avatar src={user.src} alt={user.alt} size={size} />
 				</motion.li>
 			))}
+
 			{overflow > 0 && (
 				<li
 					className={cn(

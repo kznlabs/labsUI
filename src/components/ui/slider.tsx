@@ -100,6 +100,7 @@ export function Slider(allProps: SliderProps) {
 					}}
 				/>
 			</div>
+
 			{values.map((value, i) => (
 				<motion.span
 					// biome-ignore lint/suspicious/noArrayIndexKey: thumbs are positional (min, max)
@@ -114,6 +115,7 @@ export function Slider(allProps: SliderProps) {
 					)}
 				/>
 			))}
+
 			{values.map((thumbValue, i) => (
 				<input
 					// biome-ignore lint/suspicious/noArrayIndexKey: thumbs are positional (min, max)

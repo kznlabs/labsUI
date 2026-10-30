@@ -124,12 +124,15 @@ export function Typewriter({
 	return (
 		<span className={cn("inline-flex items-baseline", className)}>
 			<span className="sr-only">{fullText}</span>
+
 			<span aria-hidden="true" data-typewriter-animated="">
 				{displayed}
 			</span>
+
 			<span aria-hidden="true" data-typewriter-fallback="" className="hidden">
 				{phrases[0]}
 			</span>
+
 			{cursor && (
 				<span
 					aria-hidden="true"

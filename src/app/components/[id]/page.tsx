@@ -57,6 +57,7 @@ export default async function ComponentPage({ params }: Props) {
 	return (
 		<SiteShell current={withBase(componentPath(id))}>
 			<ComponentStructuredData entry={entry} />
+
 			<div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
 				<aside className="hidden lg:block">
 					<div className="sticky top-24">
@@ -73,10 +74,12 @@ export default async function ComponentPage({ params }: Props) {
 								{index + 1} of {ordered.length}
 							</span>
 						</CollapsibleTrigger>
+
 						<CollapsibleContent className="pt-2">
 							<PageNav current={id} className="max-h-none overflow-visible pb-1" />
 						</CollapsibleContent>
 					</Collapsible>
+
 					<Breadcrumb
 						className="pt-2 lg:pt-6"
 						items={[
@@ -98,9 +101,11 @@ export default async function ComponentPage({ params }: Props) {
 									<ArrowLeft className="size-3.5" aria-hidden="true" />
 									Previous
 								</span>
+
 								<span className="truncate font-medium">{prev.name}</span>
 							</a>
 						)}
+
 						{next && (
 							<a
 								href={withBase(componentPath(next.id))}
@@ -110,6 +115,7 @@ export default async function ComponentPage({ params }: Props) {
 									Next
 									<ArrowRight className="size-3.5" aria-hidden="true" />
 								</span>
+
 								<span className="max-w-full truncate font-medium">{next.name}</span>
 							</a>
 						)}

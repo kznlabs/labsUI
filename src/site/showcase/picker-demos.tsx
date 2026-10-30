@@ -56,6 +56,7 @@ export function ComboboxDemo() {
 					emptyText="No channel with that name."
 				/>
 			</Field>
+
 			<Field label="Roles that can run /ban" description="Try “mod” or “owner”.">
 				<Combobox
 					multiple
@@ -65,6 +66,7 @@ export function ComboboxDemo() {
 					placeholder="Add roles…"
 				/>
 			</Field>
+
 			<Button type="submit" className="justify-self-start">
 				Save
 			</Button>
@@ -83,6 +85,7 @@ export function TagInputDemo() {
 			>
 				<TagInput value={tags} onValueChange={setTags} placeholder="Add a tag…" />
 			</Field>
+
 			<Field label="Allowed domains" description="Up to 3, must contain a dot.">
 				<TagInput
 					max={3}
@@ -121,8 +124,10 @@ export function ScrollAreaDemo() {
 					{log.map((entry, i) => (
 						<li key={entry}>
 							{i > 0 && <Separator />}
+
 							<div className="flex items-baseline justify-between gap-4 py-2.5 text-sm">
 								<span>{entry}</span>
+
 								<RelativeTime
 									date={new Date(base - i * 47 * 60_000)}
 									className="shrink-0 text-muted-foreground text-xs"
@@ -132,6 +137,7 @@ export function ScrollAreaDemo() {
 					))}
 				</ol>
 			</ScrollArea>
+
 			<ScrollArea orientation="horizontal" aria-label="Clips" className="rounded-xl border bg-card">
 				<ul className="flex w-max gap-3 p-4">
 					{Array.from({ length: 12 }, (_, i) => (
@@ -170,21 +176,27 @@ export function ResizableDemo() {
 									className="flex items-center gap-1.5 rounded-md px-2 py-1 text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-[current=page]:bg-accent aria-[current=page]:text-foreground [&_svg]:size-3.5 [&_svg]:shrink-0"
 								>
 									{item.icon}
+
 									<span className="truncate">{item.label}</span>
 								</a>
 							))}
 						</nav>
 					</ResizablePanel>
+
 					<ResizableHandle aria-label="Resize channels" withHandle />
+
 					<ResizablePanel>
 						<ResizablePanelGroup direction="vertical">
 							<ResizablePanel defaultSize={60} minSize={25}>
 								<div className="grid h-full place-content-center gap-1 p-4 text-center text-sm">
 									<p className="font-medium">#{channel}</p>
+
 									<p className="text-muted-foreground text-xs">No messages yet.</p>
 								</div>
 							</ResizablePanel>
+
 							<ResizableHandle aria-label="Resize log" />
+
 							<ResizablePanel minSize={15} collapsible>
 								<ScrollArea aria-label="Recent activity" className="h-full">
 									<ol className="px-4 py-2 font-mono text-muted-foreground text-xs">
@@ -200,6 +212,7 @@ export function ResizableDemo() {
 					</ResizablePanel>
 				</ResizablePanelGroup>
 			</div>
+
 			<p className="text-muted-foreground text-xs">
 				Drag a divider, or focus it and use the arrow keys. Enter or double-click collapses.
 			</p>
@@ -220,6 +233,7 @@ export function CalendarDemo() {
 	return (
 		<div className="flex flex-wrap items-start justify-center gap-8">
 			<Calendar value={date} onValueChange={setDate} />
+
 			<Calendar
 				mode="range"
 				value={trip}
@@ -259,6 +273,7 @@ export function DatePickerDemo() {
 			<Field label="Delivery date" description="Weekdays from today." required>
 				<DatePicker name="delivery" min={today} isDisabled={weekend} />
 			</Field>
+
 			<Field label="Report period">
 				<DatePicker
 					mode="range"
@@ -271,6 +286,7 @@ export function DatePickerDemo() {
 					]}
 				/>
 			</Field>
+
 			<Button type="submit" className="justify-self-start">
 				Submit
 			</Button>

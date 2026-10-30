@@ -52,6 +52,7 @@ function Control({
 	const content = (
 		<>
 			{active && <PaginationActivePill />}
+
 			{children}
 		</>
 	);
@@ -117,9 +118,11 @@ export function Pagination({
 							className="gap-1 px-2.5"
 						>
 							<ChevronLeft aria-hidden="true" />
+
 							<span className="hidden sm:block">{labels?.previous ?? "Previous"}</span>
 						</Control>
 					</li>
+
 					{pageRange(current, total, siblings).map((page, i) => (
 						// biome-ignore lint/suspicious/noArrayIndexKey: slots stay mounted so numbers swipe (see pageRange)
 						<li key={i}>
@@ -137,6 +140,7 @@ export function Pagination({
 							)}
 						</li>
 					))}
+
 					<li>
 						<Control
 							{...nav}
@@ -146,6 +150,7 @@ export function Pagination({
 							className="gap-1 px-2.5"
 						>
 							<span className="hidden sm:block">{labels?.next ?? "Next"}</span>
+
 							<ChevronRight aria-hidden="true" />
 						</Control>
 					</li>

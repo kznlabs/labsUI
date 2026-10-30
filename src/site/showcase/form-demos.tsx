@@ -31,8 +31,10 @@ export function CheckboxDemo() {
 					indeterminate={on.length > 0 && !all}
 					onCheckedChange={() => setOn(all ? [] : perms)}
 				/>
+
 				<Label htmlFor="perm-all">Moderator permissions</Label>
 			</div>
+
 			{perms.map((perm) => (
 				<div key={perm} className="flex items-center gap-2.5 pl-6">
 					<Checkbox
@@ -42,13 +44,16 @@ export function CheckboxDemo() {
 							setOn(checked ? [...on, perm] : on.filter((x) => x !== perm))
 						}
 					/>
+
 					<Label htmlFor={`perm-${perm}`} className="font-normal">
 						{perm}
 					</Label>
 				</div>
 			))}
+
 			<div className="flex items-center gap-2.5 pt-1">
 				<Checkbox id="perm-owner" checked disabled />
+
 				<Label htmlFor="perm-owner">Owner (always on)</Label>
 			</div>
 		</div>
@@ -62,13 +67,16 @@ export function RadioGroupDemo() {
 				<RadioGroupItem value="free" description="1 server, 50 clips a month.">
 					Free
 				</RadioGroupItem>
+
 				<RadioGroupItem value="pro" description="10 servers, unlimited clips, analytics.">
 					Pro · $9/mo
 				</RadioGroupItem>
+
 				<RadioGroupItem value="team" description="Contact sales." disabled>
 					Team
 				</RadioGroupItem>
 			</RadioGroup>
+
 			<RadioGroup legend="Playback speed" defaultValue="1" orientation="horizontal">
 				{["0.5", "1", "1.5", "2"].map((option) => (
 					<RadioGroupItem key={option} value={option}>
@@ -105,6 +113,7 @@ export function FieldDemo() {
 			<Field label="Email" required error={errors.email}>
 				<Input name="email" type="email" placeholder="jane@example.com" />
 			</Field>
+
 			<Field
 				label="Username"
 				required
@@ -115,9 +124,11 @@ export function FieldDemo() {
 					<InputGroupAddon>
 						<AtSign aria-hidden="true" />
 					</InputGroupAddon>
+
 					<Input name="username" placeholder="jane" />
 				</InputGroup>
 			</Field>
+
 			<Field label="Role" required error={errors.role}>
 				<Select
 					name="role"
@@ -128,12 +139,15 @@ export function FieldDemo() {
 					]}
 				/>
 			</Field>
+
 			<Field orientation="horizontal" label="Email me product updates">
 				<Switch name="updates" defaultChecked />
 			</Field>
+
 			<Field orientation="horizontal" label="I accept the terms" error={errors.terms}>
 				<Checkbox name="terms" />
 			</Field>
+
 			<Button type="submit">Create account</Button>
 		</form>
 	);
@@ -146,28 +160,39 @@ export function InputGroupDemo() {
 				<InputGroupAddon>
 					<Search aria-hidden="true" />
 				</InputGroupAddon>
+
 				<Input aria-label="Search clips" placeholder="Search clips…" />
+
 				<InputGroupAddon align="end">
 					<Kbd>⌘K</Kbd>
 				</InputGroupAddon>
 			</InputGroup>
+
 			<InputGroup>
 				<InputGroupAddon>https://</InputGroupAddon>
+
 				<Input aria-label="Site address" placeholder="labsui" className="px-0" />
+
 				<InputGroupAddon align="end">.dev</InputGroupAddon>
 			</InputGroup>
+
 			<InputGroup>
 				<InputGroupAddon>
 					<DollarSign aria-hidden="true" />
 				</InputGroupAddon>
+
 				<Input aria-label="Price" inputMode="decimal" placeholder="0.00" className="pl-1.5" />
+
 				<InputGroupAddon align="end">USD</InputGroupAddon>
 			</InputGroup>
+
 			<InputGroup>
 				<InputGroupAddon>
 					<Link2 aria-hidden="true" />
 				</InputGroupAddon>
+
 				<Input aria-label="Invite link" readOnly defaultValue="labsui.dev/invite/x7Kq2" />
+
 				<InputGroupAddon align="end">
 					<Button
 						variant="ghost"
@@ -205,6 +230,7 @@ export function StepperDemo() {
 			}}
 		>
 			<StepperList />
+
 			<StepperStep
 				value="server"
 				// Runs after the native checks pass, a promise keeps Continue spinning.
@@ -234,28 +260,35 @@ export function StepperDemo() {
 					/>
 				</Field>
 			</StepperStep>
+
 			<StepperStep value="bot">
 				<Field label="Display name" required>
 					<Input name="botName" defaultValue="Clipper" maxLength={32} />
 				</Field>
+
 				<Field label="Command prefix" description="One to three characters.">
 					<Input name="prefix" defaultValue="!" required minLength={1} maxLength={3} />
 				</Field>
 			</StepperStep>
+
 			<StepperStep value="access">
 				<div className="grid gap-3">
 					{["Read messages", "Manage clips", "Kick members"].map((permission, i) => (
 						<div key={permission} className="flex items-center gap-2">
 							<Checkbox id={`perm-${i}`} name="perm" value={permission} defaultChecked={i < 2} />
+
 							<Label htmlFor={`perm-${i}`}>{permission}</Label>
 						</div>
 					))}
 				</div>
+
 				<RadioGroup legend="Plan" name="plan" defaultValue="Free" orientation="horizontal">
 					<RadioGroupItem value="Free">Free</RadioGroupItem>
+
 					<RadioGroupItem value="Pro">Pro</RadioGroupItem>
 				</RadioGroup>
 			</StepperStep>
+
 			<StepperFooter submitLabel="Create bot" />
 		</Stepper>
 	);
@@ -357,6 +390,7 @@ export function AttachmentDemo() {
 					})
 				}
 			/>
+
 			<AttachmentList aria-label="Uploads">
 				{files.map((file) => (
 					<Attachment

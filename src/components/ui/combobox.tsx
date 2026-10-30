@@ -224,11 +224,13 @@ export function Combobox(allProps: ComboboxProps) {
 						))}
 					</AnimatePresence>
 				)}
+
 				{!multiple && !open && selected[0]?.icon && (
 					<span className="mr-2 flex shrink-0 text-muted-foreground [&_svg]:size-4">
 						{selected[0].icon}
 					</span>
 				)}
+
 				<input
 					ref={input}
 					id={id}
@@ -255,15 +257,18 @@ export function Combobox(allProps: ComboboxProps) {
 						multiple && "px-1",
 					)}
 				/>
+
 				<ChevronsUpDown
 					className="ml-1 size-4 shrink-0 self-center text-muted-foreground"
 					aria-hidden="true"
 				/>
 			</div>
+
 			{name &&
 				(multiple ? values : values.slice(0, 1)).map((picked) => (
 					<input key={picked} type="hidden" name={name} value={picked} disabled={disabled} />
 				))}
+
 			<FormValue
 				value={values.join(",")}
 				required={required}
@@ -271,6 +276,7 @@ export function Combobox(allProps: ComboboxProps) {
 				anchor={input}
 				onInvalid={() => setInvalid(true)}
 			/>
+
 			{mounted &&
 				createPortal(
 					<AnimatePresence>
@@ -326,7 +332,9 @@ export function Combobox(allProps: ComboboxProps) {
 											{values.includes(option.value) && (
 												<Check className="!text-current absolute left-2" aria-hidden="true" />
 											)}
+
 											{option.icon}
+
 											<span className="truncate">{option.label}</span>
 										</div>
 									))

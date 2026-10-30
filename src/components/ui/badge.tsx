@@ -46,9 +46,11 @@ export function Badge({
 					{pulse && (
 						<span className="absolute inset-0 animate-ping rounded-full bg-current opacity-60 [animation-duration:1.6s] motion-reduce:hidden" />
 					)}
+
 					<span className="relative size-1.5 rounded-full bg-current" />
 				</span>
 			)}
+
 			{children}
 		</span>
 	);

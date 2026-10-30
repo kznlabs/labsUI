@@ -17,7 +17,9 @@ export function PageNav({ current, className }: { current: string; className?: s
 			{nav.map((group, groupIndex) => (
 				<Fragment key={group.label}>
 					{groupIndex > 0 && <Separator className="my-3" />}
+
 					<p className="mb-1 px-2 font-medium text-muted-foreground text-xs">{group.label}</p>
+
 					<ul className="flex flex-col gap-0.5">
 						{group.items.map((item) => (
 							<li key={item.id}>

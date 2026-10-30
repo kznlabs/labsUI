@@ -65,6 +65,7 @@ export function RadioGroup({
 		>
 			<fieldset className={cn("min-w-0", className)} {...props}>
 				{legend && <legend className="mb-3 font-medium text-sm leading-none">{legend}</legend>}
+
 				<div
 					className={cn(
 						"flex gap-3",
@@ -120,6 +121,7 @@ export function RadioGroupItem({
 					onChange={() => ctx.setValue(value)}
 					className="peer absolute inset-0 z-10 cursor-pointer appearance-none rounded-full outline-none disabled:cursor-not-allowed"
 				/>
+
 				<span
 					aria-hidden="true"
 					className={cn(
@@ -135,6 +137,7 @@ export function RadioGroupItem({
 					/>
 				</span>
 			</span>
+
 			<span className="grid gap-1">
 				<label
 					htmlFor={id}
@@ -145,6 +148,7 @@ export function RadioGroupItem({
 				>
 					{children}
 				</label>
+
 				{description && (
 					<span id={`${id}-description`} className="text-muted-foreground text-xs">
 						{description}

@@ -49,10 +49,12 @@ export function StatTile({
 		<Card className={cn("gap-4 pb-4", className)}>
 			<CardHeader>
 				<CardDescription>{label}</CardDescription>
+
 				<div className="flex flex-wrap items-center gap-2">
 					<CardTitle as="p" className="font-semibold text-3xl tabular-nums">
 						{value}
 					</CardTitle>
+
 					{delta !== undefined && delta !== 0 && (
 						<Badge variant={good ? "success" : "destructive"} shape="pill">
 							<Icon aria-hidden="true" />
@@ -61,12 +63,14 @@ export function StatTile({
 						</Badge>
 					)}
 				</div>
+
 				{period && (
 					<p aria-hidden="true" className="text-muted-foreground text-xs">
 						{period}
 					</p>
 				)}
 			</CardHeader>
+
 			{data && data.length > 1 && (
 				<Chart
 					type="area"

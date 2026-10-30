@@ -41,6 +41,7 @@ export function StatsStrip({
 					<Card className="h-full px-5 py-4">
 						<dl className="flex flex-col gap-1">
 							<dt className="text-muted-foreground text-sm">{stat.label}</dt>
+
 							<dd className="font-semibold text-3xl tabular-nums tracking-tight">
 								<CountTo
 									to={stat.value}
@@ -49,6 +50,7 @@ export function StatsStrip({
 									decimals={stat.decimals}
 								/>
 							</dd>
+
 							{stat.hint && <dd className="text-muted-foreground text-xs">{stat.hint}</dd>}
 						</dl>
 					</Card>

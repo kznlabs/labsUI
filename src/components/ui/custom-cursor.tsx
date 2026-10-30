@@ -96,6 +96,7 @@ export function CustomCursor() {
 						}}
 						transition={spring}
 					/>
+
 					<motion.div
 						className="absolute top-0 left-0 size-1.5 rounded-full bg-foreground"
 						style={{ x, y, translateX: "-50%", translateY: "-50%" }}

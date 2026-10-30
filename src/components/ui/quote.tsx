@@ -63,6 +63,7 @@ export function Quote({
 			className={cn("flex flex-col", surface[variant], className)}
 		>
 			{large && <QuoteIcon aria-hidden="true" className="size-8 text-muted-foreground/60" />}
+
 			<blockquote
 				lang={lang}
 				className={cn(
@@ -103,11 +104,14 @@ export function Quote({
 					)}
 				</div>
 			</blockquote>
+
 			{(author || avatar) && (
 				<figcaption className="flex items-center gap-3">
 					{avatar}
+
 					<span className="grid text-left">
 						{author && <span className="font-medium text-foreground text-sm">{author}</span>}
+
 						{subtitle && <span className="text-muted-foreground text-xs">{subtitle}</span>}
 					</span>
 				</figcaption>

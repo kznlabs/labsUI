@@ -73,6 +73,7 @@ export function NumberInput({
 					<Minus aria-hidden="true" />
 				</button>
 			</InputGroupAddon>
+
 			<Input
 				type="number"
 				inputMode={Number.isInteger(step) ? "numeric" : "decimal"}
@@ -96,6 +97,7 @@ export function NumberInput({
 				className="px-0 text-center tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 				{...props}
 			/>
+
 			<InputGroupAddon align="end" className="pr-1">
 				<button
 					type="button"

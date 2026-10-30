@@ -58,12 +58,14 @@ export function WindowDemo() {
 							<div className="mb-4 flex items-center gap-2">
 								<div className="relative flex-1">
 									<Search className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 size-4 text-muted-foreground" />
+
 									<Input
 										placeholder={`Search ${tab.toLowerCase()}…`}
 										aria-label="Search"
 										className="pl-9"
 									/>
 								</div>
+
 								<Button
 									variant="outline"
 									onClick={() => toast("Demo mode: filters aren't wired up")}
@@ -71,6 +73,7 @@ export function WindowDemo() {
 									Filter
 								</Button>
 							</div>
+
 							<ul className="divide-y rounded-lg border">
 								{rows.map((row) => (
 									<li
@@ -78,6 +81,7 @@ export function WindowDemo() {
 										className="flex items-center justify-between gap-3 px-4 py-3 text-sm"
 									>
 										<span className="truncate font-mono text-xs">{row.name}</span>
+
 										<span className="flex shrink-0 items-center gap-3">
 											<Badge
 												shape="pill"
@@ -92,6 +96,7 @@ export function WindowDemo() {
 											>
 												{row.status}
 											</Badge>
+
 											<span className="hidden text-muted-foreground text-xs sm:inline">
 												{row.time}
 											</span>
@@ -115,6 +120,7 @@ export function WindowDemo() {
 					</motion.div>
 				)}
 			</AnimatePresence>
+
 			<p className="text-muted-foreground text-xs">
 				The window controls are buttons: try close, minimize, zoom.
 			</p>

@@ -290,13 +290,16 @@ function ToastItem({ toast: data, index, y, expanded, frontHeight, total, onHeig
 				className="flex items-start gap-3 p-4"
 			>
 				{icons[data.variant] && <span className="mt-0.5">{icons[data.variant]}</span>}
+
 				<div
 					className="flex min-w-0 flex-1 flex-col gap-0.5"
 					role={data.variant === "error" ? "alert" : undefined}
 				>
 					<p className="font-medium text-sm">{data.title}</p>
+
 					{data.description && <p className="text-muted-foreground text-sm">{data.description}</p>}
 				</div>
+
 				{data.action && (
 					<button
 						type="button"
@@ -309,12 +312,14 @@ function ToastItem({ toast: data, index, y, expanded, frontHeight, total, onHeig
 						{data.action.label}
 					</button>
 				)}
+
 				<button
 					type="button"
 					onClick={() => dismiss(data.id)}
 					className="-mt-1 -mr-1 shrink-0 cursor-pointer rounded-md p-1 text-muted-foreground opacity-0 outline-none transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50 group-hover:opacity-100"
 				>
 					<X className="size-3.5" aria-hidden="true" />
+
 					<span className="sr-only">Dismiss</span>
 				</button>
 			</motion.div>

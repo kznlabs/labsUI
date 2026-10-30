@@ -19,6 +19,7 @@ function ChipRow({ label, children }: { label: string; children: ReactNode }) {
 			<ul className="flex w-max items-center gap-2 sm:w-auto sm:flex-wrap" aria-label={label}>
 				{children}
 			</ul>
+
 			<OverflowFocus />
 		</div>
 	);
@@ -32,11 +33,14 @@ export default function Home() {
 			<main className="mx-auto flex w-full min-w-0 max-w-6xl flex-col px-4 pt-6 pb-10 sm:px-6 sm:pt-10">
 				<header className="flex flex-col gap-4 pb-10 sm:pt-2 sm:pb-12 lg:pt-6">
 					<h1 className="font-semibold text-4xl tracking-tight sm:text-6xl">{site.name}</h1>
+
 					<p className="max-w-2xl text-lg text-muted-foreground leading-relaxed">
 						{site.description}
 					</p>
+
 					<div className="flex items-center gap-2 font-medium text-muted-foreground text-sm">
 						<span>Featuring</span>
+
 						<span className="font-semibold text-foreground">
 							<TextSwap
 								items={[
@@ -51,6 +55,7 @@ export default function Home() {
 							/>
 						</span>
 					</div>
+
 					<div className="flex flex-wrap items-center gap-2">
 						<Code
 							code={guide.init}
@@ -58,6 +63,7 @@ export default function Home() {
 							language="bash"
 							variant="inline"
 						/>
+
 						<a
 							href="#getting-started"
 							className="rounded-md text-muted-foreground text-sm underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -65,6 +71,7 @@ export default function Home() {
 							read the 5-step setup
 						</a>
 					</div>
+
 					<ChipRow label="Tech stack">
 						{["Next.js 16", "React 19", "Tailwind CSS 4", "motion 14", "lucide-react", "Bun"].map(
 							(tool) => (
@@ -76,15 +83,18 @@ export default function Home() {
 							),
 						)}
 					</ChipRow>
+
 					<ChipRow label="Automated checks">
 						{["WCAG 2.2 AA · 0 axe violations", "Chromium", "Firefox", "WebKit"].map((check) => (
 							<li key={check}>
 								<Badge variant="success" shape="pill">
 									<Check aria-hidden="true" />
+
 									{check}
 								</Badge>
 							</li>
 						))}
+
 						<li>
 							<a
 								href="https://github.com/kznlabs/labsUI#accessibility-and-browsers"
@@ -104,7 +114,9 @@ export default function Home() {
 				</header>
 
 				<Showcase />
+
 				<GettingStarted />
+
 				<ComponentIndex />
 			</main>
 		</SiteShell>

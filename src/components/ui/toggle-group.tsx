@@ -122,6 +122,7 @@ export function ToggleGroup(props: ToggleGroupProps) {
 						className="-z-10 absolute inset-y-0.5 left-0 rounded-md bg-raised shadow-sm ring-[0.5px] ring-raised-ring"
 					/>
 				)}
+
 				{children}
 			</div>
 		</GroupContext>

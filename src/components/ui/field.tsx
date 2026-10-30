@@ -84,6 +84,7 @@ export function Field({
 	const labelEl = label && (
 		<Label htmlFor={id} className={cn(disabled && "cursor-not-allowed opacity-50")}>
 			{label}
+
 			{required && (
 				<span aria-hidden="true" className="text-destructive-ink">
 					*
@@ -106,14 +107,17 @@ export function Field({
 				{horizontal ? (
 					<div className="flex items-center gap-2.5">
 						{children}
+
 						{labelEl}
 					</div>
 				) : (
 					<>
 						{labelEl}
+
 						{children}
 					</>
 				)}
+
 				{description && (
 					<p
 						id={descId}
@@ -122,6 +126,7 @@ export function Field({
 						{description}
 					</p>
 				)}
+
 				{/* Persistent live region, so a new error is announced. */}
 				{/* -mt-2 cancels the grid gap while empty; the error brings its own pt-2. */}
 				<div aria-live="polite" className={cn("-mt-2", horizontal && "pl-6.5")}>

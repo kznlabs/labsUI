@@ -200,7 +200,9 @@ export function ScrollArea({
 			>
 				{children}
 			</div>
+
 			{orientation !== "horizontal" && <Thumb axis="y" viewport={viewport} />}
+
 			{orientation !== "vertical" && <Thumb axis="x" viewport={viewport} />}
 		</div>
 	);

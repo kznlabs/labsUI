@@ -47,17 +47,22 @@ export function SiteCommand() {
 			>
 				<span className="inline-flex items-center gap-2">
 					<Search aria-hidden="true" />
+
 					<span className="max-sm:sr-only md:max-lg:sr-only">Search…</span>
 				</span>
+
 				<KbdGroup
 					keys={mac ? ["⌘", "K"] : ["Ctrl", "K"]}
 					className="hidden sm:inline-flex md:max-lg:hidden"
 				/>
 			</Button>
+
 			<CommandDialog open={open} onOpenChange={setOpen}>
 				<CommandInput placeholder="Search components…" />
+
 				<CommandList>
 					<CommandEmpty>No components found.</CommandEmpty>
+
 					{groups.map((heading) => (
 						<CommandGroup key={heading} heading={heading}>
 							{registry
@@ -70,12 +75,15 @@ export function SiteCommand() {
 										onSelect={() => location.assign(withBase(componentPath(command.id)))}
 									>
 										<Hash aria-hidden="true" />
+
 										{command.name}
 									</CommandItem>
 								))}
 						</CommandGroup>
 					))}
+
 					<CommandSeparator />
+
 					<CommandGroup heading="Preferences">
 						<CommandItem
 							value="Toggle theme"
@@ -99,34 +107,42 @@ export function CommandDemo() {
 		<div className="grid w-full max-w-md gap-3">
 			<Command className="shadow-md">
 				<CommandInput />
+
 				<CommandList>
 					<CommandEmpty />
+
 					<CommandGroup heading="Suggestions">
 						<CommandItem onSelect={ran("Opened calendar")}>
 							<Calendar aria-hidden="true" />
 							Calendar
 						</CommandItem>
+
 						<CommandItem keywords={["emoji", "smiley"]} onSelect={ran("Opened emoji picker")}>
 							<Smile aria-hidden="true" />
 							Search emoji
 						</CommandItem>
+
 						<CommandItem disabled>
 							<Calculator aria-hidden="true" />
 							Calculator
 						</CommandItem>
 					</CommandGroup>
+
 					<CommandSeparator />
+
 					<CommandGroup heading="Settings">
 						<CommandItem onSelect={ran("Opened profile")}>
 							<User aria-hidden="true" />
 							Profile
 							<KbdGroup keys={["⌘", "P"]} className="ml-auto" />
 						</CommandItem>
+
 						<CommandItem keywords={["card", "invoice"]} onSelect={ran("Opened billing")}>
 							<CreditCard aria-hidden="true" />
 							Billing
 							<KbdGroup keys={["⌘", "B"]} className="ml-auto" />
 						</CommandItem>
+
 						<CommandItem keywords={["preferences"]} onSelect={ran("Opened settings")}>
 							<Settings aria-hidden="true" />
 							Settings
@@ -135,6 +151,7 @@ export function CommandDemo() {
 					</CommandGroup>
 				</CommandList>
 			</Command>
+
 			<p className="text-center text-muted-foreground text-xs">
 				↑ ↓ to move · Enter to run · try the site-wide palette with ⌘K / Ctrl K
 			</p>

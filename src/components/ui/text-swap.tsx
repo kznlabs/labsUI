@@ -64,11 +64,13 @@ export function TextSwap({
 			aria-live={isControlled ? "polite" : undefined}
 		>
 			<span className="sr-only">{currentItem}</span>
+
 			{list.map((item) => (
 				<span key={item} aria-hidden="true" className="invisible [grid-area:1/1]">
 					{item}
 				</span>
 			))}
+
 			<AnimatePresence mode="popLayout" initial={false}>
 				<motion.span
 					key={`${activeIndex}-${currentItem}`}

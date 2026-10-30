@@ -87,14 +87,17 @@ export function AppWindow({
 						);
 					})}
 				</div>
+
 				{header ??
 					(title && (
 						<p className="pointer-events-none absolute inset-x-24 truncate text-center font-medium text-muted-foreground text-xs">
 							{title}
 						</p>
 					))}
+
 				{actions && <div className="ml-auto flex items-center gap-1.5">{actions}</div>}
 			</div>
+
 			<div className={cn("flex-1", bodyClassName)}>{children}</div>
 		</div>
 	);

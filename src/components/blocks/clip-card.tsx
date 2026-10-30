@@ -44,10 +44,13 @@ export function ClipCard({
 				className="grid place-items-center overflow-hidden rounded-lg bg-foreground/[0.06] text-muted-foreground"
 			>
 				{thumbnail ?? <Film className="size-5" aria-hidden="true" />}
+
 				<Badge variant="secondary" className="absolute right-1.5 bottom-2 tabular-nums">
 					<span className="sr-only">Duration </span>
+
 					{duration}
 				</Badge>
+
 				{watched !== undefined && watched > 0 && (
 					<Progress
 						value={watched}
@@ -57,8 +60,10 @@ export function ClipCard({
 					/>
 				)}
 			</AspectRatio>
+
 			<div className="grid gap-0.5 px-0.5 text-left">
 				<p className="truncate font-medium text-sm">{title}</p>
+
 				{meta && <p className="truncate text-muted-foreground text-xs">{meta}</p>}
 			</div>
 		</>
@@ -78,6 +83,7 @@ export function ClipCard({
 			>
 				{body}
 			</ContextMenuTrigger>
+
 			<ContextMenuContent>{actions}</ContextMenuContent>
 		</ContextMenu>
 	);

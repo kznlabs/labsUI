@@ -71,17 +71,20 @@ export function ProductCard({
 								<CarouselItem key={i}>{frame(slide)}</CarouselItem>
 							))}
 						</CarouselContent>
+
 						<CarouselDots className="absolute inset-x-0 bottom-2 mt-0" />
 					</Carousel>
 				) : (
 					frame(media[0])
 				)}
+
 				{badge && (
 					<Badge shape="pill" className="absolute top-2 left-2">
 						{badge}
 					</Badge>
 				)}
 			</div>
+
 			<div className="flex flex-1 flex-col gap-3 p-3">
 				<div className="flex items-baseline justify-between gap-2">
 					<h3 className="min-w-0 truncate font-medium text-sm">
@@ -93,16 +96,20 @@ export function ProductCard({
 							name
 						)}
 					</h3>
+
 					<p className="shrink-0 text-sm tabular-nums">
 						{compareAt !== undefined && compareAt > price && (
 							<>
 								<del className="mr-1.5 text-muted-foreground">{money.format(compareAt)}</del>
+
 								<span className="sr-only">now </span>
 							</>
 						)}
+
 						{money.format(price)}
 					</p>
 				</div>
+
 				{onAddToCart && (
 					<Button size="sm" variant="outline" className="mt-auto w-full" onClick={onAddToCart}>
 						{addLabel}

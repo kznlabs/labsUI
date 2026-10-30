@@ -38,33 +38,43 @@ function ClipCard({ title, length }: { title: string; length: string }) {
 			>
 				<div className="relative grid aspect-video place-items-center rounded-lg bg-foreground/[0.06] text-muted-foreground">
 					<Film className="size-5" aria-hidden="true" />
+
 					<Badge variant="secondary" className="absolute right-1.5 bottom-1.5 tabular-nums">
 						{length}
 					</Badge>
 				</div>
+
 				<p className="truncate px-0.5 text-left font-medium text-sm">
 					{pinned && "📌 "}
+
 					{title}
 				</p>
 			</ContextMenuTrigger>
+
 			<ContextMenuContent>
 				<ContextMenuItem onSelect={() => toast(`Playing “${title}”`)}>
 					<Play aria-hidden="true" />
 					Play
 				</ContextMenuItem>
+
 				<ContextMenuItem shortcut="⌘C" onSelect={() => toast.success("Link copied")}>
 					<Copy aria-hidden="true" />
 					Copy link
 				</ContextMenuItem>
+
 				<ContextMenuItem onSelect={() => toast("Renaming")}>
 					<Pencil aria-hidden="true" />
 					Rename
 				</ContextMenuItem>
+
 				<ContextMenuCheckboxItem checked={pinned} onCheckedChange={setPinned}>
 					Pin to profile
 				</ContextMenuCheckboxItem>
+
 				<ContextMenuSeparator />
+
 				<ContextMenuLabel>Playback speed</ContextMenuLabel>
+
 				<ContextMenuRadioGroup value={speed} onValueChange={setSpeed}>
 					{["0.5", "1", "1.5", "2"].map((option) => (
 						<ContextMenuRadioItem key={option} value={option}>
@@ -72,7 +82,9 @@ function ClipCard({ title, length }: { title: string; length: string }) {
 						</ContextMenuRadioItem>
 					))}
 				</ContextMenuRadioGroup>
+
 				<ContextMenuSeparator />
+
 				<ContextMenuItem variant="destructive" onSelect={() => toast.error("Clip deleted")}>
 					<Trash2 aria-hidden="true" />
 					Delete
@@ -90,6 +102,7 @@ export function ContextMenuDemo() {
 					<ClipCard key={clip.title} {...clip} />
 				))}
 			</div>
+
 			<p className="text-muted-foreground text-xs">
 				Right-click a clip, or focus one and press Shift+F10.
 			</p>
@@ -102,14 +115,18 @@ export function AlertDemo() {
 		<div className="grid w-full max-w-lg gap-3">
 			<Alert variant="info">
 				<AlertTitle>New version available</AlertTitle>
+
 				<AlertDescription>
 					labsUI 0.2 adds Context menu, Alert, Progress and Empty.
 				</AlertDescription>
 			</Alert>
+
 			<Alert variant="success">
 				<AlertTitle>Bot connected</AlertTitle>
+
 				<AlertDescription>Slash commands are live in 3 servers.</AlertDescription>
 			</Alert>
+
 			<Alert
 				variant="warning"
 				action={
@@ -123,10 +140,13 @@ export function AlertDemo() {
 				}
 			>
 				<AlertTitle>Token expires in 2 days</AlertTitle>
+
 				<AlertDescription>Renew it to keep the dashboard in sync.</AlertDescription>
 			</Alert>
+
 			<Alert variant="destructive">
 				<AlertTitle>Payment failed</AlertTitle>
+
 				<AlertDescription>Your card was declined. Update it in Billing.</AlertDescription>
 			</Alert>
 		</div>
@@ -156,8 +176,11 @@ export function ProgressDemo() {
 	return (
 		<div className="grid w-full max-w-sm gap-6">
 			<Progress label="Uploading clip.mp4" value={value} showValue />
+
 			<Progress label="Processing" />
+
 			<Progress value={64} size="sm" aria-label="Storage used" />
+
 			<Button
 				variant="outline"
 				onClick={() => {
@@ -167,6 +190,7 @@ export function ProgressDemo() {
 				disabled={running}
 			>
 				<Upload aria-hidden="true" />
+
 				{value >= 100 ? "Upload again" : "Start upload"}
 			</Button>
 		</div>
@@ -186,6 +210,7 @@ export function EmptyDemo() {
 					<Upload aria-hidden="true" />
 					Upload clip
 				</Button>
+
 				<Button size="sm" variant="ghost" onClick={() => toast("Clips are kept for 30 days.")}>
 					Learn more
 				</Button>

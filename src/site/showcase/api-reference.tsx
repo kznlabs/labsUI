@@ -58,22 +58,26 @@ export function ApiReference({
 					{entries.length} {entries.length === 1 ? "export" : "exports"}
 				</span>
 			</CollapsibleTrigger>
+
 			<CollapsibleContent className="grid gap-8 pt-5">
 				{entries.map((entry) => (
 					<div key={entry.name} className="grid min-w-0 gap-2">
 						<Heading className={`${mono} font-semibold text-sm`}>
 							{entry.kind === "component" ? `<${entry.name}>` : `${entry.name}()`}
 						</Heading>
+
 						{entry.description && (
 							<p className="max-w-2xl text-muted-foreground text-sm leading-relaxed">
 								{prose(entry.description)}
 							</p>
 						)}
+
 						{entry.kind === "function" ? (
 							<pre
 								className={`${mono} overflow-x-auto rounded-lg border bg-card px-3 py-2 leading-relaxed outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50`}
 							>
 								{entry.signature}
+
 								<OverflowFocus />
 							</pre>
 						) : (
@@ -88,8 +92,10 @@ export function ApiReference({
 												<div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
 													<code className={`${mono} font-medium text-foreground`}>
 														{prop.name}
+
 														{prop.required && <span className="text-destructive-ink">*</span>}
 													</code>
+
 													{prop.default && (
 														<span className="text-muted-foreground text-xs">
 															default{" "}
@@ -97,9 +103,11 @@ export function ApiReference({
 														</span>
 													)}
 												</div>
+
 												<code className={`${mono} text-primary-ink wrap-break-word`}>
 													{prop.type}
 												</code>
+
 												{prop.description && (
 													<p className="text-muted-foreground text-xs leading-relaxed">
 														{prose(prop.description)}
@@ -109,29 +117,36 @@ export function ApiReference({
 										))}
 									</ul>
 								)}
+
 								{entry.props.length > 0 && (
 									<Table containerClassName="shadow-none max-sm:hidden">
 										<TableHeader>
 											<TableRow>
 												<TableHead>Prop</TableHead>
+
 												<TableHead>Type</TableHead>
+
 												<TableHead>Default</TableHead>
 											</TableRow>
 										</TableHeader>
+
 										<TableBody>
 											{entry.props.map((prop) => (
 												<TableRow key={prop.name}>
 													<TableCell className="min-w-44 align-top">
 														<code className={`${mono} font-medium text-foreground`}>
 															{prop.name}
+
 															{prop.required && <span className="text-destructive-ink">*</span>}
 														</code>
+
 														{prop.description && (
 															<p className="mt-1 max-w-sm whitespace-normal text-muted-foreground text-xs leading-relaxed">
 																{prose(prop.description)}
 															</p>
 														)}
 													</TableCell>
+
 													<TableCell className="align-top">
 														<code
 															className={`${mono} whitespace-normal text-primary-ink wrap-anywhere`}
@@ -139,6 +154,7 @@ export function ApiReference({
 															{prop.type}
 														</code>
 													</TableCell>
+
 													<TableCell className="align-top">
 														{prop.default ? (
 															<code className={`${mono} wrap-anywhere`}>{prop.default}</code>
@@ -151,6 +167,7 @@ export function ApiReference({
 										</TableBody>
 									</Table>
 								)}
+
 								{entry.extends && (
 									<p className="text-muted-foreground text-xs">
 										Also accepts every <code className={mono}>{entry.extends}</code> prop
@@ -161,11 +178,13 @@ export function ApiReference({
 						)}
 					</div>
 				))}
+
 				{types.length > 0 && (
 					<dl className="grid gap-2 text-sm">
 						{types.map(([name, def]) => (
 							<Fragment key={name}>
 								<dt className={`${mono} font-semibold`}>type {name}</dt>
+
 								<dd className={`${mono} -mt-1 break-words text-muted-foreground`}>
 									{def as string}
 								</dd>
@@ -173,6 +192,7 @@ export function ApiReference({
 						))}
 					</dl>
 				)}
+
 				<p className="text-muted-foreground text-xs">
 					<span className="text-destructive-ink">*</span> required. Every component also takes{" "}
 					<code className={mono}>className</code>.

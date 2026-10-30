@@ -68,15 +68,19 @@ function Line({
 			{line.time && (
 				<span className="mr-3 text-muted-foreground tabular-nums select-none">{line.time}</span>
 			)}
+
 			{line.kind === "command" && (
 				<span className="mr-2 text-muted-foreground select-none">{prompt}</span>
 			)}
+
 			{kind.glyph && (
 				<span aria-hidden="true" className={cn("mr-2", kind.glyphClass)}>
 					{kind.glyph}
 				</span>
 			)}
+
 			{text}
+
 			{cursor && <Cursor />}
 		</div>
 	);
@@ -208,6 +212,7 @@ export function Terminal({
 								<Line key={key(item, i)} line={item} prompt={prompt} />
 							))}
 						</div>
+
 						<div aria-hidden="true" data-typewriter-animated="">
 							{lines
 								.slice(0, at.line + 1)
@@ -224,8 +229,10 @@ export function Terminal({
 										/>
 									) : null,
 								)}
+
 							{done && <Line line={{ kind: "command", text: "" }} prompt={prompt} cursor />}
 						</div>
+
 						<div aria-hidden="true" data-typewriter-fallback="" className="hidden">
 							{lines.map((item, i) => (
 								<Line key={key(item, i)} line={item} prompt={prompt} />
@@ -247,6 +254,7 @@ export function Terminal({
 					lines.map((item, i) => <Line key={key(item, i)} line={item} prompt={prompt} />)
 				)}
 			</div>
+
 			<AnimatePresence>
 				{log && behind && (
 					<motion.button

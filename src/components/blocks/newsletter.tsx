@@ -77,13 +77,16 @@ export function Newsletter({
 							{title}
 						</h3>
 					)}
+
 					{description && <p className="text-muted-foreground text-sm">{description}</p>}
 				</div>
 			)}
+
 			<InputGroup>
 				<InputGroupAddon>
 					<Mail aria-hidden="true" />
 				</InputGroupAddon>
+
 				<Input
 					type="email"
 					name="email"
@@ -92,6 +95,7 @@ export function Newsletter({
 					placeholder={placeholder}
 					aria-label="Email address"
 				/>
+
 				<InputGroupAddon align="end">
 					<Button type="submit" size="sm" status={status} successLabel="Subscribed">
 						{submitLabel}

@@ -201,15 +201,19 @@ export function StepperList({ className, ...props }: ComponentProps<"ol">) {
 									className="flex cursor-pointer items-center gap-2 rounded-full pr-1 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 								>
 									{mark}
+
 									{label}
+
 									<span className="sr-only"> (completed, go back)</span>
 								</button>
 							) : (
 								<span className="flex items-center gap-2 pr-1">
 									{mark}
+
 									{label}
 								</span>
 							)}
+
 							{i < steps.length - 1 && (
 								<span aria-hidden="true" className="relative mx-2 h-px flex-1 bg-border">
 									<motion.span
@@ -224,6 +228,7 @@ export function StepperList({ className, ...props }: ComponentProps<"ol">) {
 					);
 				})}
 			</ol>
+
 			{/* Small screens hide the titles; this keeps the current one (and announces moves). */}
 			<p aria-live="polite" className="text-muted-foreground text-xs sm:sr-only">
 				Step {index + 1} of {steps.length}
@@ -282,11 +287,13 @@ export function StepperStep({
 			{step && (
 				<legend className="mb-4 grid gap-1">
 					<span className="font-semibold text-lg leading-none">{step.title}</span>
+
 					{step.description && (
 						<span className="text-muted-foreground text-sm">{step.description}</span>
 					)}
 				</legend>
 			)}
+
 			{children}
 		</motion.fieldset>
 	);
@@ -315,6 +322,7 @@ export function StepperFooter({
 			<Button variant="ghost" onClick={back} className={cn(index === 0 && "invisible")}>
 				{backLabel}
 			</Button>
+
 			{last ? (
 				<Button type="submit">{submitLabel}</Button>
 			) : (

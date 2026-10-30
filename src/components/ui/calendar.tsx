@@ -246,6 +246,7 @@ export function Calendar(props: CalendarProps) {
 				<p id={`${id}-caption`} aria-live="polite" className="font-semibold text-sm">
 					{month ? fmtMonth.format(month) : " "}
 				</p>
+
 				<div className="flex gap-0.5">
 					<Button
 						variant="ghost"
@@ -257,6 +258,7 @@ export function Calendar(props: CalendarProps) {
 					>
 						<ChevronLeft />
 					</Button>
+
 					<Button
 						variant="ghost"
 						size="icon"
@@ -302,6 +304,7 @@ export function Calendar(props: CalendarProps) {
 								))}
 							</tr>
 						</thead>
+
 						<tbody>
 							{weeks.map((week, weekIndex) => (
 								// biome-ignore lint/suspicious/noArrayIndexKey: six fixed rows

@@ -20,8 +20,10 @@ export function SiteShell({ current, children }: { current?: string; children: R
 						>
 							{/* biome-ignore lint/performance/noImgElement: an 18px static SVG; the static export has no image optimizer */}
 							<img src={withBase("/logo.svg")} alt="" width={18} height={18} />
+
 							{site.name}
 						</a>
+
 						<Badge variant="secondary" shape="pill" className="hidden sm:inline-flex">
 							v{version}
 						</Badge>
@@ -32,12 +34,16 @@ export function SiteShell({ current, children }: { current?: string; children: R
 				actions={
 					<>
 						<AccentPicker className="hidden xl:flex" />
+
 						<SiteCommand />
+
 						<ThemeToggle />
 					</>
 				}
 			/>
+
 			{children}
+
 			<footer className="border-t">
 				<p className="mx-auto max-w-7xl px-4 py-6 text-muted-foreground text-xs sm:px-6">
 					{site.name} · clean components you own, one spring for every motion. Hand-made, MIT

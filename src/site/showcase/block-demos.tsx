@@ -144,6 +144,7 @@ export function ProductCardDemo() {
 				]}
 				onAddToCart={() => toast.success("Clip camera added to cart")}
 			/>
+
 			<ProductCard
 				name="Studio headphones"
 				price={129}
@@ -161,11 +162,14 @@ const clipActions = (title: string) => (
 			<Play aria-hidden="true" />
 			Play
 		</ContextMenuItem>
+
 		<ContextMenuItem shortcut="⌘C" onSelect={() => toast.success("Link copied")}>
 			<Copy aria-hidden="true" />
 			Copy link
 		</ContextMenuItem>
+
 		<ContextMenuSeparator />
+
 		<ContextMenuItem variant="destructive" onSelect={() => toast.error("Clip deleted")}>
 			<Trash2 aria-hidden="true" />
 			Delete
@@ -184,6 +188,7 @@ export function ClipCardDemo() {
 				meta="12.4K views · 2 days ago"
 				actions={clipActions("Insane 1v4 clutch")}
 			/>
+
 			<ClipCard
 				className="w-48"
 				title="Boss fight, no hits"
@@ -191,6 +196,7 @@ export function ClipCardDemo() {
 				meta="3.1K views · last week"
 				actions={clipActions("Boss fight, no hits")}
 			/>
+
 			<ClipCard
 				className="w-28"
 				ratio={9 / 16}
@@ -220,6 +226,7 @@ export function StatTileDemo() {
 				}))}
 				format={{ style: "currency", currency: "USD", maximumFractionDigits: 0 }}
 			/>
+
 			<StatTile
 				label="Failed commands"
 				value="0.42%"
@@ -372,8 +379,10 @@ export function SiteHeaderDemo() {
 					</Button>
 				}
 			/>
+
 			<div className="mx-auto flex max-w-2xl flex-col gap-4 px-6 py-10" aria-hidden="true">
 				<Skeleton className="h-8 w-2/3" />
+
 				{Array.from({ length: 12 }, (_, i) => (
 					// biome-ignore lint/suspicious/noArrayIndexKey: static filler rows
 					<Skeleton key={i} className="h-4" style={{ width: `${70 + ((i * 37) % 30)}%` }} />

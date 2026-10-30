@@ -70,9 +70,11 @@ export function CountTo({
 	return (
 		<span ref={ref} className={className}>
 			<span className="sr-only">{target}</span>
+
 			<span ref={out} aria-hidden="true" data-count-to-animated="">
 				{text(from)}
 			</span>
+
 			<span aria-hidden="true" data-count-to-fallback="" className="hidden">
 				{target}
 			</span>

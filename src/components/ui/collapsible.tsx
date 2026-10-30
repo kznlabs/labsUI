@@ -81,6 +81,7 @@ export function CollapsibleTrigger({
 			{...props}
 		>
 			{children}
+
 			{chevron && (
 				<motion.span
 					animate={{ rotate: open ? 180 : 0 }}

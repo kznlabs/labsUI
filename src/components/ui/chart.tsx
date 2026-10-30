@@ -369,9 +369,11 @@ export function Chart({
 		// stop.
 		<Table containerClassName={view === "table" ? "max-h-[32rem]" : "overflow-x-visible"}>
 			<TableCaption className={view === "chart" ? "sr-only" : undefined}>{label}</TableCaption>
+
 			<TableHeader>
 				<TableRow>
 					<TableHead className="capitalize">{index}</TableHead>
+
 					{series.map((item) => (
 						<TableHead key={item.key} className="text-right">
 							{item.label}
@@ -379,10 +381,12 @@ export function Chart({
 					))}
 				</TableRow>
 			</TableHeader>
+
 			<TableBody>
 				{data.map((row) => (
 					<TableRow key={String(row[index])}>
 						<TableCell className="font-medium">{row[index]}</TableCell>
+
 						{series.map((item) => (
 							<TableCell key={item.key} className="text-right tabular-nums">
 								{fmt.format(num(row[item.key]))}
@@ -430,6 +434,7 @@ export function Chart({
 											}
 											style={{ background: color(slots.get(item.key) ?? 1) }}
 										/>
+
 										<span className={cn(off && "line-through")}>{item.label}</span>
 									</button>
 								</li>
@@ -439,6 +444,7 @@ export function Chart({
 				) : (
 					<span />
 				)}
+
 				<Button
 					size="sm"
 					variant="ghost"
@@ -490,6 +496,7 @@ export function Chart({
 												className={tick === 0 ? "stroke-foreground/25" : "stroke-border"}
 												shapeRendering="crispEdges"
 											/>
+
 											<text
 												x={margin.left - 8}
 												y={y(tick)}
@@ -501,6 +508,7 @@ export function Chart({
 											</text>
 										</g>
 									))}
+
 									{data.map((row, i) =>
 										i % every === 0 ? (
 											<text
@@ -561,6 +569,7 @@ export function Chart({
 																fillOpacity={0.1}
 															/>
 														)}
+
 														<motion.path
 															initial={{ d: linePath(flat(pts)) }}
 															animate={{ d: linePath(pts) }}
@@ -571,6 +580,7 @@ export function Chart({
 															strokeLinejoin="round"
 															strokeLinecap="round"
 														/>
+
 														{(active === null ? [rowCount - 1] : [active]).map((i) =>
 															pts[i] ? (
 																<motion.circle
@@ -636,6 +646,7 @@ export function Chart({
 											)}
 										>
 											<p className="mb-1.5 text-muted-foreground">{row[index]}</p>
+
 											<ul className="grid gap-1">
 												{shown.map((item) => (
 													<li key={item.key} className="flex items-center gap-2">
@@ -643,7 +654,9 @@ export function Chart({
 															className="h-0.5 w-2.5 shrink-0 rounded-full"
 															style={{ background: color(slots.get(item.key) ?? 1) }}
 														/>
+
 														<span className="text-muted-foreground">{item.label}</span>
+
 														<span className="ml-auto pl-3 font-medium tabular-nums">
 															{fmt.format(num(row[item.key]))}
 														</span>
@@ -655,9 +668,11 @@ export function Chart({
 								)}
 							</AnimatePresence>
 						</div>
+
 						<p className="sr-only" aria-live="polite">
 							{readout}
 						</p>
+
 						{/* The same numbers for screen readers, search engines and no-JS. */}
 						<div className="sr-only">{table}</div>
 					</>

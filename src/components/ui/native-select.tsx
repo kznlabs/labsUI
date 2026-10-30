@@ -27,6 +27,7 @@ export function NativeSelect({ className, children, ...rest }: ComponentProps<"s
 			>
 				{children}
 			</select>
+
 			<ChevronsUpDown
 				aria-hidden="true"
 				className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-3 size-4 text-muted-foreground"
