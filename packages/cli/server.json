@@ -9,12 +9,12 @@
 		"subfolder": "packages/cli"
 	},
 	"websiteUrl": "https://kznlabs.github.io/labsUI",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"packages": [
 		{
 			"registryType": "npm",
 			"identifier": "@kznlabs/labsui",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"transport": { "type": "stdio" },
 			"packageArguments": [{ "type": "positional", "value": "mcp" }]
 		}
