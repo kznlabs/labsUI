@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { relative } from "node:path";
-import { dim, green, red } from "../log.ts";
+import { lines, sameCode } from "../lines.ts";
+import { CliError, dim, green, red } from "../log.ts";
 import { fetchAllItems, itemName } from "../registry.ts";
 import type { Config, RegistryItem } from "../types.ts";
 import { projectBase, rewriteAlias, safeTarget } from "./add.ts";
@@ -14,20 +15,8 @@ export type FileDiff = {
 	formatting: boolean;
 	patch: string;
 };
-export type ItemDiff = { name: string; files: FileDiff[] };
-
-export const lines = (text: string) => text.replace(/\r\n/g, "\n").replace(/\n$/, "").split("\n");
-
-/** The same code apart from blank lines and indentation. */
-export function sameCode(a: string, b: string) {
-	const strip = (text: string) =>
-		lines(text)
-			.map((line) => line.trim())
-			.filter(Boolean)
-			.join("\n");
-
-	return strip(a) === strip(b);
-}
+/** `installed: false` for an item asked for by name that isn't in the project. */
+export type ItemDiff = { name: string; installed: boolean; files: FileDiff[] };
 
 /** For each line of `a`, the index of the line of `b` it is kept as, or -1 where it changed. */
 export function matches(a: string[], b: string[]) {
@@ -128,10 +117,8 @@ export function unifiedDiff(
  * like `add`'s: a registry that points outside the alias folder is refused, since `update` writes
  * to them.
  */
-export async function installedItems(config: Config, base: string) {
-	const all = await fetchAllItems(config.registry);
-
-	return all.flatMap((item: RegistryItem) => {
+export async function installedItems(config: Config, base: string, all?: RegistryItem[]) {
+	return (all ?? (await fetchAllItems(config.registry))).flatMap((item: RegistryItem) => {
 		const files = item.files.map((file) => safeTarget(base, file.target ?? file.path));
 
 		return files.some((file) => existsSync(file)) ? [{ item, files }] : [];
@@ -140,13 +127,22 @@ export async function installedItems(config: Config, base: string) {
 
 /**
  * How installed items differ from this labsui version, as patches from the registry file to
- * yours. No names: every installed item that differs.
+ * yours. No names: every installed item that differs. A name that isn't installed comes back with
+ * `installed: false`; an unknown one is an error.
  */
 export async function diff(cwd: string, config: Config, names: string[], version: string) {
 	const base = projectBase(cwd, config);
 	const wanted = new Set(names.map(itemName));
-	const installed = await installedItems(config, base);
-	const out: ItemDiff[] = [];
+	const all = await fetchAllItems(config.registry);
+	const unknown = [...wanted].filter((name) => !all.some((item) => item.name === name));
+
+	if (unknown.length)
+		throw new CliError(`Unknown item(s): ${unknown.join(", ")}. Search finds the names.`);
+
+	const installed = await installedItems(config, base, all);
+	const out: ItemDiff[] = [...wanted]
+		.filter((name) => !installed.some(({ item }) => item.name === name))
+		.map((name) => ({ name, installed: false, files: [] }));
 
 	for (const { item, files } of installed) {
 		if (wanted.size && !wanted.has(item.name)) continue;
@@ -175,7 +171,7 @@ export async function diff(cwd: string, config: Config, names: string[], version
 				patch,
 			});
 		});
-		if (changed.length) out.push({ name: item.name, files: changed });
+		if (changed.length) out.push({ name: item.name, installed: true, files: changed });
 	}
 
 	return out;
@@ -184,7 +180,10 @@ export async function diff(cwd: string, config: Config, names: string[], version
 export function printDiff(items: ItemDiff[], full: boolean) {
 	if (!items.length) return console.log(`${green("✓")} Installed items match this labsui version.`);
 
-	for (const item of items)
+	for (const item of items) {
+		if (!item.installed)
+			console.log(`  ${item.name.padEnd(24)} ${dim(`not installed (labsui add ${item.name})`)}`);
+
 		for (const file of item.files) {
 			if (!full) {
 				console.log(
@@ -204,6 +203,7 @@ export function printDiff(items: ItemDiff[], full: boolean) {
 								: line,
 				);
 		}
+	}
 
 	if (!full)
 		console.log(

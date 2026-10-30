@@ -4,10 +4,11 @@ import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { projectBase, rewriteAlias, safeTarget } from "../packages/cli/src/commands/add.ts";
-import { sameCode, unifiedDiff } from "../packages/cli/src/commands/diff.ts";
+import { unifiedDiff } from "../packages/cli/src/commands/diff.ts";
 import { doctor } from "../packages/cli/src/commands/doctor.ts";
 import { searchIndex } from "../packages/cli/src/commands/search.ts";
 import { describe as view, viewMarkdown } from "../packages/cli/src/commands/view.ts";
+import { sameCode } from "../packages/cli/src/lines.ts";
 import { handle } from "../packages/cli/src/mcp.ts";
 import { findCss } from "../packages/cli/src/project.ts";
 import { closest, fetchIndex } from "../packages/cli/src/registry.ts";

@@ -72,6 +72,11 @@ async function callTool(ctx: Context, name: string, args: Json) {
 			const lines = [
 				`${added.dryRun ? "Would write" : "Wrote"} ${added.written.length} file(s)${added.written.length ? `: ${added.written.join(", ")}` : ""}.`,
 				...(added.kept.length ? [`Kept existing: ${added.kept.join(", ")}.`] : []),
+				...(added.outdated.length
+					? [
+							`Dependencies already here differ from this version (older or edited): ${added.outdated.join(", ")}. The new items may not compile against them; call update with these names.`,
+						]
+					: []),
 				...(added.installCommand
 					? [`Install: ${added.installCommand}`]
 					: added.packages.length
@@ -112,7 +117,11 @@ async function callTool(ctx: Context, name: string, args: Json) {
 			);
 			const body = items.length
 				? items
-						.flatMap((i) => i.files.map((file) => `\`\`\`diff\n${file.patch}\n\`\`\``))
+						.flatMap((i) =>
+							i.installed
+								? i.files.map((file) => `\`\`\`diff\n${file.patch}\n\`\`\``)
+								: [`${i.name} is not installed; add installs it.`],
+						)
 						.join("\n\n")
 				: "Installed items match this labsui version.";
 

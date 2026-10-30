@@ -73,7 +73,7 @@ export const TOOLS = [
 		name: "add",
 		title: "Add labsUI items",
 		description:
-			"Install labsUI items into the project: copies each item and everything it imports, then installs their npm packages. Existing files are kept, never overwritten. Returns the files written, the packages installed and anything to mount once in the root layout. Needs init first; dryRun previews. To bring installed items to a newer version, use update instead.",
+			"Install labsUI items into the project: copies each item and everything it imports, then installs their npm packages. Existing files are kept, never overwritten. Returns the files written, the packages installed, dependencies kept that differ from this version (call update on them) and anything to mount once in the root layout. Needs init first; dryRun previews. To bring installed items to a newer version, use update instead.",
 		inputSchema: {
 			type: "object",
 			properties: { names, dryRun },
@@ -96,7 +96,7 @@ export const TOOLS = [
 		name: "diff",
 		title: "Diff installed labsUI items",
 		description:
-			"Compare installed labsUI items with this labsUI version. Returns a unified patch per changed file, from the registry file to the project file (+ lines exist only in the project), with formatting: true when only blank lines or indentation differ; matching items are left out, and when nothing differs it says so. Use it to see local edits before update. Needs init.",
+			"Compare installed labsUI items with this labsUI version. Returns a unified patch per changed file, from the registry file to the project file (+ lines exist only in the project), with formatting: true when only blank lines or indentation differ; matching items are left out, a named item that isn't installed comes back with installed: false, and when nothing differs it says so. Use it to see local edits before update. Needs init.",
 		inputSchema: {
 			type: "object",
 			properties: { names: installed },

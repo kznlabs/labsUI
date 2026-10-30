@@ -1,6 +1,7 @@
-import { existsSync, mkdirSync, realpathSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { installCommand, installDeps, PACKAGE_SPEC } from "../install.ts";
+import { sameCode } from "../lines.ts";
 import { bold, CliError, dim, green, yellow } from "../log.ts";
 import { CONFIG, readPackage, recordInstalled } from "../project.ts";
 import { itemName, resolveItems } from "../registry.ts";
@@ -59,6 +60,8 @@ export type AddResult = {
 	written: string[];
 	/** Existing files of the items asked for; dependencies already there are expected. */
 	kept: string[];
+	/** Dependencies already there whose code differs from this version (older or edited). */
+	outdated: string[];
 	/** npm packages the items need and package.json lacks. */
 	packages: string[];
 	/** Set when the packages still need installing (dry run, --no-install). */
@@ -85,6 +88,7 @@ export async function add(
 		fresh: [],
 		written: [],
 		kept: [],
+		outdated: [],
 		packages: [],
 		mounts: [],
 		dryRun: opts.dryRun,
@@ -132,6 +136,12 @@ function writeItem(
 
 		if (existsSync(target) && !opts.overwrite) {
 			if (named) result.kept.push(shown);
+			else if (
+				!result.outdated.includes(item.name) &&
+				!sameCode(readFileSync(target, "utf8"), rewriteAlias(file.content, config.alias))
+			)
+				result.outdated.push(item.name);
+
 			continue;
 		}
 
@@ -159,6 +169,10 @@ export function printAdd(result: AddResult) {
 	if (result.kept.length)
 		console.log(
 			`${yellow("•")} Kept ${result.kept.length} existing file(s) (--overwrite replaces them):\n${fileList(result.kept)}`,
+		);
+	if (result.outdated.length)
+		console.log(
+			`${yellow("•")} Kept dependencies that differ from this version (older or edited): ${result.outdated.join(", ")}. The new items may need this version: ${bold(`labsui update ${result.outdated.join(" ")}`)}`,
 		);
 	if (result.installCommand)
 		console.log(`${yellow("•")} Install these yourself: ${bold(result.installCommand)}`);

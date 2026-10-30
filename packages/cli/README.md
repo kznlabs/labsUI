@@ -60,7 +60,9 @@ Run it again any time: existing files are kept.
 Resolves dependencies through the registry (`data-table` brings `table`,
 `checkbox`, `pagination`, …), writes each file under your alias folder and
 installs the npm packages it imports. Existing files are kept unless you pass
-`--overwrite`. If your alias isn't `@/`, imports are rewritten to match.
+`--overwrite`; a kept dependency whose code differs from this version is
+named, with the `labsui update` that brings it level, since the new item may
+need it. If your alias isn't `@/`, imports are rewritten to match.
 Components that live once in the root layout (`toast`, `confirm`) print the
 line to add there. A mistyped name gets a suggestion: `buton` suggests `button`.
 
@@ -109,16 +111,18 @@ changes. `labsui.json` records which labsui version wrote each item, and
 The base comes from JSR, which keeps every release's files. Offline, with a
 hosted registry, or for items installed before versions were recorded,
 edited files are left as they are. `labsui diff` lists installed items that
-differ from this version; `labsui diff dialog` prints the patch from this
-version's file to yours.
+differ from this version, marking those that differ only in blank lines or
+indentation; `labsui diff dialog` prints the patch from this version's file
+to yours, or says `dialog` isn't installed.
 
 ### `doctor`
 
 Checks the setup and prints a fix for each problem: React 19 and Tailwind v4,
 the path alias and `labsui.json`, the stylesheet import, `MotionProvider` and
 the theme script, `<Toaster />` and `<Confirmer />` mounted when installed,
-missing npm packages or files. It also lists installed items that differ from
-this version, your edits or an older install. Exits with 1 when something is
+missing npm packages, and files your installed components import but the
+project lacks. It also lists installed items that differ from this version,
+your edits or an older install. Exits with 1 when something is
 broken, so it can run in CI.
 
 It reads your code, not a framework's conventions: it works the same in any

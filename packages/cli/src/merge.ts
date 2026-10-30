@@ -1,4 +1,5 @@
-import { lines, matches } from "./commands/diff.ts";
+import { matches } from "./commands/diff.ts";
+import { lines } from "./lines.ts";
 
 export type Merged = { text: string; conflicts: number };
 

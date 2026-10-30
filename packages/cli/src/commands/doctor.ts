@@ -1,12 +1,13 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { installCommand, PACKAGE_SPEC } from "../install.ts";
+import { sameCode } from "../lines.ts";
 import { bold, CliError, dim, green, red, yellow } from "../log.ts";
 import { hasConflictMarkers } from "../merge.ts";
 import { CONFIG, detectAlias, findCss, readConfig, readPackage } from "../project.ts";
 import type { Config } from "../types.ts";
 import { packageName, projectBase, rewriteAlias } from "./add.ts";
-import { installedItems, sameCode } from "./diff.ts";
+import { installedItems } from "./diff.ts";
 
 type Status = "pass" | "info" | "warn" | "fail";
 export type Check = { id: string; status: Status; message: string; fix?: string };
@@ -181,18 +182,21 @@ export async function doctor(cwd: string, registryFlag?: string): Promise<Doctor
 		);
 	else if (items.length) add("packages", "pass", "npm packages installed");
 
-	const names = new Set(items.map(({ item }) => item.name));
-	const broken = items.flatMap(({ item }) =>
-		(item.registryDependencies ?? [])
-			.map(
-				(dependency) =>
-					dependency
-						.split("/")
-						.pop()
-						?.replace(/\.json$/, "") ?? dependency,
-			)
-			.filter((dependency) => !names.has(dependency))
-			.map((dependency) => `${item.name} → ${dependency}`),
+	// What the files on disk import, not what this version's registry lists: an item installed by an
+	// older version may not need a newer dependency yet.
+	const alias = config.alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const local = new RegExp(`from "(?:${alias}((?:components|lib)/[\\w/-]+)|\\./([\\w-]+))"`, "g");
+	const resolves = (path: string) => [".ts", ".tsx"].some((ext) => existsSync(path + ext));
+	const broken = items.flatMap(({ item, files }) =>
+		files
+			.filter((file) => existsSync(file))
+			.flatMap((file) =>
+				[...readFileSync(file, "utf8").matchAll(local)].flatMap(([, fromAlias, sibling]) => {
+					const path = fromAlias ? join(base, fromAlias) : join(file, "..", sibling ?? "");
+
+					return resolves(path) ? [] : [`${item.name} → ${path.split(/[\\/]/).pop()}`];
+				}),
+			),
 	);
 
 	if (broken.length)

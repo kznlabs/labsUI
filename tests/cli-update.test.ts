@@ -3,7 +3,8 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { installedItems } from "../packages/cli/src/commands/diff.ts";
+import { add } from "../packages/cli/src/commands/add.ts";
+import { diff, installedItems } from "../packages/cli/src/commands/diff.ts";
 import { doctor } from "../packages/cli/src/commands/doctor.ts";
 import { update } from "../packages/cli/src/commands/update.ts";
 import { hasConflictMarkers, merge3 } from "../packages/cli/src/merge.ts";
@@ -157,5 +158,65 @@ describe("installedItems", () => {
 			server.stop(true);
 			rmSync(dir, { recursive: true, force: true });
 		}
+	});
+});
+
+describe("an older install", () => {
+	const items = bundled.items as Record<string, RegistryItem>;
+	const config = { alias: "@/", root: "src" };
+	let dir = "";
+
+	const project = (files: Record<string, string>) => {
+		dir = mkdtempSync(join(tmpdir(), "labsui-older-"));
+		writeFileSync(join(dir, "package.json"), JSON.stringify({ dependencies: {} }));
+		writeFileSync(
+			join(dir, "tsconfig.json"),
+			JSON.stringify({ compilerOptions: { paths: { "@/*": ["./src/*"] } } }),
+		);
+		writeFileSync(join(dir, "labsui.json"), JSON.stringify(config));
+
+		for (const [path, content] of Object.entries(files)) {
+			mkdirSync(join(dir, "src", path, ".."), { recursive: true });
+			writeFileSync(join(dir, "src", path), content);
+		}
+	};
+
+	afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+	test("diff names items that aren't installed and refuses unknown ones", async () => {
+		project({ "components/ui/kbd.tsx": items.kbd?.files[0]?.content as string });
+
+		expect(await diff(dir, config, ["select"], VERSION)).toEqual([
+			{ name: "select", installed: false, files: [] },
+		]);
+		await expect(diff(dir, config, ["nonsense"], VERSION)).rejects.toThrow(/Unknown item/);
+	});
+
+	test("doctor checks the imports on disk, not this version's", async () => {
+		project({ "components/ui/kbd.tsx": "export function Kbd() {\n\treturn null;\n}\n" });
+
+		expect((await doctor(dir)).checks.find((check) => check.id === "files")).toBeUndefined();
+
+		writeFileSync(
+			join(dir, "src/components/ui/kbd.tsx"),
+			'import { gone } from "@/lib/gone";\n\nexport const Kbd = gone;\n',
+		);
+
+		const files = (await doctor(dir)).checks.find((check) => check.id === "files");
+
+		expect(files?.message).toContain("kbd → gone");
+	});
+
+	test("add points at dependencies older than the items it adds", async () => {
+		project({ "lib/utils.ts": 'export const cn = () => "";\n' });
+
+		const added = await add(dir, config, ["kbd"], {
+			overwrite: false,
+			dryRun: true,
+			install: false,
+			quiet: true,
+		});
+
+		expect(added.outdated).toEqual(["utils"]);
 	});
 });
