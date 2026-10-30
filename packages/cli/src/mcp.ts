@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { add } from "./commands/add.ts";
 import { diff } from "./commands/diff.ts";
 import { doctor } from "./commands/doctor.ts";
@@ -16,7 +17,8 @@ const PROTOCOLS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
 
 type Json = Record<string, unknown>;
 type Request = { jsonrpc: "2.0"; id?: string | number | null; method: string; params?: Json };
-type Context = { cwd: string; registry?: string; version: string };
+/** `pinned`: `--cwd` was given, so the client's roots don't move it. */
+type Context = { cwd: string; pinned?: boolean; registry?: string; version: string };
 
 const text = (text: string, structured?: unknown) => ({
 	content: [{ type: "text", text: text }],
@@ -216,6 +218,34 @@ export function serve(ctx: Context) {
 		message && process.stdout.write(`${JSON.stringify(message)}\n`);
 	let queue = Promise.resolve();
 	let buffer = "";
+	let usesRoots = false;
+	let sent = 0;
+	const waiting = new Map<string, (result: Json | undefined) => void>();
+
+	const ask = (method: string) =>
+		new Promise<Json | undefined>((resolve) => {
+			const id = `labsui-${++sent}`;
+
+			const settle = (result: Json | undefined) => {
+				clearTimeout(timer);
+				waiting.delete(id);
+				resolve(result);
+			};
+
+			const timer = setTimeout(() => settle(undefined), 5000);
+
+			waiting.set(id, settle);
+			write({ jsonrpc: "2.0", id, method });
+		});
+
+	// The client's first file root is the project, so clients that start servers in their own
+	// folder (Claude Desktop) need no --cwd.
+	const readRoots = async () => {
+		const roots = (await ask("roots/list"))?.roots as { uri?: string }[] | undefined;
+		const uri = roots?.find((root) => root.uri?.startsWith("file:"))?.uri;
+
+		if (uri) ctx.cwd = fileURLToPath(uri);
+	};
 
 	const onLine = (line: string) => {
 		let msg: Request | Request[];
@@ -224,6 +254,21 @@ export function serve(ctx: Context) {
 			msg = JSON.parse(line);
 		} catch {
 			return write({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } });
+		}
+
+		// Replies to our own requests skip the queue: a queued call may be waiting on them.
+		if (!Array.isArray(msg) && msg.method === undefined)
+			return waiting.get(String(msg.id))?.((msg as Json).result as Json | undefined);
+
+		if (!Array.isArray(msg) && !ctx.pinned) {
+			if (msg.method === "initialize")
+				usesRoots = Boolean((msg.params?.capabilities as Json | undefined)?.roots);
+
+			const changed =
+				msg.method === "notifications/initialized" ||
+				msg.method === "notifications/roots/list_changed";
+
+			if (usesRoots && changed) queue = queue.then(readRoots);
 		}
 
 		// One call at a time, file writes and installs can't interleave.

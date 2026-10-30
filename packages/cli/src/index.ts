@@ -169,7 +169,7 @@ async function main() {
 		case "rules":
 			return console.log(rules(readConfig(cwd)?.alias));
 		case "mcp":
-			return serve({ cwd, registry, version: VERSION });
+			return serve({ cwd, pinned: values.cwd !== undefined, registry, version: VERSION });
 		default:
 			throw new CliError(`Unknown command "${command}". Run labsui --help.`);
 	}

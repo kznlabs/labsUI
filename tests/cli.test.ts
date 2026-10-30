@@ -270,6 +270,78 @@ describe("mcp", () => {
 		}
 	});
 
+	const client = (args: string[]) => {
+		const server = Bun.spawn(["bun", "packages/cli/src/index.ts", "mcp", ...args], {
+			stdin: "pipe",
+			stdout: "pipe",
+			stderr: "ignore",
+		});
+		const reader = server.stdout.pipeThrough(new TextDecoderStream()).getReader();
+		let buffer = "";
+
+		const send = (message: Record<string, unknown>) =>
+			server.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", ...message })}\n`);
+
+		const next = async (): Promise<Record<string, unknown>> => {
+			while (!buffer.includes("\n")) {
+				const { value, done } = await reader.read();
+
+				if (done) throw new Error("server closed");
+				buffer += value;
+			}
+
+			const line = buffer.slice(0, buffer.indexOf("\n"));
+
+			buffer = buffer.slice(line.length + 1);
+
+			return JSON.parse(line);
+		};
+
+		return { send, next, stop: () => server.kill() };
+	};
+
+	const doctorText = (message: Record<string, unknown>) =>
+		(message.result as { content: { text: string }[] }).content[0]?.text ?? "";
+
+	test("works in the client's root, not where it was started", async () => {
+		const root = mkdtempSync(join(tmpdir(), "labsui-root-"));
+		const { send, next, stop } = client([]);
+
+		try {
+			send({ id: 1, method: "initialize", params: { capabilities: { roots: {} } } });
+			await next();
+			send({ method: "notifications/initialized" });
+
+			const ask = await next();
+
+			expect(ask.method).toBe("roots/list");
+			send({ id: ask.id, result: { roots: [{ uri: Bun.pathToFileURL(root).href }] } });
+			send({ id: 2, method: "tools/call", params: { name: "doctor", arguments: {} } });
+			expect(doctorText(await next())).toContain(`No package.json in ${root}`);
+		} finally {
+			stop();
+			rmSync(root, { recursive: true, force: true });
+		}
+	});
+
+	test("--cwd wins over the client's roots", async () => {
+		const { send, next, stop } = client(["--cwd", "."]);
+
+		try {
+			send({ id: 1, method: "initialize", params: { capabilities: { roots: {} } } });
+			await next();
+			send({ method: "notifications/initialized" });
+			send({ id: 2, method: "tools/call", params: { name: "doctor", arguments: {} } });
+
+			const reply = await next();
+
+			expect(reply.id).toBe(2);
+			expect(doctorText(reply)).not.toContain("No package.json");
+		} finally {
+			stop();
+		}
+	});
+
 	test("tool errors come back as results the agent can read", async () => {
 		const result = (await call("tools/call", {
 			name: "view",
