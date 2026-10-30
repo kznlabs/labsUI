@@ -86,11 +86,13 @@ it.
   `public/og.png`, rendered from `public/og.svg` (social sites need a
   raster). No icon/opengraph-image conventions: they miss basePath in the
   static export.
-- Release CLI: `bun run release:cli` bumps `packages/cli/package.json`
-  **and** `jsr.json` together (JSR never reuses a version, even a deleted
-  one; the header badge reads it), tags `cli-v<version>` and pushes;
-  `.github/workflows/release-cli.yml` publishes to npm and JSR
-  (`@kznlabs/labsui`).
+- Release CLI: `bun run release:cli` bumps `packages/cli/package.json`,
+  `jsr.json` **and** `server.json` together (JSR never reuses a version, even
+  a deleted one; the header badge reads it), tags `cli-v<version>` and
+  pushes; `.github/workflows/release-cli.yml` publishes to npm, JSR
+  (`@kznlabs/labsui`) and then the MCP registry
+  (`io.github.kznlabs/labsui`, OIDC; it checks `mcpName` in the published
+  npm package, so npm goes first).
 
 ## Rules
 

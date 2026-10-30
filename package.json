@@ -13,7 +13,7 @@
 		"typecheck": "bun run registry && tsc --noEmit",
 		"registry": "node scripts/build-api.ts && bun scripts/build-registry.ts && bun scripts/build-docs-md.ts && bun scripts/format-snippets.ts",
 		"cli:build": "bun run registry && cd packages/cli && bun run build",
-		"release:cli": "bumpp packages/cli/package.json packages/cli/jsr.json --tag \"cli-v%s\" --commit \"chore(cli): release v%s\" --sign --git-check",
+		"release:cli": "bumpp packages/cli/package.json packages/cli/jsr.json packages/cli/server.json --tag \"cli-v%s\" --commit \"chore(cli): release v%s\" --sign --git-check",
 		"test": "bun test",
 		"e2e:build": "STATIC_EXPORT=1 NEXT_PUBLIC_BASE_PATH=/labsUI bun run build",
 		"e2e": "playwright test -c tests/e2e",

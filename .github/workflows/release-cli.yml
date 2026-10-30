@@ -24,8 +24,9 @@ jobs:
           tag="${GITHUB_REF_NAME#cli-v}"
           npm_v=$(bun -e 'console.log(require("./packages/cli/package.json").version)')
           jsr_v=$(bun -e 'console.log(require("./packages/cli/jsr.json").version)')
-          echo "tag $tag · package.json $npm_v · jsr.json $jsr_v"
-          test "$tag" = "$npm_v" && test "$tag" = "$jsr_v"
+          mcp_v=$(bun -e 'console.log(require("./packages/cli/server.json").version)')
+          echo "tag $tag · package.json $npm_v · jsr.json $jsr_v · server.json $mcp_v"
+          test "$tag" = "$npm_v" && test "$tag" = "$jsr_v" && test "$tag" = "$mcp_v"
 
       - run: bun install --frozen-lockfile
       - run: bun run lint && bun run typecheck && bun test
@@ -50,3 +51,23 @@ jobs:
       - name: Publish to JSR
         working-directory: packages/cli
         run: bunx jsr@0.14.3 publish
+
+      # after npm: the registry checks the published package's mcpName
+      - name: Publish to the MCP registry
+        working-directory: packages/cli
+        env:
+          PUBLISHER: v1.8.1
+          PUBLISHER_SHA256: a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc
+        run: |
+          version=$(jq -r .version server.json)
+          if curl -fsS -o /dev/null "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.kznlabs%2Flabsui/versions/$version"; then
+            echo "io.github.kznlabs/labsui@$version is already in the MCP registry, skipping"
+            exit 0
+          fi
+          curl -fsSL -o publisher.tar.gz "https://github.com/modelcontextprotocol/registry/releases/download/$PUBLISHER/mcp-publisher_linux_amd64.tar.gz"
+          echo "$PUBLISHER_SHA256  publisher.tar.gz" | sha256sum -c
+          tar xzf publisher.tar.gz mcp-publisher
+          # bumpp only bumps the top-level version
+          jq --arg v "$version" '.packages[0].version = $v' server.json > server.tmp && mv server.tmp server.json
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish

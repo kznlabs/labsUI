@@ -1,0 +1,22 @@
+{
+	"$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+	"name": "io.github.kznlabs/labsui",
+	"title": "labsUI",
+	"description": "Search, add, diff and update labsUI React components in your project.",
+	"repository": {
+		"url": "https://github.com/kznlabs/labsUI",
+		"source": "github",
+		"subfolder": "packages/cli"
+	},
+	"websiteUrl": "https://kznlabs.github.io/labsUI",
+	"version": "0.1.2",
+	"packages": [
+		{
+			"registryType": "npm",
+			"identifier": "@kznlabs/labsui",
+			"version": "0.1.2",
+			"transport": { "type": "stdio" },
+			"packageArguments": [{ "type": "positional", "value": "mcp" }]
+		}
+	]
+}
