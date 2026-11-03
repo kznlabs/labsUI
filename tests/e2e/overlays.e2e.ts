@@ -228,6 +228,41 @@ test.describe("toast", () => {
 		await expect.poll(measure).toEqual({ middles: 0, edges: 0 });
 	});
 
+	test("F8 goes to the toast waiting for the user, not a newer plain one", async ({ page }) => {
+		await open(page, "e2e/overlays");
+		await page.getByRole("button", { name: "Archive" }).click();
+		await page.getByRole("button", { name: "Save" }).click();
+		await expect(page.getByText("Saved")).toBeVisible();
+		await page.keyboard.press("F8");
+		await expect(page.getByRole("button", { name: "Undo" })).toBeFocused();
+	});
+
+	test("keyboard users see F8 on the toast waiting for them", async ({ page }) => {
+		await open(page, "e2e/overlays");
+
+		const toasts = page.getByRole("region", { name: "Notifications" });
+		const hint = toasts.locator("li", { hasText: "Archived" }).locator("kbd", { hasText: "F8" });
+		const save = page.getByRole("button", { name: "Save" });
+
+		await page.getByRole("button", { name: "Archive" }).focus();
+		await page.keyboard.press("Enter");
+		await expect(hint).toBeVisible();
+
+		await save.focus();
+		await page.keyboard.press("Enter");
+		await expect(toasts.locator("li", { hasText: "Saved" }).locator("kbd")).toHaveCount(0);
+		await expect(hint).toBeVisible();
+
+		await page.keyboard.press("F8");
+		await expect(hint).toBeHidden();
+		await page.keyboard.press("Escape");
+		await expect(save).toBeFocused();
+		await expect(hint).toBeVisible();
+
+		await page.getByRole("heading", { name: "Overlay probes" }).click();
+		await expect(hint).toBeHidden();
+	});
+
 	test("acting on a toast from the keyboard returns focus", async ({ page }) => {
 		await open(page, "e2e/overlays");
 

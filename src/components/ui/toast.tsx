@@ -10,7 +10,9 @@ import {
 	useState,
 	useSyncExternalStore,
 } from "react";
+import { Kbd } from "@/components/ui/kbd";
 import { tabbables } from "@/lib/focus";
+import { useIsMac } from "@/lib/platform";
 import { useDismiss } from "@/lib/use-dismiss";
 import { useHotkey } from "@/lib/use-hotkey";
 import { cn, material, spring } from "@/lib/utils";
@@ -141,8 +143,8 @@ export type ToasterProps = {
 
 /**
  * Mount once (root layout). Stacked toasts: hover, focus or a tap expands, swipe dismisses. F8
- * jumps to the newest toast's buttons (timers pause while focus is there); Esc, the action or
- * Dismiss sends focus back.
+ * jumps to the newest toast with an action, else the newest (timers pause while focus is there);
+ * after a key press that toast shows the shortcut. Esc, the action or Dismiss sends focus back.
  */
 export function Toaster({
 	duration = 4000,
@@ -156,11 +158,30 @@ export function Toaster({
 	);
 	const section = useRef<HTMLElement>(null);
 	const back = useRef<HTMLElement | null>(null);
+	const waiting = items.find((item) => item.action)?.id;
+	const [keyboard, setKeyboard] = useState(false);
+	const mac = useIsMac();
+
+	useEffect(() => {
+		const onKey = () => setKeyboard(true);
+		// motion's tap fires a pointerdown without a pointerType when Enter presses a button.
+		const onPointer = (event: PointerEvent) => event.pointerType && setKeyboard(false);
+
+		window.addEventListener("keydown", onKey, true);
+		window.addEventListener("pointerdown", onPointer, true);
+
+		return () => {
+			window.removeEventListener("keydown", onKey, true);
+			window.removeEventListener("pointerdown", onPointer, true);
+		};
+	}, []);
 
 	useHotkey(
 		"F8",
 		() => {
-			const first = tabbables(section.current)[0];
+			const first =
+				tabbables(section.current?.querySelector<HTMLElement>("[data-waiting]") ?? null)[0] ??
+				tabbables(section.current)[0];
 
 			if (!first) return false;
 			back.current = document.activeElement as HTMLElement | null;
@@ -233,6 +254,8 @@ export function Toaster({
 								toast={item}
 								duration={item.duration ?? (item.action ? actionDuration : duration)}
 								index={i}
+								waiting={item.id === waiting}
+								hint={keyboard ? (mac ? ["fn", "F8"] : ["F8"]) : undefined}
 								y={y}
 								expanded={expanded}
 								frontHeight={frontH}
@@ -252,6 +275,8 @@ type ItemProps = {
 	toast: ToastData;
 	duration: number;
 	index: number;
+	waiting: boolean;
+	hint?: string[];
 	y: number;
 	expanded: boolean;
 	frontHeight: number;
@@ -264,6 +289,8 @@ function ToastItem({
 	toast: data,
 	duration,
 	index,
+	waiting,
+	hint,
 	y,
 	expanded,
 	frontHeight,
@@ -338,6 +365,7 @@ function ToastItem({
 			dragMomentum={false}
 			onDragEnd={onDragEnd}
 			inert={hidden}
+			data-waiting={waiting || undefined}
 			className={cn(
 				"group absolute inset-x-0 bottom-0 touch-pan-y rounded-2xl border text-popover-foreground shadow-lg",
 				material,
@@ -361,7 +389,17 @@ function ToastItem({
 					<p className="font-medium text-sm">{data.title}</p>
 
 					{data.description && <p className="text-muted-foreground text-sm">{data.description}</p>}
+
+					{data.action && <span className="sr-only">Press F8 for {data.action.label}.</span>}
 				</div>
+
+				{waiting && hint && (
+					<span aria-hidden="true" className="flex shrink-0 gap-1 group-focus-within:hidden">
+						{hint.map((key) => (
+							<Kbd key={key}>{key}</Kbd>
+						))}
+					</span>
+				)}
 
 				{data.action && (
 					<button
