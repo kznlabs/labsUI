@@ -191,4 +191,26 @@ test.describe("toast", () => {
 		await page.keyboard.press("Escape");
 		await expect(archive).toBeFocused();
 	});
+
+	test("acting on a toast from the keyboard returns focus", async ({ page }) => {
+		await open(page, "e2e/overlays");
+
+		const archive = page.getByRole("button", { name: "Archive" });
+
+		await archive.click();
+		await page.keyboard.press("F8");
+		await expect(page.getByRole("button", { name: "Undo" })).toBeFocused();
+		await page.keyboard.press("Enter");
+		await expect(log(page)).toHaveText("undo");
+		await expect(archive).toBeFocused();
+		await expect(page.getByText("Archived")).toHaveCount(0);
+
+		await archive.click();
+		await page.keyboard.press("F8");
+		await page.keyboard.press("Tab");
+		await expect(page.getByRole("button", { name: "Dismiss" })).toBeFocused();
+		await page.keyboard.press("Enter");
+		await expect(page.getByText("Archived")).toHaveCount(0);
+		await expect(archive).toBeFocused();
+	});
 });

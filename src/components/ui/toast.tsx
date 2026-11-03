@@ -133,7 +133,8 @@ const icons = {
 
 /**
  * Mount once (root layout). Stacked toasts: hover, focus or a tap expands, swipe dismisses. F8
- * jumps to the newest toast's buttons (timers pause while focus is there), Esc goes back.
+ * jumps to the newest toast's buttons (timers pause while focus is there); Esc, the action or
+ * Dismiss sends focus back.
  */
 export function Toaster({ className }: { className?: string }) {
 	const items = useSyncExternalStore(
@@ -155,6 +156,19 @@ export function Toaster({ className }: { className?: string }) {
 		},
 		{ skipInFields: false },
 	);
+
+	// The buttons unmount with their toast: focus goes back where F8 came from, else to the next toast.
+	const leave = useCallback((from: Element) => {
+		if (!section.current?.contains(document.activeElement)) return;
+
+		const toast = from.closest("li");
+		const target = back.current?.isConnected
+			? back.current
+			: tabbables(section.current).find((element) => !toast?.contains(element));
+
+		back.current = null;
+		target?.focus();
+	}, []);
 
 	const [expanded, setExpanded] = useState(false);
 	const [heights, setHeights] = useState<Record<number, number>>({});
@@ -211,6 +225,7 @@ export function Toaster({ className }: { className?: string }) {
 								frontHeight={frontH}
 								total={items.length}
 								onHeight={onHeight}
+								onLeave={leave}
 							/>
 						);
 					})}
@@ -228,9 +243,19 @@ type ItemProps = {
 	frontHeight: number;
 	total: number;
 	onHeight: (id: number, height: number) => void;
+	onLeave: (from: Element) => void;
 };
 
-function ToastItem({ toast: data, index, y, expanded, frontHeight, total, onHeight }: ItemProps) {
+function ToastItem({
+	toast: data,
+	index,
+	y,
+	expanded,
+	frontHeight,
+	total,
+	onHeight,
+	onLeave,
+}: ItemProps) {
 	const inner = useRef<HTMLDivElement>(null);
 	const [height, setHeight] = useState(0);
 	const x = useMotionValue(0);
@@ -327,8 +352,9 @@ function ToastItem({ toast: data, index, y, expanded, frontHeight, total, onHeig
 				{data.action && (
 					<button
 						type="button"
-						onClick={() => {
+						onClick={(event) => {
 							data.action?.onClick();
+							onLeave(event.currentTarget);
 							dismiss(data.id);
 						}}
 						className="h-7 shrink-0 cursor-pointer rounded-md bg-primary px-2.5 font-medium text-primary-foreground text-xs outline-none transition-opacity hover:opacity-90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -339,7 +365,10 @@ function ToastItem({ toast: data, index, y, expanded, frontHeight, total, onHeig
 
 				<button
 					type="button"
-					onClick={() => dismiss(data.id)}
+					onClick={(event) => {
+						onLeave(event.currentTarget);
+						dismiss(data.id);
+					}}
 					className="-mt-1 -mr-1 shrink-0 cursor-pointer rounded-md p-1 text-muted-foreground opacity-0 outline-none transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50 group-hover:opacity-100"
 				>
 					<X className="size-3.5" aria-hidden="true" />
