@@ -134,7 +134,7 @@ const icons = {
 export type ToasterProps = {
 	/** ms before a toast without an action closes; a toast's own `duration` wins. */
 	duration?: number;
-	/** ms before a toast with an action closes; Infinity by default, so it stays until used or dismissed. */
+	/** ms before a toast with an action closes; Infinity by default, so it stays until used or dismissed. A toast's own `duration` still wins. */
 	actionDuration?: number;
 	className?: string;
 };
