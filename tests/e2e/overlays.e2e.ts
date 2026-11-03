@@ -203,6 +203,31 @@ test.describe("toast", () => {
 		await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
 	});
 
+	test("the action lines up with the title and both edges match", async ({ page }) => {
+		await open(page, "e2e/overlays");
+		await page.getByRole("button", { name: "Archive" }).click();
+
+		const toast = page.getByRole("region", { name: "Notifications" }).locator("li", {
+			hasText: "Archived",
+		});
+
+		const measure = () =>
+			Promise.all([
+				toast.boundingBox(),
+				toast.getByText("Archived", { exact: true }).boundingBox(),
+				toast.getByRole("button", { name: "Undo" }).boundingBox(),
+			]).then(([card, title, action]) =>
+				card && title && action
+					? {
+							middles: Math.round(title.y + title.height / 2 - (action.y + action.height / 2)),
+							edges: Math.round(card.x + card.width - action.x - action.width - (title.x - card.x)),
+						}
+					: null,
+			);
+
+		await expect.poll(measure).toEqual({ middles: 0, edges: 0 });
+	});
+
 	test("acting on a toast from the keyboard returns focus", async ({ page }) => {
 		await open(page, "e2e/overlays");
 

@@ -371,7 +371,7 @@ function ToastItem({
 							onLeave(event.currentTarget);
 							dismiss(data.id);
 						}}
-						className="h-7 shrink-0 cursor-pointer rounded-md bg-primary px-2.5 font-medium text-primary-foreground text-xs outline-none transition-opacity hover:opacity-90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+						className="-my-1 h-7 shrink-0 cursor-pointer rounded-md bg-primary px-2.5 font-medium text-primary-foreground text-xs outline-none transition-opacity hover:opacity-90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
 					>
 						{data.action.label}
 					</button>
@@ -383,7 +383,7 @@ function ToastItem({
 						onLeave(event.currentTarget);
 						dismiss(data.id);
 					}}
-					className="-mt-1 -mr-1 shrink-0 cursor-pointer rounded-md p-1 text-muted-foreground opacity-0 outline-none transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50 group-hover:opacity-100"
+					className="absolute -top-2 -right-2 inline-flex size-6 cursor-pointer items-center justify-center rounded-full border bg-popover text-muted-foreground opacity-0 shadow-sm outline-none transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50 group-hover:opacity-100"
 				>
 					<X className="size-3.5" aria-hidden="true" />
 
