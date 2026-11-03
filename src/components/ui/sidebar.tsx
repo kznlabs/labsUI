@@ -6,7 +6,9 @@ import { type ComponentProps, createContext, type ReactNode, use, useState } fro
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
-import { useMediaQuery } from "@/lib/platform";
+import { KbdGroup } from "@/components/ui/kbd";
+import { Tooltip } from "@/components/ui/tooltip";
+import { useIsMac, useMediaQuery } from "@/lib/platform";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { useHotkey } from "@/lib/use-hotkey";
 import { cn, spring } from "@/lib/utils";
@@ -18,6 +20,7 @@ type SidebarCtx = {
 	mobile: boolean;
 	openMobile: boolean;
 	setOpenMobile: (open: boolean) => void;
+	shortcut: boolean;
 };
 
 const SidebarContext = createContext<SidebarCtx | null>(null);
@@ -65,7 +68,9 @@ export function SidebarLayout({
 	useHotkey(shortcut && "mod+b", () => setCollapsed(!collapsed), { skipInFields: true });
 
 	return (
-		<SidebarContext value={{ collapsed, setCollapsed, mobile, openMobile, setOpenMobile }}>
+		<SidebarContext
+			value={{ collapsed, setCollapsed, mobile, openMobile, setOpenMobile, shortcut }}
+		>
 			<div className={cn("flex min-h-0 w-full", className)} {...props}>
 				{children}
 			</div>
@@ -263,19 +268,29 @@ function Entry({
 }
 
 export function SidebarTrigger({ className }: { className?: string }) {
-	const { collapsed, setCollapsed, mobile, openMobile } = useSidebar();
+	const { collapsed, setCollapsed, mobile, openMobile, shortcut } = useSidebar();
+	const mac = useIsMac();
 	const expanded = mobile ? openMobile : !collapsed;
 
-	return (
+	const button = (
 		<Button
 			variant="ghost"
 			size="icon"
 			aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
 			aria-expanded={expanded}
+			aria-keyshortcuts={shortcut ? (mac ? "Meta+B" : "Control+B") : undefined}
 			onClick={() => setCollapsed(!collapsed)}
 			className={cn("size-8", className)}
 		>
 			<PanelLeft aria-hidden="true" />
 		</Button>
+	);
+
+	return shortcut ? (
+		<Tooltip content={<KbdGroup keys={mac ? ["⌘", "B"] : ["Ctrl", "B"]} />} side="bottom">
+			{button}
+		</Tooltip>
+	) : (
+		button
 	);
 }

@@ -51,6 +51,21 @@ test.describe("sidebar shortcut", () => {
 	});
 });
 
+test.describe("sidebar trigger", () => {
+	only("sidebar");
+	test("names its shortcut and shows it on focus", async ({ page }) => {
+		await open(page, "e2e/display");
+
+		const trigger = page.getByRole("button", { name: "Collapse sidebar" });
+
+		await expect(trigger).toHaveAttribute("aria-keyshortcuts", /^(Meta|Control)\+B$/);
+		await page.getByRole("link", { name: "Settings" }).focus();
+		await page.keyboard.press("Tab");
+		await expect(trigger).toBeFocused();
+		await expect(page.locator("[role=tooltip]")).toContainText("B");
+	});
+});
+
 test.describe("moving text", () => {
 	only("text-swap", "typewriter", "terminal");
 	test("text swap holds still under reduced motion", async ({ page }) => {

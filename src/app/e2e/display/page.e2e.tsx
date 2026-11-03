@@ -31,7 +31,7 @@ import {
 	NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { SearchInput } from "@/components/ui/search-input";
-import { Sidebar, SidebarLayout } from "@/components/ui/sidebar";
+import { Sidebar, SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Terminal } from "@/components/ui/terminal";
 import { TextSwap } from "@/components/ui/text-swap";
@@ -69,6 +69,8 @@ export default function DisplayProbe() {
 
 			<main className="grid min-w-0 flex-1 gap-6 p-4">
 				<h1>Display probes</h1>
+
+				<SidebarTrigger />
 
 				<Accordion type="single" collapsible>
 					<AccordionItem value="a">
