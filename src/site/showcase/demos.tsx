@@ -757,7 +757,7 @@ export function TypewriterDemo() {
 	const cursorProp = cursor ? "" : " cursor={false}";
 
 	useSetDynamicCode(
-		`import { Typewriter } from "@/components/ui/typewriter";\n\nexport function Headline() {\n  return (\n    <h2>\n      Design for{" "}\n      <Typewriter\n        text={[\n          "clean, precise details.",\n          "accessible keyboard navigation.",\n          "delightful micro-interactions.",\n        ]}\n        speed={${speed}}\n        pauseDuration={${pauseDuration}}${cursorProp}\n      />\n    </h2>\n  );\n}`,
+		`import { Typewriter } from "@/components/ui/typewriter";\n\nexport function Headline() {\n  return (\n    <h2>\n      Design for{" "}\n      <Typewriter\n        text={[\n          "clean, precise details.",\n          "accessible keyboard navigation.",\n          "delightful micro-interactions.",\n        ]}\n        speed={${speed}}\n        pauseDuration={${pauseDuration}}${cursorProp}\n        controls\n      />\n    </h2>\n  );\n}`,
 	);
 
 	return (
@@ -822,6 +822,7 @@ export function TypewriterDemo() {
 						deleteSpeed={20}
 						pauseDuration={pauseDuration}
 						cursor={cursor}
+						controls
 					/>
 				</span>
 			</p>
@@ -834,7 +835,7 @@ export function TextSwapDemo() {
 	const [interval, setIntervalTime] = useState(2600);
 
 	useSetDynamicCode(
-		`import { TextSwap } from "@/components/ui/text-swap";\n\nexport function DynamicTag() {\n  return (\n    <span>\n      Crafted with{" "}\n      <TextSwap\n        items={[\n          "Next.js 16 App Router",\n          "Tailwind CSS 4",\n          "Motion 14 springs",\n          "OKLCH design tokens",\n        ]}\n        direction="${direction}"\n        interval={${interval}}\n      />\n    </span>\n  );\n}`,
+		`import { TextSwap } from "@/components/ui/text-swap";\n\nexport function DynamicTag() {\n  return (\n    <span>\n      Crafted with{" "}\n      <TextSwap\n        items={[\n          "Next.js 16 App Router",\n          "Tailwind CSS 4",\n          "Motion 14 springs",\n          "OKLCH design tokens",\n        ]}\n        direction="${direction}"\n        interval={${interval}}\n        controls\n      />\n    </span>\n  );\n}`,
 	);
 
 	return (
@@ -892,6 +893,7 @@ export function TextSwapDemo() {
 						]}
 						interval={interval}
 						direction={direction}
+						controls
 					/>
 				</span>
 			</div>

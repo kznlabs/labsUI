@@ -117,6 +117,71 @@ test.describe("moving text", () => {
 
 			expect(seen.size).toBe(1);
 		});
+
+		for (const [probe, read] of [
+			["type", "[data-typewriter-animated]"],
+			["swap", ".sr-only"],
+		] as const)
+			test(`the ${probe} pause button stops it until pressed again`, async ({ page }) => {
+				await page.clock.install();
+				await open(page, "e2e/display");
+
+				const pause = page.locator(`[data-probe=${probe}]`).getByRole("button", {
+					name: "Pause animation",
+				});
+				const text = page.locator(`[data-probe=${probe}] ${read}`);
+
+				const sample = async () => {
+					const seen = new Set<string | null>();
+
+					for (let i = 0; i < 12; i++) {
+						await page.clock.runFor(130);
+						seen.add(await text.textContent());
+					}
+
+					return seen.size;
+				};
+
+				await page.clock.runFor(300);
+				await pause.focus();
+				await page.keyboard.press("Enter");
+				await expect(pause).toHaveAttribute("aria-pressed", "true");
+				expect(await sample()).toBe(1);
+
+				await page.keyboard.press("Enter");
+				await expect(pause).toHaveAttribute("aria-pressed", "false");
+				expect(await sample()).toBeGreaterThan(1);
+			});
+	});
+
+	test.describe("with a mouse", () => {
+		test.use({ reducedMotion: "no-preference" });
+		test("the pause button shows on hover, keyboard focus or while paused", async ({ page }) => {
+			await open(page, "e2e/display");
+
+			const probe = page.locator("[data-probe=swap]");
+			const pause = probe.getByRole("button", { name: "Pause animation" });
+			const opacity = () => pause.evaluate((element) => getComputedStyle(element).opacity);
+
+			await expect.poll(opacity).toBe("0");
+			await probe.locator("> span").hover();
+			await expect.poll(opacity).toBe("1");
+			await page.getByRole("heading", { name: "Display probes" }).hover();
+			await expect.poll(opacity).toBe("0");
+
+			await pause.focus();
+			await page.keyboard.press("Shift+Tab");
+			await page.keyboard.press("Tab");
+			await expect.poll(opacity).toBe("1");
+			await page.keyboard.press("Enter");
+			await page.keyboard.press("Shift+Tab");
+			await expect.poll(opacity).toBe("1");
+		});
+	});
+
+	test("no pause button when nothing moves", async ({ page }) => {
+		await open(page, "e2e/display");
+		await expect(page.getByRole("button", { name: "Pause animation" })).toHaveCount(0);
 	});
 });
 

@@ -120,11 +120,17 @@ export default function DisplayProbe() {
 				<Typewriter text={["Typewriter full sentence"]} />
 
 				<p data-probe="type">
-					<Typewriter text={["Ab", "Cd"]} speed={20} deleteSpeed={20} pauseDuration={100} />
+					<Typewriter
+						text={["Ab", "Cd"]}
+						speed={20}
+						deleteSpeed={20}
+						pauseDuration={100}
+						controls
+					/>
 				</p>
 
 				<p data-probe="swap">
-					<TextSwap items={["Swap first", "Swap second"]} interval={500} />
+					<TextSwap items={["Swap first", "Swap second"]} interval={500} controls />
 				</p>
 
 				<CountTo to={48290} />

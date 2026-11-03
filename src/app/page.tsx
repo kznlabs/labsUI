@@ -52,6 +52,7 @@ export default function Home() {
 								]}
 								interval={3200}
 								direction="up"
+								controls
 							/>
 						</span>
 					</div>

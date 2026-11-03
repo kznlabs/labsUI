@@ -1,7 +1,9 @@
 "use client";
 
+import { Pause, Play } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useEffect, useEffectEvent, useMemo, useState } from "react";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { useMounted } from "@/lib/platform";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +22,10 @@ type TypewriterProps = {
 	loop?: boolean;
 	/** Pause typing on mouse hover (default: true). */
 	pauseOnHover?: boolean;
+	/** Show a pause button, so keyboard and touch users can stop it too (WCAG 2.2.2). With a mouse it shows on hover or focus. Use it when the text keeps moving next to other content. Hidden with reduced motion. */
+	controls?: boolean;
+	/** Accessible name of the pause button (default: "Pause animation"). */
+	pauseLabel?: string;
 	/** Whether to show a blinking cursor (default: true). */
 	cursor?: boolean;
 	/** Custom character for the cursor (default: "|"). */
@@ -40,6 +46,8 @@ export function Typewriter({
 	pauseDuration = 2000,
 	loop = true,
 	pauseOnHover = true,
+	controls = false,
+	pauseLabel = "Pause animation",
 	cursor = true,
 	cursorChar = "|",
 	cursorClassName,
@@ -51,7 +59,9 @@ export function Typewriter({
 	const [phraseIndex, setPhraseIndex] = useState(0);
 	const [subIndex, setSubIndex] = useState(0);
 	const [isDeleting, setIsDeleting] = useState(false);
-	const [isPaused, setIsPaused] = useState(false);
+	const [isHovered, setIsHovered] = useState(false);
+	const [isStopped, setIsStopped] = useState(false);
+	const isPaused = isHovered || isStopped;
 
 	const mounted = useMounted();
 	// After mount only, so hydration matches.
@@ -129,9 +139,9 @@ export function Typewriter({
 	return (
 		/* biome-ignore lint/a11y/noStaticElementInteractions: pause typing on hover */
 		<span
-			onMouseEnter={pauseOnHover ? () => setIsPaused(true) : undefined}
-			onMouseLeave={pauseOnHover ? () => setIsPaused(false) : undefined}
-			className={cn("inline-flex items-baseline", className)}
+			onMouseEnter={pauseOnHover ? () => setIsHovered(true) : undefined}
+			onMouseLeave={pauseOnHover ? () => setIsHovered(false) : undefined}
+			className={cn("group/pause inline-flex items-baseline", className)}
 		>
 			<span className="sr-only">{fullText}</span>
 
@@ -154,6 +164,38 @@ export function Typewriter({
 					{cursorChar}
 				</span>
 			)}
+
+			{controls && mounted && !reduce && (
+				<PauseButton label={pauseLabel} pressed={isStopped} onPressedChange={setIsStopped} />
+			)}
 		</span>
+	);
+}
+
+function PauseButton({
+	label,
+	pressed,
+	onPressedChange,
+}: {
+	label: string;
+	pressed: boolean;
+	onPressedChange: (pressed: boolean) => void;
+}) {
+	return (
+		<button
+			type="button"
+			aria-label={label}
+			aria-pressed={pressed}
+			onClick={() => onPressedChange(!pressed)}
+			className={buttonVariants({
+				variant: "ghost",
+				size: "icon",
+				// A mouse pauses it by hovering, so the button waits for hover or focus; touch always sees it.
+				className:
+					"ml-1 size-6 self-center rounded-md text-muted-foreground [&_svg]:size-3.5 opacity-0 group-hover/pause:opacity-100 focus-visible:opacity-100 aria-pressed:opacity-100 pointer-coarse:opacity-100",
+			})}
+		>
+			{pressed ? <Play /> : <Pause />}
+		</button>
 	);
 }

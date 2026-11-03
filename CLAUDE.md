@@ -276,8 +276,8 @@ toast("Title", { description, action: { label, onClick }, duration }); toast.suc
 <Kbd>⌘K</Kbd> · <KbdGroup keys={["⇧", "⌘", "P"]} />          // server-safe
 <Separator orientation="horizontal|vertical" decorative label="or" />   // server-safe
 <SkeletonGroup label="Loading"><Skeleton className="h-4 w-32" /></SkeletonGroup>   // server-safe
-<Typewriter text={["Hello", "World"]} speed={40} deleteSpeed={24} loop cursor />
-<TextSwap items={["Phrase 1", "Phrase 2"]} interval={3000} direction="up|down|fade" />
+<Typewriter text={["Hello", "World"]} speed={40} deleteSpeed={24} loop cursor controls />
+<TextSwap items={["Phrase 1", "Phrase 2"]} interval={3000} direction="up|down|fade" controls />   // controls = keyboard pause button (WCAG 2.2.2), hidden with reduced motion
 <Table striped containerClassName><TableCaption/><TableHeader><TableRow><TableHead sort="ascending|descending|none" onSort>Name</TableHead></TableRow></TableHeader><TableBody><TableRow data-state="selected"><TableCell/></TableRow></TableBody><TableFooter/></Table>   // server-safe; onSort only from client parents
 <DataTable label="Members" data columns={[{ id, header, accessor?, cell?, sortable?, className? }]} getRowId rowLabel pageSize={10} defaultSort={{ id, dir }} searchable selectable selection? onSelectionChange rowActions={(row) => <DropdownMenuItem/>} toolbar={(selected) => …} striped />   // client-side search/sort/select/page; columns typed DataTableColumn<T>
 <Chart type="line|area|bar" stacked label="Revenue" data={rows} index="month" series={[{ key, label, color?: 1-8 }]} format={{ style: "currency", currency: "USD" }} height={240} />   // tokens chart-1…8 (fixed order, CVD-validated; ≤8 series); legend hides series, crosshair tooltip, arrow keys, table view
