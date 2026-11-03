@@ -34,6 +34,7 @@ import { SearchInput } from "@/components/ui/search-input";
 import { Sidebar, SidebarLayout } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Terminal } from "@/components/ui/terminal";
+import { TextSwap } from "@/components/ui/text-swap";
 import { Typewriter } from "@/components/ui/typewriter";
 
 const people = Array.from({ length: 14 }, (_, i) => ({
@@ -115,6 +116,14 @@ export default function DisplayProbe() {
 				</NavigationMenu>
 
 				<Typewriter text={["Typewriter full sentence"]} />
+
+				<p data-probe="type">
+					<Typewriter text={["Ab", "Cd"]} speed={20} deleteSpeed={20} pauseDuration={100} />
+				</p>
+
+				<p data-probe="swap">
+					<TextSwap items={["Swap first", "Swap second"]} interval={500} />
+				</p>
 
 				<CountTo to={48290} />
 

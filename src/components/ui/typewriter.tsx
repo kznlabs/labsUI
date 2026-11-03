@@ -18,6 +18,8 @@ type TypewriterProps = {
 	pauseDuration?: number;
 	/** Whether to loop through phrases when text is an array (default: true). */
 	loop?: boolean;
+	/** Pause typing on mouse hover (default: true). */
+	pauseOnHover?: boolean;
 	/** Whether to show a blinking cursor (default: true). */
 	cursor?: boolean;
 	/** Custom character for the cursor (default: "|"). */
@@ -37,6 +39,7 @@ export function Typewriter({
 	delay = 0,
 	pauseDuration = 2000,
 	loop = true,
+	pauseOnHover = true,
 	cursor = true,
 	cursorChar = "|",
 	cursorClassName,
@@ -48,6 +51,7 @@ export function Typewriter({
 	const [phraseIndex, setPhraseIndex] = useState(0);
 	const [subIndex, setSubIndex] = useState(0);
 	const [isDeleting, setIsDeleting] = useState(false);
+	const [isPaused, setIsPaused] = useState(false);
 
 	const mounted = useMounted();
 	// After mount only, so hydration matches.
@@ -67,7 +71,7 @@ export function Typewriter({
 	}, [delay]);
 
 	useEffect(() => {
-		if (!started || phrases.length === 0) return;
+		if (!started || isPaused || phrases.length === 0) return;
 
 		if (!isDeleting && subIndex === currentPhrase.length) {
 			if (phrases.length === 1 && !loop) {
@@ -107,6 +111,7 @@ export function Typewriter({
 		return () => clearTimeout(timer);
 	}, [
 		started,
+		isPaused,
 		subIndex,
 		isDeleting,
 		phraseIndex,
@@ -122,7 +127,12 @@ export function Typewriter({
 	const displayed = reduce ? (phrases[0] ?? "") : currentPhrase.slice(0, subIndex);
 
 	return (
-		<span className={cn("inline-flex items-baseline", className)}>
+		/* biome-ignore lint/a11y/noStaticElementInteractions: pause typing on hover */
+		<span
+			onMouseEnter={pauseOnHover ? () => setIsPaused(true) : undefined}
+			onMouseLeave={pauseOnHover ? () => setIsPaused(false) : undefined}
+			className={cn("inline-flex items-baseline", className)}
+		>
 			<span className="sr-only">{fullText}</span>
 
 			<span aria-hidden="true" data-typewriter-animated="">
@@ -137,7 +147,7 @@ export function Typewriter({
 				<span
 					aria-hidden="true"
 					className={cn(
-						"ml-0.5 inline-block animate-pulse font-light text-muted-foreground select-none",
+						"ml-0.5 inline-block animate-pulse font-light motion-reduce:animate-none text-muted-foreground select-none",
 						cursorClassName,
 					)}
 				>

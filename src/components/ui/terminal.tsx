@@ -90,7 +90,7 @@ function Cursor() {
 	return (
 		<span
 			aria-hidden="true"
-			className="ml-px inline-block h-[1.1em] w-[0.55em] translate-y-[0.2em] animate-pulse bg-foreground/70"
+			className="ml-px inline-block h-[1.1em] w-[0.55em] translate-y-[0.2em] animate-pulse bg-foreground/70 motion-reduce:animate-none"
 		/>
 	);
 }

@@ -51,6 +51,60 @@ test.describe("sidebar shortcut", () => {
 	});
 });
 
+test.describe("moving text", () => {
+	only("text-swap", "typewriter", "terminal");
+	test("text swap holds still under reduced motion", async ({ page }) => {
+		await page.clock.install();
+		await open(page, "e2e/display");
+
+		const seen = new Set<string | null>();
+
+		for (let i = 0; i < 12; i++) {
+			await page.clock.runFor(130);
+			seen.add(await page.locator("[data-probe=swap] .sr-only").textContent());
+		}
+
+		expect([...seen]).toEqual(["Swap first"]);
+	});
+
+	test("nothing blinks under reduced motion", async ({ page }) => {
+		await open(page, "e2e/display");
+
+		const running = await page.evaluate(() =>
+			document
+				.querySelector("main")
+				?.getAnimations({ subtree: true })
+				.filter((animation) => animation instanceof CSSAnimation)
+				.map((animation) => (animation.effect as KeyframeEffect).target?.className),
+		);
+
+		expect(running).toEqual([]);
+	});
+
+	test.describe("with motion", () => {
+		test.use({ reducedMotion: "no-preference" });
+		test("the typewriter pauses while hovered", async ({ page }) => {
+			await page.clock.install();
+			await open(page, "e2e/display");
+
+			const typed = page.locator("[data-probe=type] [data-typewriter-animated]");
+
+			await page.clock.runFor(1000);
+			await page.locator("[data-probe=type] > span").hover({ force: true });
+			await page.clock.runFor(50);
+
+			const seen = new Set<string | null>();
+
+			for (let i = 0; i < 12; i++) {
+				await page.clock.runFor(37);
+				seen.add(await typed.textContent());
+			}
+
+			expect(seen.size).toBe(1);
+		});
+	});
+});
+
 test.describe("search-input", () => {
 	only("search-input");
 	test("the shortcut focuses it, steps aside once focused, Esc clears", async ({ page }) => {

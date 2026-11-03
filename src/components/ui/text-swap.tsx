@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { cn, spring } from "@/lib/utils";
 
@@ -9,7 +9,7 @@ type TextSwapProps = {
 	items?: readonly string[];
 	/** Active index when controlling externally. */
 	index?: number;
-	/** Milliseconds between swaps when cycling automatically (default: 3000). */
+	/** Milliseconds between swaps when cycling automatically (default: 3000). With reduced motion it doesn't cycle. */
 	interval?: number;
 	/** Swap direction (default: "up"). */
 	direction?: "up" | "down" | "fade";
@@ -34,19 +34,21 @@ export function TextSwap({
 
 	const [uncontrolledIndex, setUncontrolledIndex] = useState(0);
 	const [isPaused, setIsPaused] = useState(false);
+	const reduce = useReducedMotion();
 
 	const activeIndex = isControlled ? controlledIndex : uncontrolledIndex;
 	const currentItem = list[activeIndex % (list.length || 1)] ?? "";
 
 	useEffect(() => {
-		if (isControlled || list.length <= 1 || isPaused || interval <= 0) return;
+		// Reduced motion: no auto-cycling, the first item stays.
+		if (isControlled || list.length <= 1 || isPaused || reduce || interval <= 0) return;
 
 		const timer = setInterval(() => {
 			setUncontrolledIndex((prev) => (prev + 1) % list.length);
 		}, interval);
 
 		return () => clearInterval(timer);
-	}, [isControlled, list.length, isPaused, interval]);
+	}, [isControlled, list.length, isPaused, reduce, interval]);
 
 	const yOffset = direction === "up" ? 14 : direction === "down" ? -14 : 0;
 	const exitY = direction === "up" ? -14 : direction === "down" ? 14 : 0;
