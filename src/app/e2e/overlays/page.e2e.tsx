@@ -143,6 +143,10 @@ export default function OverlaysProbe() {
 			<Tooltip content="Bold">
 				<Button variant="ghost">Bold</Button>
 			</Tooltip>
+
+			<Button variant="outline" onClick={() => toast("Saved")}>
+				Save
+			</Button>
 		</main>
 	);
 }

@@ -192,6 +192,17 @@ test.describe("toast", () => {
 		await expect(archive).toBeFocused();
 	});
 
+	test("a toast with an action waits for it, a plain one times out", async ({ page }) => {
+		await page.clock.install();
+		await open(page, "e2e/overlays");
+		await page.getByRole("button", { name: "Archive" }).click();
+		await page.getByRole("button", { name: "Save" }).click();
+		await page.mouse.move(0, 0);
+		await page.clock.runFor(60_000);
+		await expect(page.getByText("Saved")).toHaveCount(0);
+		await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
+	});
+
 	test("acting on a toast from the keyboard returns focus", async ({ page }) => {
 		await open(page, "e2e/overlays");
 

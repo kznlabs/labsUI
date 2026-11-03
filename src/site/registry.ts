@@ -100,7 +100,7 @@ export const registry: Entry[] = [
 		name: "Toast",
 		file: "toast.tsx",
 		description:
-			"Stacked notifications. Hover to expand, swipe to dismiss, timers pause on hover or focus, and F8 jumps to the newest toast from the keyboard.",
+			"Stacked notifications. Hover to expand, swipe to dismiss, timers pause on hover or focus, a toast with an action stays until it's used or dismissed, and F8 jumps to the newest toast from the keyboard.",
 		usage: `toast.success("Saved", { description: "All changes synced", action: { label: "Undo", onClick } })`,
 		mount: "<Toaster />",
 	},

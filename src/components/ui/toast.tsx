@@ -23,8 +23,8 @@ export type ToastData = {
 	title: ReactNode;
 	description?: ReactNode;
 	variant: ToastVariant;
-	/** ms; Infinity = sticky. */
-	duration: number;
+	/** ms; Infinity = sticky. Defaults to the Toaster's `duration` or `actionDuration`. */
+	duration?: number;
 	action?: { label: string; onClick: () => void };
 };
 type ToastOptions = Partial<Omit<ToastData, "id" | "title">>;
@@ -51,7 +51,7 @@ const MAX = 6;
 
 function create(title: ReactNode, opts: ToastOptions = {}) {
 	const id = ++nextId;
-	const next: ToastData = { id, title, variant: "default", duration: 4000, ...opts };
+	const next: ToastData = { id, title, variant: "default", ...opts };
 
 	toasts = [next, ...toasts].slice(0, MAX);
 	emit();
@@ -82,7 +82,7 @@ function promise<T>(
 
 	pending.then(
 		(value) =>
-			update(id, { title: resolve(msgs.success, value), variant: "success", duration: 4000 }),
+			update(id, { title: resolve(msgs.success, value), variant: "success", duration: undefined }),
 		(error) => update(id, { title: resolve(msgs.error, error), variant: "error", duration: 6000 }),
 	);
 
@@ -131,12 +131,24 @@ const icons = {
 	loading: <Loader2 className="size-4 animate-spin text-muted-foreground" aria-hidden="true" />,
 };
 
+export type ToasterProps = {
+	/** ms before a toast without an action closes; a toast's own `duration` wins. */
+	duration?: number;
+	/** ms before a toast with an action closes; Infinity by default, so it stays until used or dismissed. */
+	actionDuration?: number;
+	className?: string;
+};
+
 /**
  * Mount once (root layout). Stacked toasts: hover, focus or a tap expands, swipe dismisses. F8
  * jumps to the newest toast's buttons (timers pause while focus is there); Esc, the action or
  * Dismiss sends focus back.
  */
-export function Toaster({ className }: { className?: string }) {
+export function Toaster({
+	duration = 4000,
+	actionDuration = Number.POSITIVE_INFINITY,
+	className,
+}: ToasterProps) {
 	const items = useSyncExternalStore(
 		subscribe,
 		() => toasts,
@@ -157,7 +169,7 @@ export function Toaster({ className }: { className?: string }) {
 		{ skipInFields: false },
 	);
 
-	// The buttons unmount with their toast: focus goes back where F8 came from, else to the next toast.
+	// The buttons unmount with their toast, so focus moves first.
 	const leave = useCallback((from: Element) => {
 		if (!section.current?.contains(document.activeElement)) return;
 
@@ -219,6 +231,7 @@ export function Toaster({ className }: { className?: string }) {
 							<ToastItem
 								key={item.id}
 								toast={item}
+								duration={item.duration ?? (item.action ? actionDuration : duration)}
 								index={i}
 								y={y}
 								expanded={expanded}
@@ -237,6 +250,7 @@ export function Toaster({ className }: { className?: string }) {
 
 type ItemProps = {
 	toast: ToastData;
+	duration: number;
 	index: number;
 	y: number;
 	expanded: boolean;
@@ -248,6 +262,7 @@ type ItemProps = {
 
 function ToastItem({
 	toast: data,
+	duration,
 	index,
 	y,
 	expanded,
@@ -264,7 +279,7 @@ function ToastItem({
 	// Paused while you read the stack and while the tab is in the background.
 	const visible = useSyncExternalStore(onVisibility, isVisible, () => true);
 	const paused = expanded || !visible;
-	const remaining = useRef({ duration: data.duration, left: data.duration });
+	const remaining = useRef({ duration, left: duration });
 
 	useEffect(() => {
 		const element = inner.current;
@@ -283,9 +298,8 @@ function ToastItem({
 
 	useEffect(() => {
 		// Time left restarts when the duration changes (a promise toast settling).
-		if (remaining.current.duration !== data.duration)
-			remaining.current = { duration: data.duration, left: data.duration };
-		if (paused || !Number.isFinite(data.duration)) return;
+		if (remaining.current.duration !== duration) remaining.current = { duration, left: duration };
+		if (paused || !Number.isFinite(duration)) return;
 
 		const start = Date.now();
 		const timer = setTimeout(() => dismiss(data.id), remaining.current.left);
@@ -294,7 +308,7 @@ function ToastItem({
 			clearTimeout(timer);
 			remaining.current.left -= Date.now() - start;
 		};
-	}, [paused, data.id, data.duration]);
+	}, [paused, data.id, duration]);
 
 	const onDragEnd = (_: unknown, info: PanInfo) => {
 		if (Math.abs(info.offset.x) > 80 || Math.abs(info.velocity.x) > 500) {
