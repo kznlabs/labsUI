@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { add } from "./commands/add.ts";
-import { diff } from "./commands/diff.ts";
+import { changeNote, diff } from "./commands/diff.ts";
 import { doctor } from "./commands/doctor.ts";
 import { init } from "./commands/init.ts";
 import { searchIndex, suggest } from "./commands/search.ts";
@@ -119,7 +119,11 @@ async function callTool(ctx: Context, name: string, args: Json) {
 				? items
 						.flatMap((i) =>
 							i.installed
-								? i.files.map((file) => `\`\`\`diff\n${file.patch}\n\`\`\``)
+								? i.files.map((file) => {
+										const note = changeNote(file, i.since);
+
+										return `${note ? `${i.name}: ${note}\n` : ""}\`\`\`diff\n${file.patch}\n\`\`\``;
+									})
 								: [`${i.name} is not installed; add installs it.`],
 						)
 						.join("\n\n")

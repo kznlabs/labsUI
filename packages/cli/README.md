@@ -111,9 +111,11 @@ changes. `labsui.json` records which labsui version wrote each item, and
 The base comes from JSR, which keeps every release's files. Offline, with a
 hosted registry, or for items installed before versions were recorded,
 edited files are left as they are. `labsui diff` lists installed items that
-differ from this version, marking those that differ only in blank lines or
-indentation; `labsui diff dialog` prints the patch from this version's file
-to yours, or says `dialog` isn't installed.
+differ from this version and, from the same base, whose change each file
+is: only labsUI's (update replaces it), only yours (update keeps it) or
+both (update merges). It also marks files that differ only in blank lines
+or indentation. `labsui diff dialog` prints the patch from this version's
+file to yours, or says `dialog` isn't installed.
 
 ### `doctor`
 

@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { relative } from "node:path";
 import { lines, sameCode } from "../lines.ts";
 import { CliError, dim, green, red } from "../log.ts";
-import { fetchAllItems, itemName } from "../registry.ts";
+import { type BaseLoader, fetchAllItems, itemName, jsrBase } from "../registry.ts";
 import type { Config, RegistryItem } from "../types.ts";
 import { projectBase, rewriteAlias, safeTarget } from "./add.ts";
 
@@ -13,10 +13,14 @@ export type FileDiff = {
 	removed: number;
 	/** Only blank lines or indentation differ: a formatter, not an edit. */
 	formatting: boolean;
+	/** Who changed it since it was installed: `upstream` (update replaces it), `local` (update keeps it) or `both` (update merges). Unset when that version is unknown or can't be fetched. */
+	changedBy?: "upstream" | "local" | "both";
 	patch: string;
 };
-/** `installed: false` for an item asked for by name that isn't in the project. */
-export type ItemDiff = { name: string; installed: boolean; files: FileDiff[] };
+/** `installed: false` for an item asked for by name that isn't in the project; `since` is the version that installed it. */
+export type ItemDiff = { name: string; installed: boolean; since?: string; files: FileDiff[] };
+
+const same = (a: string, b: string) => lines(a).join("\n") === lines(b).join("\n");
 
 /** For each line of `a`, the index of the line of `b` it is kept as, or -1 where it changed. */
 export function matches(a: string[], b: string[]) {
@@ -128,9 +132,16 @@ export async function installedItems(config: Config, base: string, all?: Registr
 /**
  * How installed items differ from this labsui version, as patches from the registry file to
  * yours. No names: every installed item that differs. A name that isn't installed comes back with
- * `installed: false`; an unknown one is an error.
+ * `installed: false`; an unknown one is an error. The version that installed an item tells whose
+ * change each file is.
  */
-export async function diff(cwd: string, config: Config, names: string[], version: string) {
+export async function diff(
+	cwd: string,
+	config: Config,
+	names: string[],
+	version: string,
+	loadBase: BaseLoader = jsrBase,
+) {
 	const base = projectBase(cwd, config);
 	const wanted = new Set(names.map(itemName));
 	const all = await fetchAllItems(config.registry);
@@ -144,10 +155,22 @@ export async function diff(cwd: string, config: Config, names: string[], version
 		.filter((name) => !installed.some(({ item }) => item.name === name))
 		.map((name) => ({ name, installed: false, files: [] }));
 
+	const bases = new Map<string, ReturnType<BaseLoader>>();
+
+	const baseOf = async (name: string, since: string | undefined) => {
+		if (!since || config.registry) return undefined;
+		if (since === version) return all.find((item) => item.name === name);
+		if (!bases.has(since)) bases.set(since, loadBase(since));
+
+		return (await bases.get(since))?.[name];
+	};
+
 	for (const { item, files } of installed) {
 		if (wanted.size && !wanted.has(item.name)) continue;
 
 		const changed: FileDiff[] = [];
+		const since = config.installed?.[item.name];
+		const old = await baseOf(item.name, since);
 
 		item.files.forEach((file, i) => {
 			const local = files[i];
@@ -162,19 +185,40 @@ export async function diff(cwd: string, config: Config, names: string[], version
 			if (!patch) return;
 
 			const body = patch.split("\n").slice(2);
+			const before = old?.files.find((entry) => entry.path === file.path)?.content;
+			const was = before === undefined ? undefined : rewriteAlias(before, config.alias);
 
 			changed.push({
 				path: shown,
 				added: body.filter((line) => line.startsWith("+")).length,
 				removed: body.filter((line) => line.startsWith("-")).length,
 				formatting: sameCode(theirs, yours),
+				changedBy:
+					was === undefined
+						? undefined
+						: same(was, yours)
+							? "upstream"
+							: same(was, theirs)
+								? "local"
+								: "both",
 				patch,
 			});
 		});
-		if (changed.length) out.push({ name: item.name, installed: true, files: changed });
+		if (changed.length) out.push({ name: item.name, installed: true, since, files: changed });
 	}
 
 	return out;
+}
+
+/** Whose change a file is and what `update` does with it; "" when that isn't known. */
+export function changeNote(file: FileDiff, since?: string) {
+	if (file.changedBy === "upstream")
+		return `only labsUI changed it since ${since}; update replaces it`;
+	if (file.changedBy === "local") return "your edits; update keeps them";
+	if (file.changedBy === "both")
+		return `your edits and labsUI's since ${since}; update merges them`;
+
+	return "";
 }
 
 export function printDiff(items: ItemDiff[], full: boolean) {
@@ -185,12 +229,16 @@ export function printDiff(items: ItemDiff[], full: boolean) {
 			console.log(`  ${item.name.padEnd(24)} ${dim(`not installed (labsui add ${item.name})`)}`);
 
 		for (const file of item.files) {
+			const note = file.formatting ? "formatting only" : changeNote(file, item.since);
+
 			if (!full) {
 				console.log(
-					`  ${item.name.padEnd(24)} ${green(`+${file.added}`)} ${red(`-${file.removed}`)}  ${dim(file.path)}${file.formatting ? dim("  (formatting only)") : ""}`,
+					`  ${item.name.padEnd(24)} ${green(`+${file.added}`)} ${red(`-${file.removed}`)}  ${dim(file.path)}${note ? dim(`  (${note})`) : ""}`,
 				);
 				continue;
 			}
+
+			if (note) console.log(dim(`# ${item.name}: ${note}`));
 
 			for (const line of file.patch.split("\n"))
 				console.log(
@@ -207,6 +255,6 @@ export function printDiff(items: ItemDiff[], full: boolean) {
 
 	if (!full)
 		console.log(
-			`\n${dim("labsui diff <name> shows the changes; add <name> --overwrite takes this version.")}`,
+			`\n${dim("labsui diff <name> shows the changes; labsui update <name> takes this version and keeps your edits.")}`,
 		);
 }

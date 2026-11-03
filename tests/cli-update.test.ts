@@ -10,6 +10,7 @@ import { update } from "../packages/cli/src/commands/update.ts";
 import { hasConflictMarkers, merge3 } from "../packages/cli/src/merge.ts";
 import { readConfig } from "../packages/cli/src/project.ts";
 import bundled from "../packages/cli/src/registry.json" with { type: "json" };
+import type { BaseLoader } from "../packages/cli/src/registry.ts";
 import type { RegistryItem } from "../packages/cli/src/types.ts";
 import { VERSION } from "../packages/cli/src/version.ts";
 
@@ -119,6 +120,29 @@ describe("update", () => {
 		const checks = (await doctor(dir)).checks;
 
 		expect(checks.find((check) => check.id === "merge")?.status).toBe("fail");
+	});
+
+	const changedBy = async (local: string, installed: string, load: BaseLoader = loadBase) => {
+		const config = project(local, { kbd: installed });
+		const [item] = await diff(dir, config, ["kbd"], VERSION, load);
+
+		return item?.files[0]?.changedBy;
+	};
+
+	test("diff: only labsUI changed an unedited file", async () => {
+		expect(await changedBy(older, "0.0.9")).toBe("upstream");
+	});
+
+	test("diff: only you changed a file labsUI left alone", async () => {
+		expect(await changedBy(`// my note\n${current}`, VERSION)).toBe("local");
+	});
+
+	test("diff: both changed a file", async () => {
+		expect(await changedBy(`// my note\n${older}`, "0.0.9")).toBe("both");
+	});
+
+	test("diff: without the old version nobody is named", async () => {
+		expect(await changedBy(older, "0.0.9", async () => undefined)).toBeUndefined();
 	});
 
 	test("without the old version an edited file is kept", async () => {

@@ -3,27 +3,11 @@ import { dirname, relative } from "node:path";
 import { bold, CliError, dim, green, yellow } from "../log.ts";
 import { merge3 } from "../merge.ts";
 import { recordInstalled } from "../project.ts";
-import { itemName } from "../registry.ts";
+import { type BaseLoader, itemName, jsrBase } from "../registry.ts";
 import type { Config, Opts, RegistryItem } from "../types.ts";
 import { VERSION } from "../version.ts";
 import { type AddResult, add, printAdd, projectBase, rewriteAlias } from "./add.ts";
 import { installedItems } from "./diff.ts";
-
-/** The registry a published version shipped, by item name; undefined when it can't be had. */
-export type BaseLoader = (version: string) => Promise<Record<string, RegistryItem> | undefined>;
-
-/** JSR serves every published version's files, the bundled registry among them. */
-export const jsrBase: BaseLoader = async (version) => {
-	try {
-		const res = await fetch(`https://jsr.io/@kznlabs/labsui/${version}/src/registry.json`);
-
-		return res.ok
-			? ((await res.json()) as { items: Record<string, RegistryItem> }).items
-			: undefined;
-	} catch {
-		return undefined;
-	}
-};
 
 type Status = "current" | "replaced" | "merged" | "conflicts" | "kept";
 export type ItemUpdate = {

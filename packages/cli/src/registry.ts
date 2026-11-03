@@ -138,3 +138,19 @@ export async function fetchAllItems(source: Source): Promise<RegistryItem[]> {
 
 	return Promise.all(index.map((i) => fetchItem(source, i.name)));
 }
+
+/** The registry a published version shipped, by item name; undefined when it can't be had. */
+export type BaseLoader = (version: string) => Promise<Record<string, RegistryItem> | undefined>;
+
+/** JSR serves every published version's files, the bundled registry among them. */
+export const jsrBase: BaseLoader = async (version) => {
+	try {
+		const res = await fetch(`https://jsr.io/@kznlabs/labsui/${version}/src/registry.json`);
+
+		return res.ok
+			? ((await res.json()) as { items: Record<string, RegistryItem> }).items
+			: undefined;
+	} catch {
+		return undefined;
+	}
+};
