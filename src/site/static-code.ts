@@ -47,6 +47,17 @@ export function Save() {
     "labsui": { "command": "npx", "args": ["-y", "@kznlabs/labsui", "mcp"] }
   }
 }`,
+	/** Real output, see /why's caption: 0.1.12 install, toast.tsx edited, updated to a later version. */
+	updateRun: `$ labsui diff
+  toast  +18 -98  src/components/ui/toast.tsx  (your edits and labsUI's since 0.1.12; update merges them)
+  utils  +0 -9  src/lib/utils.ts  (only labsUI changed it since 0.1.12; update replaces it)
+
+$ labsui update toast
+✓ toast  merged
+✓ Wrote 2 file(s):
+  src/lib/platform.ts
+  src/components/ui/kbd.tsx
+• Kept dependencies that differ from this version (older or edited): utils`,
 	theming: `import { setAccent, setTheme } from "@/lib/theme";
 
 setTheme("dark"); // or "light"; follows the OS until set, then remembered

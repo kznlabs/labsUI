@@ -58,7 +58,9 @@ export function SiteShell({ current, children }: { current?: string; children: R
 						title: "Docs",
 						links: [
 							{ label: "Get started", href: withBase("/#getting-started") },
+							{ label: "Why labsUI", href: withBase("/why") },
 							{ label: "llms.txt", href: withBase("/llms.txt") },
+							{ label: "llms-full.txt", href: withBase("/llms-full.txt") },
 						],
 					},
 					{

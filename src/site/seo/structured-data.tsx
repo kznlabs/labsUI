@@ -58,6 +58,45 @@ export function ComponentStructuredData({ entry }: { entry: Entry }) {
 	);
 }
 
+/** Schema.org JSON-LD for a page about the library itself: the article and its breadcrumb trail. */
+export function ArticleStructuredData({
+	path,
+	title,
+	description,
+}: {
+	path: string;
+	title: string;
+	description: string;
+}) {
+	const url = `${site.url}${path}`;
+
+	return (
+		<JsonLd
+			graph={{
+				"@context": "https://schema.org",
+				"@graph": [
+					{
+						"@type": "TechArticle",
+						"@id": `${url}#article`,
+						url,
+						headline: title,
+						description,
+						isPartOf: { "@id": `${site.url}/#website` },
+						about: { "@id": `${site.url}/#library` },
+					},
+					{
+						"@type": "BreadcrumbList",
+						itemListElement: [
+							{ "@type": "ListItem", position: 1, name: site.name, item: site.url },
+							{ "@type": "ListItem", position: 2, name: title, item: url },
+						],
+					},
+				],
+			}}
+		/>
+	);
+}
+
 /** Schema.org JSON-LD: WebSite + SoftwareSourceCode + ItemList of components. */
 export function StructuredData() {
 	const graph = {

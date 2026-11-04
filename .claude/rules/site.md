@@ -20,6 +20,11 @@ paths:
 - `/components/[id]` is one static page per registry entry with its own title,
   description, canonical, JSON-LD (`ComponentStructuredData`) and sitemap entry,
   rendering `ShowcaseSection` from `sectionProps()` (code, API).
+- `/why` says what labsUI does, how it is checked and when it is not a fit. Its
+  `update` transcript (`guide.updateRun`) is real output; rerun it if the
+  CLI's wording changes.
+- `/llms.txt` is an index, a link per component's Markdown; `/llms-full.txt`
+  holds usage and exact props for all of them (`src/site/llms.ts`).
 
 ## API docs
 
@@ -27,7 +32,7 @@ paths:
   oven-sh/bun#39747 ships) reads exported components' prop types with TS 7's API
   (`typescript/unstable/sync`, drives tsgo over `tsconfig.json`; unstable, so
   rerun it after bumping TypeScript) into `src/site/api.generated.json`, shown
-  as each section's API reference and in `/llms.txt`.
+  as each section's API reference and in `/llms-full.txt`.
 - **JSDoc on a prop is its public description**; own props only (inherited DOM
   props are summarized, `className` omitted). Every own prop needs one: the
   script fails and lists the gaps otherwise.
@@ -46,7 +51,8 @@ TSX.
 ## SEO and GEO
 
 Semantic tags, one `h1`, `section[aria-labelledby]`→`h2`; the registry feeds
-JSON-LD (`<StructuredData />`, `@/site/seo/structured-data`) and `/llms.txt`.
+JSON-LD (`<StructuredData />`, `@/site/seo/structured-data`) and both `llms`
+files.
 
 ## Originality and claims
 

@@ -41,6 +41,9 @@ Hand-made, accessible, and copied into your project so you own the code.
   charts, motion helpers, and ready-made blocks like pricing, site header and
   changelog.
 
+[Why labsUI](https://kznlabs.github.io/labsUI/why) has more, including when it
+is not a fit.
+
 ## Accessibility and browsers
 
 CI runs an automated sweep on pull requests (the pages a change reaches) and

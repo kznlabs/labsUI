@@ -49,6 +49,7 @@ const statics: [code: string, language: string][] = [
 	[guide.layout, "tsx"],
 	[guide.usage, "tsx"],
 	[guide.mcp, "json"],
+	[guide.updateRun, "console"],
 	[guide.theming, "ts"],
 ];
 

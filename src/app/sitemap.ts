@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
 	return [
 		{ url: site.url, lastModified, changeFrequency: "monthly", priority: 1 },
+		{ url: `${site.url}/why`, lastModified, changeFrequency: "monthly", priority: 0.9 },
 		...registry.map((entry) => ({
 			url: `${site.url}${componentPath(entry.id)}`,
 			lastModified,

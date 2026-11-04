@@ -166,6 +166,7 @@ export const sectionProps = (entry: Entry, page = false) => ({
 /** Header nav: groups jump to their place in the gallery, blocks open their own pages. */
 export const headerNav = [
 	{ label: "Get started", href: withBase("/#getting-started") },
+	{ label: "Why", href: withBase("/why") },
 	{
 		label: "Components",
 		items: nav

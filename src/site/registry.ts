@@ -20,7 +20,7 @@ export type Entry = {
 	mount?: string;
 };
 
-/** Component index: drives gallery nav/sections, JSON-LD and /llms.txt. */
+/** Component index: drives gallery nav/sections, JSON-LD, /llms.txt and /llms-full.txt. */
 export const registry: Entry[] = [
 	{
 		id: "button",
