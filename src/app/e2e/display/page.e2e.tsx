@@ -30,6 +30,7 @@ import {
 	NavigationMenuList,
 	NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { Quote } from "@/components/ui/quote";
 import { SearchInput } from "@/components/ui/search-input";
 import { Sidebar, SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -132,6 +133,28 @@ export default function DisplayProbe() {
 				<p data-probe="swap">
 					<TextSwap items={["Swap first", "Swap second"]} interval={500} controls />
 				</p>
+
+				<div data-probe="quote-swap" className="max-w-xs">
+					<Quote
+						textSwap={{
+							items: [
+								"Quote first",
+								"Quote second, long enough to wrap onto more than one line in this narrow box",
+							],
+							interval: 500,
+							controls: true,
+						}}
+					>
+						Quote first
+					</Quote>
+				</div>
+
+				<div data-probe="quote-type">
+					<Quote typewriter={{ speed: 20, controls: true }}>
+						A quote long enough to keep typing through every sample of the pause test, well past the
+						first few seconds of it, and then some more words for good measure.
+					</Quote>
+				</div>
 
 				<CountTo to={48290} />
 

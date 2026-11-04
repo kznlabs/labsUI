@@ -20,15 +20,25 @@ type QuoteProps = {
 	avatar?: ReactNode;
 	/** "plain" text, "card" surface, or "large" display text with an accent mark. */
 	variant?: "plain" | "card" | "large";
-	/** Enables typewriter effect for string children, or pass custom speed/delay options. */
-	typewriter?: boolean | { speed?: number; delay?: number; cursor?: boolean };
-	/** Cycles through an array of quotes with spring text swap transitions. */
+	/** Enables typewriter effect for string children, or pass custom speed/delay options. `controls` adds a pause button, named by `pauseLabel`. */
+	typewriter?:
+		| boolean
+		| {
+				speed?: number;
+				delay?: number;
+				cursor?: boolean;
+				controls?: boolean;
+				pauseLabel?: string;
+		  };
+	/** Cycles through an array of quotes with spring text swap transitions. In the object form, `controls` adds a pause button, named by `pauseLabel`. */
 	textSwap?:
 		| readonly string[]
 		| {
 				items: readonly string[];
 				interval?: number;
 				direction?: "up" | "down" | "fade";
+				controls?: boolean;
+				pauseLabel?: string;
 		  };
 	className?: string;
 };
@@ -80,25 +90,7 @@ export function Quote({
 							{...(typeof typewriter === "object" ? typewriter : {})}
 						/>
 					) : textSwap ? (
-						<TextSwap
-							items={
-								Array.isArray(textSwap)
-									? textSwap
-									: "items" in textSwap
-										? textSwap.items
-										: undefined
-							}
-							interval={
-								typeof textSwap === "object" && "interval" in textSwap
-									? textSwap.interval
-									: undefined
-							}
-							direction={
-								typeof textSwap === "object" && "direction" in textSwap
-									? textSwap.direction
-									: undefined
-							}
-						/>
+						<TextSwap {...("items" in textSwap ? textSwap : { items: textSwap })} />
 					) : (
 						children
 					)}

@@ -3,7 +3,6 @@
 import { Pause, Play } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
-import { buttonVariants } from "@/components/ui/button-variants";
 import { useMounted } from "@/lib/platform";
 import { cn, spring } from "@/lib/utils";
 
@@ -18,7 +17,7 @@ type TextSwapProps = {
 	direction?: "up" | "down" | "fade";
 	/** Pause the cycle on mouse hover (default: true). */
 	pauseOnHover?: boolean;
-	/** Show a pause button after the text, so keyboard and touch users can stop it too (WCAG 2.2.2). With a mouse it shows on hover or focus. Use it when it cycles next to other content. Hidden with reduced motion. */
+	/** Make the text a pause button, so keyboard and touch users can stop it too (WCAG 2.2.2). It takes no room: a mouse sees it over the text on hover, a keyboard on focus, and a tap anywhere toggles it. Use it when it cycles next to other content. Hidden with reduced motion. */
 	controls?: boolean;
 	/** Accessible name of the pause button (default: "Pause animation"). */
 	pauseLabel?: string;
@@ -115,7 +114,7 @@ export function TextSwap({
 	if (!withButton) return swap;
 
 	return (
-		<span {...hover} className="group/pause">
+		<span {...hover} className="group/pause relative inline-flex items-baseline">
 			{swap}
 
 			<button
@@ -123,14 +122,13 @@ export function TextSwap({
 				aria-label={pauseLabel}
 				aria-pressed={isStopped}
 				onClick={() => setIsStopped(!isStopped)}
-				className={buttonVariants({
-					variant: "ghost",
-					size: "icon",
-					className:
-						"ml-1 size-6 rounded-md align-middle text-muted-foreground [&_svg]:size-3.5 opacity-0 group-hover/pause:opacity-100 focus-visible:opacity-100 aria-pressed:opacity-100 pointer-coarse:opacity-100",
-				})}
+				// Lies over the text, so it takes no room; past its edges, so a small line is still a 24px
+				// target. Touch has no hover: paused is what shows a tap landed.
+				className="absolute -inset-1 grid cursor-pointer place-items-center rounded-md bg-background/40 text-foreground opacity-0 outline-none transition-opacity duration-400 ease-in-out focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50 group-hover/pause:opacity-100 pointer-coarse:aria-pressed:opacity-100"
 			>
-				{isStopped ? <Play /> : <Pause />}
+				<span className="grid size-6 place-items-center rounded-md border bg-popover shadow-xs [&_svg]:size-3.5">
+					{isStopped ? <Play /> : <Pause />}
+				</span>
 			</button>
 		</span>
 	);

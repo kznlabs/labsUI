@@ -652,11 +652,14 @@ export function QuoteDemo() {
 					variant="large"
 					author="Adam Mickiewicz"
 					subtitle="Pan Tadeusz · tr. G. R. Noyes, 1917"
-					textSwap={[
-						"O spring! Happy is he who beheld thee then in our country!",
-						"To-day thy beauty in all its splendour I see and describe, for I yearn for thee.",
-						"Memorable spring of war, spring of harvest!",
-					]}
+					textSwap={{
+						items: [
+							"O spring! Happy is he who beheld thee then in our country!",
+							"To-day thy beauty in all its splendour I see and describe, for I yearn for thee.",
+							"Memorable spring of war, spring of harvest!",
+						],
+						controls: true,
+					}}
 				>
 					O spring! Happy is he who beheld thee then in our country!
 				</Quote>

@@ -241,7 +241,7 @@ toast("Title", { description, action: { label, onClick }, duration }); toast.suc
 <CountTo to={48290} prefix="$" />                       // springs up once in view
 <Reveal delay={0.1}><Card>…</Card></Reveal>               // fades + rises on scroll
 <AvatarGroup users={team} max={4} size="lg" />               // overlapping, +N chip, hover spring
-<Quote variant="card" lang? author="Adam Mickiewicz" subtitle="Pan Tadeusz · tr. G. R. Noyes" avatar={<Avatar … />} typewriter textSwap={[…]}>…</Quote>   // sample quotes: famous Polish poetry in public-domain English translation, verified verbatim
+<Quote variant="card" lang? author="Adam Mickiewicz" subtitle="Pan Tadeusz · tr. G. R. Noyes" avatar={<Avatar … />} typewriter textSwap={[…] | { items, controls }}>…</Quote>   // sample quotes: famous Polish poetry in public-domain English translation, verified verbatim
 <Breadcrumb items={[{ label: "Home", href: "/", onClick? }, { label: "Page" }]} separator="/" />   // server-safe; last item is the current page
 <ButtonGroup orientation="horizontal|vertical" attached><Button>A</Button><Button>B</Button></ButtonGroup>
 <Collapsible open? onOpenChange? defaultOpen><CollapsibleTrigger chevron?>More</CollapsibleTrigger><CollapsibleContent>…</CollapsibleContent></Collapsible>
@@ -277,7 +277,7 @@ toast("Title", { description, action: { label, onClick }, duration }); toast.suc
 <Separator orientation="horizontal|vertical" decorative label="or" />   // server-safe
 <SkeletonGroup label="Loading"><Skeleton className="h-4 w-32" /></SkeletonGroup>   // server-safe
 <Typewriter text={["Hello", "World"]} speed={40} deleteSpeed={24} loop cursor controls />
-<TextSwap items={["Phrase 1", "Phrase 2"]} interval={3000} direction="up|down|fade" controls />   // controls = keyboard pause button (WCAG 2.2.2), hidden with reduced motion
+<TextSwap items={["Phrase 1", "Phrase 2"]} interval={3000} direction="up|down|fade" controls />   // controls = the text is a pause button (WCAG 2.2.2), takes no room, hidden with reduced motion
 <Table striped containerClassName><TableCaption/><TableHeader><TableRow><TableHead sort="ascending|descending|none" onSort>Name</TableHead></TableRow></TableHeader><TableBody><TableRow data-state="selected"><TableCell/></TableRow></TableBody><TableFooter/></Table>   // server-safe; onSort only from client parents
 <DataTable label="Members" data columns={[{ id, header, accessor?, cell?, sortable?, className? }]} getRowId rowLabel pageSize={10} defaultSort={{ id, dir }} searchable selectable selection? onSelectionChange rowActions={(row) => <DropdownMenuItem/>} toolbar={(selected) => …} striped />   // client-side search/sort/select/page; columns typed DataTableColumn<T>
 <Chart type="line|area|bar" stacked label="Revenue" data={rows} index="month" series={[{ key, label, color?: 1-8 }]} format={{ style: "currency", currency: "USD" }} height={240} />   // tokens chart-1…8 (fixed order, CVD-validated; ≤8 series); legend hides series, crosshair tooltip, arrow keys, table view

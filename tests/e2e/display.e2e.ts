@@ -67,7 +67,7 @@ test.describe("sidebar trigger", () => {
 });
 
 test.describe("moving text", () => {
-	only("text-swap", "typewriter", "terminal");
+	only("text-swap", "typewriter", "terminal", "quote");
 	test("text swap holds still under reduced motion", async ({ page }) => {
 		await page.clock.install();
 		await open(page, "e2e/display");
@@ -121,6 +121,8 @@ test.describe("moving text", () => {
 		for (const [probe, read] of [
 			["type", "[data-typewriter-animated]"],
 			["swap", ".sr-only"],
+			["quote-type", "[data-typewriter-animated]"],
+			["quote-swap", ".sr-only"],
 		] as const)
 			test(`the ${probe} pause button stops it until pressed again`, async ({ page }) => {
 				await page.clock.install();
@@ -156,7 +158,9 @@ test.describe("moving text", () => {
 
 	test.describe("with a mouse", () => {
 		test.use({ reducedMotion: "no-preference" });
-		test("the pause button shows on hover, keyboard focus or while paused", async ({ page }) => {
+		test("the pause overlay shows on hover or keyboard focus, then leaves paused text clear", async ({
+			page,
+		}) => {
 			await open(page, "e2e/display");
 
 			const probe = page.locator("[data-probe=swap]");
@@ -175,7 +179,51 @@ test.describe("moving text", () => {
 			await expect.poll(opacity).toBe("1");
 			await page.keyboard.press("Enter");
 			await page.keyboard.press("Shift+Tab");
+			await expect.poll(opacity).toBe("0");
+			await probe.locator("> span").hover();
 			await expect.poll(opacity).toBe("1");
+		});
+
+		test("a click anywhere on the text toggles the pause", async ({ page }) => {
+			await open(page, "e2e/display");
+
+			const probe = page.locator("[data-probe=swap]");
+			const pause = probe.getByRole("button", { name: "Pause animation" });
+
+			await expect(pause).toHaveAttribute("aria-pressed", "false");
+			await probe.locator("> span").click();
+			await expect(pause).toHaveAttribute("aria-pressed", "true");
+			await probe.locator("> span").click();
+			await expect(pause).toHaveAttribute("aria-pressed", "false");
+		});
+
+		test("the pause button takes no room from the text", async ({ page }) => {
+			await open(page, "e2e/display");
+
+			const pause = page
+				.locator("[data-probe=swap]")
+				.getByRole("button", { name: "Pause animation" });
+
+			const { outer, text } = await pause.evaluate((element) => ({
+				outer: element.parentElement?.getBoundingClientRect().width,
+				text: element.previousElementSibling?.getBoundingClientRect().width,
+			}));
+
+			expect(outer).toBe(text);
+		});
+
+		test("the pause button is a large enough target on one line of small text", async ({
+			page,
+		}) => {
+			await open(page, "e2e/display");
+
+			const box = await page
+				.locator("[data-probe=swap]")
+				.getByRole("button", { name: "Pause animation" })
+				.boundingBox();
+
+			expect(box?.height).toBeGreaterThanOrEqual(24);
+			expect(box?.width).toBeGreaterThanOrEqual(24);
 		});
 	});
 
