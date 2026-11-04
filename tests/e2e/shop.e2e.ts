@@ -254,6 +254,27 @@ test.describe("product-gallery", () => {
 		await expect(section(page, "gallery").locator("span[aria-hidden=true]").first()).toBeAttached();
 	});
 
+	test("photos keep a gap while they scroll, and a slide still lands exactly", async ({ page }) => {
+		await open(page, "e2e/shop");
+
+		const slides = section(page, "gallery").locator("[data-carousel-slide]");
+		const first = await slides.nth(0).boundingBox();
+		const second = await slides.nth(1).boundingBox();
+
+		expect((second?.x ?? 0) - ((first?.x ?? 0) + (first?.width ?? 0))).toBeGreaterThan(0);
+
+		await section(page, "gallery").getByRole("button", { name: "Show photo 2 of 3" }).click();
+		await expect
+			.poll(() =>
+				viewport(page).evaluate(
+					(element) =>
+						element.scrollLeft -
+						(element.querySelectorAll<HTMLElement>("[data-carousel-slide]")[1]?.offsetLeft ?? 0),
+				),
+			)
+			.toBe(0);
+	});
+
 	test("one photo needs no carousel", async ({ page }) => {
 		await open(page, "e2e/shop");
 

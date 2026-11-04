@@ -43,7 +43,7 @@ export function ProductGallery({
 	return (
 		<Carousel label={label} className={cn("flex flex-col gap-3", className)}>
 			<div className="relative">
-				<CarouselContent className="[--gap:0px]">
+				<CarouselContent className="[--gap:0.75rem]">
 					{media.map((slide, i) => (
 						// biome-ignore lint/suspicious/noArrayIndexKey: photos are positions
 						<CarouselItem key={i}>{frame(slide)}</CarouselItem>
