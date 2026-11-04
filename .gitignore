@@ -20,7 +20,8 @@ src/site/snippets.formatted.json
 # Maintainer notes, kept out of the public repo
 /TODO.md
 /PUBLISHING.md
-/.claude/
+/.claude/*
+!/.claude/rules/
 /CLAUDE.local.md
 /e2e-results.json
 /e2e-summary/

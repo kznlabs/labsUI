@@ -8,4 +8,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-Project rules, commands and the component registry live in `CLAUDE.md`.
+Project rules and commands live in `CLAUDE.md`. Its table lists the topic rules in `.claude/rules/`: read the ones your task touches, they don't load by themselves here. Exact component props are in `public/components/<id>.md`, written by `bun run registry`.
