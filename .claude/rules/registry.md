@@ -147,7 +147,8 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
   only when passed, never a computed percentage.
 - `testimonial`: Testimonial. Server-safe.
 - `stats-strip`: StatsStrip. Server-safe; Reveal + CountTo.
-- `product-card`: ProductCard. 2+ media become a Carousel.
+- `product-card`: ProductCard. 2+ media become a Carousel; `action` replaces the
+  add button, also when `soldOut` disables it.
 - `clip-card`: ClipCard.
 - `stat-tile`: StatTile. Server-safe.
 - `changelog`: Changelog. Server-safe.

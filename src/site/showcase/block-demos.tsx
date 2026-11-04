@@ -9,6 +9,7 @@ import {
 	Gauge,
 	Headphones,
 	History,
+	Mic,
 	Play,
 	ShoppingBag,
 	Trash2,
@@ -181,12 +182,15 @@ const tile = (Icon: typeof Camera, tint: string) => (
 
 export function ProductCardDemo() {
 	return (
-		<div className="grid w-full max-w-xl gap-4 sm:grid-cols-2">
+		<div className="grid w-full max-w-3xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			<ProductCard
 				name="Clip camera"
 				price={279}
 				compareAt={349}
+				lowestPrice={349}
 				badge="−20%"
+				rating={4.6}
+				ratingNote="128 reviews"
 				href="#product-card"
 				media={[
 					tile(Camera, "bg-chart-2/12 text-chart-2"),
@@ -200,8 +204,27 @@ export function ProductCardDemo() {
 				name="Studio headphones"
 				price={129}
 				badge="New"
+				rating={5}
+				ratingNote="12 reviews"
 				media={[tile(Headphones, "bg-chart-5/12 text-chart-5")]}
 				onAddToCart={() => toast.success("Studio headphones added to cart")}
+			/>
+
+			<ProductCard
+				name="Field recorder"
+				price={49.99}
+				soldOut
+				media={[tile(Mic, "bg-chart-3/12 text-chart-3")]}
+				action={
+					<Button
+						size="sm"
+						variant="outline"
+						className="w-full"
+						onClick={() => toast("Demo mode: would email you when it is back")}
+					>
+						Notify me
+					</Button>
+				}
 			/>
 		</div>
 	);

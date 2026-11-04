@@ -1702,6 +1702,10 @@ type Product = {
   name: string;
   price: number;
   compareAt?: number;
+  lowestPrice?: number;
+  rating?: number;
+  reviews?: number;
+  stock: number;
   images: string[];
 };
 
@@ -1720,7 +1724,11 @@ export function ProductGrid({
           name={p.name}
           price={p.price}
           compareAt={p.compareAt}
+          lowestPrice={p.lowestPrice}
           badge={p.compareAt ? "Sale" : undefined}
+          rating={p.rating}
+          ratingNote={p.reviews ? \`\${p.reviews} reviews\` : undefined}
+          soldOut={p.stock === 0}
           href={\`/products/\${p.id}\`}
           media={p.images.map((src) => <img key={src} src={src} alt="" />)}
           onAddToCart={() => onAdd(p.id)}

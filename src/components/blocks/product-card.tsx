@@ -5,7 +5,8 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselDots, CarouselItem } from "@/components/ui/carousel";
-import { cn } from "@/lib/utils";
+import { Rating } from "@/components/ui/rating";
+import { cn, formatMoney } from "@/lib/utils";
 
 type ProductCardProps = {
 	/** Product name, the card's heading. */
@@ -14,6 +15,12 @@ type ProductCardProps = {
 	price: number;
 	/** Struck-through original price for a sale. */
 	compareAt?: number;
+	/** Lowest price from the 30 days before a reduction, shown as text under the price. Pass it only during a promotion. */
+	lowestPrice?: number;
+	/** Text before `lowestPrice`. Polish: "Najniższa cena z 30 dni przed obniżką". */
+	lowestPriceLabel?: ReactNode;
+	/** Read by screen readers between `compareAt` and the price. */
+	nowLabel?: string;
 	/** ISO 4217 code for the price. */
 	currency?: string;
 	/** BCP 47 locale for number formatting. */
@@ -24,33 +31,51 @@ type ProductCardProps = {
 	ratio?: number;
 	/** Small label over the media, e.g. "New". */
 	badge?: string;
+	/** Score out of 5, fractions included; shows read-only stars. */
+	rating?: number;
+	/** Beside the stars, e.g. "128 reviews". */
+	ratingNote?: ReactNode;
 	/** Product page link for the name. */
 	href?: string;
+	/** Dims the photos, shows `soldOutLabel` in place of `badge` and disables the add button. */
+	soldOut?: boolean;
+	/** Label over the media when sold out. */
+	soldOutLabel?: string;
 	/** Shows the add button; called when it is pressed. */
 	onAddToCart?: () => void;
 	/** Add button text. */
 	addLabel?: ReactNode;
+	/** Your own control in place of the add button, e.g. "Notify me" on a sold-out product. */
+	action?: ReactNode;
 	className?: string;
 };
 
-/** Shop tile: photos in an AspectRatio (a Carousel when there are several), name, price, badge, add button. */
+/** Shop tile: photos in an AspectRatio (a Carousel when there are several), name, price, rating, badge, add button or your own action. */
 export function ProductCard({
 	name,
 	price,
 	compareAt,
-	currency = "USD",
-	locale = "en-US",
+	lowestPrice,
+	lowestPriceLabel = "Lowest price in the 30 days before the reduction",
+	nowLabel = "now",
+	currency,
+	locale,
 	media,
 	ratio = 4 / 3,
 	badge,
+	rating,
+	ratingNote,
 	href,
+	soldOut,
+	soldOutLabel = "Sold out",
 	onAddToCart,
 	addLabel = "Add to cart",
+	action,
 	className,
 }: ProductCardProps) {
-	const money = new Intl.NumberFormat(locale, { style: "currency", currency });
+	const label = soldOut ? soldOutLabel : badge;
 	const frame = (slide: ReactNode) => (
-		<AspectRatio ratio={ratio} className="overflow-hidden bg-muted">
+		<AspectRatio ratio={ratio} className={cn("overflow-hidden bg-muted", soldOut && "opacity-60")}>
 			{slide}
 		</AspectRatio>
 	);
@@ -78,42 +103,75 @@ export function ProductCard({
 					frame(media[0])
 				)}
 
-				{badge && (
-					<Badge shape="pill" className="absolute top-2 left-2">
-						{badge}
+				{label && (
+					<Badge
+						variant={soldOut ? "secondary" : "default"}
+						shape="pill"
+						className="absolute top-2 left-2"
+					>
+						{label}
 					</Badge>
 				)}
 			</div>
 
 			<div className="flex flex-1 flex-col gap-3 p-3">
-				<div className="flex items-baseline justify-between gap-2">
-					<h3 className="min-w-0 truncate font-medium text-sm">
-						{href ? (
-							<a href={href} className="outline-none hover:underline focus-visible:underline">
-								{name}
-							</a>
-						) : (
-							name
-						)}
-					</h3>
+				<div className="grid gap-1.5">
+					<div className="flex items-baseline justify-between gap-2">
+						<h3 className="min-w-0 truncate font-medium text-sm">
+							{href ? (
+								<a href={href} className="outline-none hover:underline focus-visible:underline">
+									{name}
+								</a>
+							) : (
+								name
+							)}
+						</h3>
 
-					<p className="shrink-0 text-sm tabular-nums">
-						{compareAt !== undefined && compareAt > price && (
-							<>
-								<del className="mr-1.5 text-muted-foreground">{money.format(compareAt)}</del>
+						<p className="shrink-0 text-sm tabular-nums">
+							{compareAt !== undefined && compareAt > price && (
+								<>
+									<del className="mr-1.5 text-muted-foreground">
+										{formatMoney(compareAt, currency, locale)}
+									</del>
 
-								<span className="sr-only">now </span>
-							</>
-						)}
+									<span className="sr-only">{nowLabel} </span>
+								</>
+							)}
 
-						{money.format(price)}
-					</p>
+							{formatMoney(price, currency, locale)}
+						</p>
+					</div>
+
+					{lowestPrice !== undefined && (
+						<p className="text-muted-foreground text-xs">
+							{lowestPriceLabel}:{" "}
+							<span className="tabular-nums">{formatMoney(lowestPrice, currency, locale)}</span>
+						</p>
+					)}
+
+					{rating !== undefined && (
+						<div className="flex items-center gap-1.5">
+							<Rating readOnly value={rating} size="sm" />
+
+							{ratingNote && <span className="text-muted-foreground text-xs">{ratingNote}</span>}
+						</div>
+					)}
 				</div>
 
-				{onAddToCart && (
-					<Button size="sm" variant="outline" className="mt-auto w-full" onClick={onAddToCart}>
-						{addLabel}
-					</Button>
+				{action ? (
+					<div className="mt-auto">{action}</div>
+				) : (
+					onAddToCart && (
+						<Button
+							size="sm"
+							variant="outline"
+							className="mt-auto w-full"
+							disabled={soldOut}
+							onClick={onAddToCart}
+						>
+							{addLabel}
+						</Button>
+					)
 				)}
 			</div>
 		</article>

@@ -731,8 +731,8 @@ export const registry: Entry[] = [
 		name: "Product Card",
 		file: "blocks/product-card.tsx",
 		description:
-			"Shop tile: photos in an AspectRatio (a swipeable Carousel with dots when there are several), sale price, Badge and add-to-cart Button.",
-		usage: `<ProductCard name="Clip camera" price={279} compareAt={349} badge="−20%" media={[<img src={front} alt="Front" />, <img src={back} alt="Back" />]} onAddToCart={add} />`,
+			"Shop tile: photos in an AspectRatio (a swipeable Carousel with dots when there are several), sale price, read-only Rating, sold-out state, and an add-to-cart Button or your own action. During a price reduction, `lowestPrice` shows the lowest price from the 30 days before it as visible text; the EU's Omnibus rule (Art. 6a of Directive 98/6) asks for this. A pointer, not legal advice: your app owns the price history and passes it only during a promotion, and no discount percentage is computed.",
+		usage: `<ProductCard name="Clip camera" price={279} compareAt={349} lowestPrice={349} badge="−20%" rating={4.6} ratingNote="128 reviews" media={[<img src={front} alt="Front" />, <img src={back} alt="Back" />]} onAddToCart={add} />`,
 	},
 	{
 		id: "clip-card",
