@@ -1,7 +1,7 @@
 {
 	"name": "@kznlabs/labsui",
 	"version": "0.1.14",
-	"description": "Add labsUI components to your React + Tailwind v4 project: clean primitives you own, with smooth spring motion.",
+	"description": "Add labsUI components to your React + Tailwind v4 project, by hand or through your coding agent over MCP: code you own, exact props, updates that merge your edits.",
 	"type": "module",
 	"mcpName": "io.github.kznlabs/labsui",
 	"bin": {
@@ -22,6 +22,8 @@
 		"tailwindcss",
 		"components",
 		"cli",
+		"mcp",
+		"agents",
 		"nextjs",
 		"motion"
 	],
