@@ -37,6 +37,7 @@ import { TextSwap } from "@/components/ui/text-swap";
 import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { toast } from "@/components/ui/toast";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Typewriter } from "@/components/ui/typewriter";
 import { useMediaQuery } from "@/lib/platform";
 import { cn, spring } from "@/lib/utils";
@@ -847,21 +848,18 @@ export function TextSwapDemo() {
 				<div className="flex items-center gap-1.5">
 					<span className="mr-0.5 text-muted-foreground">Direction:</span>
 
-					{(["up", "down", "fade"] as const).map((option) => (
-						<button
-							key={option}
-							type="button"
-							onClick={() => setDirection(option)}
-							className={cn(
-								"rounded px-2 py-0.5 capitalize transition-colors",
-								direction === option
-									? "bg-primary font-medium text-primary-foreground"
-									: "bg-muted text-muted-foreground hover:text-foreground",
-							)}
-						>
-							{option}
-						</button>
-					))}
+					<ToggleGroup
+						size="sm"
+						aria-label="Direction"
+						value={direction}
+						onValueChange={(value) => setDirection(value as typeof direction)}
+					>
+						<ToggleGroupItem value="up">Up</ToggleGroupItem>
+
+						<ToggleGroupItem value="down">Down</ToggleGroupItem>
+
+						<ToggleGroupItem value="fade">Fade</ToggleGroupItem>
+					</ToggleGroup>
 				</div>
 
 				<label className="flex items-center gap-2">
