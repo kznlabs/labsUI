@@ -84,6 +84,20 @@ export function RadioGroupDemo() {
 					</RadioGroupItem>
 				))}
 			</RadioGroup>
+
+			<RadioGroup legend="Shipping" variant="card" defaultValue="courier" name="shipping">
+				<RadioGroupItem value="locker" description="Parcel locker, 1-2 days." end="Free">
+					Locker
+				</RadioGroupItem>
+
+				<RadioGroupItem value="courier" description="To your door, next day." end="$4.99">
+					Courier
+				</RadioGroupItem>
+
+				<RadioGroupItem value="pickup" description="Back in stock next week." end="Free" disabled>
+					Store pickup
+				</RadioGroupItem>
+			</RadioGroup>
 		</div>
 	);
 }

@@ -14,6 +14,7 @@ type RadioCtx = {
 	disabled?: boolean;
 	required?: boolean;
 	invalid?: boolean;
+	card: boolean;
 };
 
 const RadioContext = createContext<RadioCtx | null>(null);
@@ -31,6 +32,8 @@ type RadioGroupProps = Omit<ComponentProps<"fieldset">, "defaultValue" | "onChan
 	name?: string;
 	/** Stack items or lay them in a row. */
 	orientation?: "vertical" | "horizontal";
+	/** "card" makes each item a bordered surface, all of it clickable: plans, shipping, payment, sizes. */
+	variant?: "default" | "card";
 	/** Submit needs a picked item. */
 	required?: boolean;
 	"aria-invalid"?: boolean;
@@ -44,6 +47,7 @@ export function RadioGroup({
 	onValueChange,
 	name,
 	orientation = "vertical",
+	variant = "default",
 	className,
 	children,
 	...rest
@@ -66,6 +70,7 @@ export function RadioGroup({
 				disabled: props.disabled,
 				required,
 				invalid: !!props["aria-invalid"],
+				card: variant === "card",
 			}}
 		>
 			<fieldset
@@ -79,7 +84,8 @@ export function RadioGroup({
 					ref={items}
 					className={cn(
 						"flex gap-3",
-						orientation === "vertical" ? "flex-col" : "flex-wrap gap-x-5",
+						orientation === "vertical" ? "flex-col" : "flex-wrap",
+						orientation === "horizontal" && variant === "default" && "gap-x-5",
 					)}
 				>
 					{children}
@@ -94,6 +100,7 @@ export function RadioGroupItem({
 	value,
 	disabled,
 	description,
+	end,
 	className,
 	children,
 }: {
@@ -103,6 +110,8 @@ export function RadioGroupItem({
 	disabled?: boolean;
 	/** Muted line under the label. */
 	description?: ReactNode;
+	/** At the far end of the row, e.g. a shipping price. Text only: a card's whole surface is its label. */
+	end?: ReactNode;
 	className?: string;
 	/** Label. */
 	children: ReactNode;
@@ -116,7 +125,17 @@ export function RadioGroupItem({
 	const off = disabled || ctx.disabled;
 
 	return (
-		<div className={cn("flex items-start gap-2.5", off && "opacity-50", className)}>
+		<div
+			className={cn(
+				"flex items-start gap-2.5",
+				ctx.card &&
+					"relative min-w-40 flex-1 rounded-xl border bg-card p-3 shadow-xs transition-colors has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50 has-aria-invalid:border-destructive",
+				ctx.card && !off && "hover:bg-accent",
+				ctx.card && checked && "border-primary ring-1 ring-primary",
+				off && "opacity-50",
+				className,
+			)}
+		>
 			<span className="relative mt-px inline-flex size-4 shrink-0">
 				<input
 					type="radio"
@@ -135,7 +154,9 @@ export function RadioGroupItem({
 				<span
 					aria-hidden="true"
 					className={cn(
-						"grid size-full place-items-center rounded-full border shadow-xs transition-colors peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-aria-invalid:border-destructive",
+						"grid size-full place-items-center rounded-full border shadow-xs transition-colors peer-aria-invalid:border-destructive",
+						// A card carries the ring itself: one ring, the shape of the surface.
+						!ctx.card && "peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50",
 						checked ? "border-primary bg-primary" : "border-input bg-field",
 					)}
 				>
@@ -148,12 +169,13 @@ export function RadioGroupItem({
 				</span>
 			</span>
 
-			<span className="grid gap-1">
+			<span className={cn("grid gap-1", end !== undefined && "min-w-0 flex-1")}>
 				<label
 					htmlFor={id}
 					className={cn(
 						"font-medium text-sm leading-4",
 						off ? "cursor-not-allowed" : "cursor-pointer",
+						ctx.card && "after:absolute after:inset-0 after:rounded-[inherit]",
 					)}
 				>
 					{children}
@@ -165,6 +187,8 @@ export function RadioGroupItem({
 					</span>
 				)}
 			</span>
+
+			{end !== undefined && <span className="shrink-0 text-sm tabular-nums">{end}</span>}
 		</div>
 	);
 }

@@ -272,6 +272,19 @@ export function PlanPicker() {
   );
 }`,
 		},
+		{
+			name: "shipping-picker.tsx",
+			code: `import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+export function ShippingPicker() {
+  return (
+    <RadioGroup legend="Shipping" name="shipping" variant="card" defaultValue="courier" required>
+      <RadioGroupItem value="locker" description="Parcel locker, 1-2 days." end="Free">Locker</RadioGroupItem>
+      <RadioGroupItem value="courier" description="To your door, next day." end="$4.99">Courier</RadioGroupItem>
+    </RadioGroup>
+  );
+}`,
+		},
 	],
 	slider: [
 		{

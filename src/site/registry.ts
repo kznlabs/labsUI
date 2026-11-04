@@ -281,7 +281,7 @@ export const registry: Entry[] = [
 		group: "Actions & inputs",
 		file: "radio-group.tsx",
 		description:
-			"Native radios in a fieldset with a legend: browser arrow keys and form submit, a dot that springs in, optional per-option descriptions, vertical or horizontal.",
+			"Native radios in a fieldset with a legend: browser arrow keys and form submit, a dot that springs in, optional per-option descriptions, vertical or horizontal. The card variant makes each option a bordered surface, all of it clickable, for plans, shipping, payment and sizes.",
 		usage: `<RadioGroup legend="Plan" defaultValue="pro" name="plan"><RadioGroupItem value="free">Free</RadioGroupItem><RadioGroupItem value="pro" description="Unlimited clips">Pro</RadioGroupItem></RadioGroup>`,
 	},
 	{
