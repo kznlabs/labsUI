@@ -189,7 +189,7 @@ export function Terminal({
 			title={title}
 			actions={clip ? <CopyButton code={clip} label="Copy commands" /> : undefined}
 			className={cn("w-full", className)}
-			bodyClassName="relative p-0"
+			bodyClassName="relative rounded-b-[inherit] p-0"
 		>
 			<div
 				ref={body}
@@ -201,7 +201,7 @@ export function Terminal({
 					if (stuck.current) setBehind(false);
 				}}
 				className={cn(
-					"overflow-auto p-4 font-mono text-[13px] leading-relaxed outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset",
+					"overflow-auto rounded-b-[inherit] p-4 font-mono text-[13px] leading-relaxed outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset",
 					bodyClassName,
 				)}
 			>

@@ -273,35 +273,43 @@ export function CarouselContent({ className, children, ...props }: ComponentProp
 	const items = Children.toArray(children);
 
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: a focusable scroll region; keys and drag scroll it
-		<div
-			ref={viewport}
-			// Focusable so arrow keys work (and axe's scrollable-region rule passes).
-			// biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be keyboard-reachable
-			tabIndex={0}
-			onKeyDown={(event) => {
-				if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-				event.preventDefault();
-				goTo(page + (event.key === "ArrowRight" ? 1 : -1));
-			}}
-			onDragStart={(event) => event.preventDefault()}
-			{...dragHandlers}
-			onPointerCancel={dragHandlers?.onPointerUp}
-			className={cn(
-				"relative flex snap-x snap-mandatory gap-(--gap) overflow-x-auto [--gap:1rem] overscroll-x-contain rounded-xl outline-none [scrollbar-width:none] focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-scrollbar]:hidden",
-				pages > 1 && "cursor-grab active:cursor-grabbing",
-				className,
-			)}
-			{...props}
-		>
-			{items.map((child, index) => (
-				<SlideContext
-					key={isValidElement(child) ? child.key : index}
-					value={{ index, total: items.length }}
-				>
-					{child}
-				</SlideContext>
-			))}
+		<div className="relative min-w-0">
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: a focusable scroll region; keys and drag scroll it */}
+			<div
+				ref={viewport}
+				// Focusable so arrow keys work (and axe's scrollable-region rule passes).
+				// biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be keyboard-reachable
+				tabIndex={0}
+				onKeyDown={(event) => {
+					if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+					event.preventDefault();
+					goTo(page + (event.key === "ArrowRight" ? 1 : -1));
+				}}
+				onDragStart={(event) => event.preventDefault()}
+				{...dragHandlers}
+				onPointerCancel={dragHandlers?.onPointerUp}
+				className={cn(
+					"peer relative flex snap-x snap-mandatory gap-(--gap) overflow-x-auto [--gap:1rem] overscroll-x-contain rounded-xl outline-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+					pages > 1 && "cursor-grab active:cursor-grabbing",
+					className,
+				)}
+				{...props}
+			>
+				{items.map((child, index) => (
+					<SlideContext
+						key={isValidElement(child) ? child.key : index}
+						value={{ index, total: items.length }}
+					>
+						{child}
+					</SlideContext>
+				))}
+			</div>
+
+			{/* A slide that fills the row would paint over a ring on the row itself. */}
+			<span
+				aria-hidden="true"
+				className="pointer-events-none absolute inset-0 rounded-xl peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-focus-visible:ring-inset"
+			/>
 		</div>
 	);
 }

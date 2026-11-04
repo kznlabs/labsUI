@@ -61,6 +61,57 @@ export async function clickable(page: Page) {
 }
 
 /**
+ * No tab stop is clipped away while it has focus (WCAG 2.4.7). Inputs are left out: a visually
+ * hidden input is fine, its Switch or Checkbox shows the focus.
+ */
+export async function hiddenTabStops(page: Page) {
+	const hidden = await page.evaluate(() => {
+		const out: string[] = [];
+
+		for (const candidate of document.querySelectorAll<HTMLElement>(
+			'main :is(a[href], button, select, textarea, [tabindex]:not([tabindex="-1"], input))',
+		)) {
+			candidate.focus({ preventScroll: true });
+			if (document.activeElement !== candidate) continue;
+			candidate.scrollIntoView({ block: "center", inline: "center", behavior: "instant" });
+
+			const own = candidate.getBoundingClientRect();
+			let { left, top, right, bottom } = own;
+			let collapsed = false;
+
+			for (let element = candidate.parentElement; element; element = element.parentElement) {
+				const style = getComputedStyle(element);
+
+				if (style.overflowX === "visible" && style.overflowY === "visible") continue;
+
+				const rect = element.getBoundingClientRect();
+
+				collapsed ||= rect.width < 4 || rect.height < 4;
+				left = Math.max(left, rect.left);
+				top = Math.max(top, rect.top);
+				right = Math.min(right, rect.right);
+				bottom = Math.min(bottom, rect.bottom);
+			}
+
+			// A thin control is fine by itself (a Resizable handle), what counts is the clip.
+			const cut = (right - left < 4 && own.width >= 4) || (bottom - top < 4 && own.height >= 4);
+
+			if (collapsed || cut)
+				out.push(
+					`${candidate.tagName.toLowerCase()} "${(candidate.getAttribute("aria-label") ?? candidate.textContent ?? "").trim().slice(0, 30)}"`,
+				);
+		}
+
+		if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+		scrollTo(0, 0);
+
+		return out;
+	});
+
+	expect(hidden, "tab stops that can't show focus").toEqual([]);
+}
+
+/**
  * Scroll containers that overflow by 2-4 px: a focus ring, border or margin poking out. 1 px is
  * rounding; more is real content (a long code line), which may scroll.
  */

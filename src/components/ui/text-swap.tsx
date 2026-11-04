@@ -123,10 +123,11 @@ export function TextSwap({
 				aria-pressed={isStopped}
 				onClick={() => setIsStopped(!isStopped)}
 				// Lies over the text, so it takes no room; past its edges, so a small line is still a 24px
-				// target. Touch has no hover: paused is what shows a tap landed.
-				className="absolute -inset-1 grid cursor-pointer place-items-center rounded-md bg-background/40 text-foreground opacity-0 outline-none transition-opacity duration-400 ease-in-out focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50 group-hover/pause:opacity-100 pointer-coarse:aria-pressed:opacity-100"
+				// target, while the veil and the ring hug the text. Touch has no hover: paused is what shows
+				// a tap landed.
+				className="absolute -inset-1 grid cursor-pointer place-items-center text-foreground opacity-0 outline-none transition-opacity duration-400 ease-in-out before:absolute before:inset-x-0.5 before:inset-y-1 before:rounded-md before:bg-background/40 focus-visible:opacity-100 focus-visible:before:ring-[3px] focus-visible:before:ring-ring/50 group-hover/pause:opacity-100 pointer-coarse:aria-pressed:opacity-100"
 			>
-				<span className="grid size-6 place-items-center rounded-md border bg-popover shadow-xs [&_svg]:size-3.5">
+				<span className="relative grid size-6 place-items-center rounded-md border bg-popover shadow-xs [&_svg]:size-3.5">
 					{isStopped ? <Play /> : <Pause />}
 				</span>
 			</button>

@@ -129,11 +129,13 @@ function ShowcaseSectionInner({
 						</TabsList>
 					</header>
 
-					<TabsContent value="preview">
+					<TabsContent value="preview" className="rounded-2xl">
 						<Reveal className={surface}>{preview}</Reveal>
 					</TabsContent>
 
-					<TabsContent value="code">{code}</TabsContent>
+					<TabsContent value="code" className="rounded-2xl">
+						{code}
+					</TabsContent>
 				</Tabs>
 			)}
 

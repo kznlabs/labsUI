@@ -24,10 +24,12 @@ function keepTableRoles(table: HTMLTableElement) {
 }
 
 function updateFocus(box: HTMLElement) {
+	// Clipped away (an sr-only table) it can't show focus, so it must not take it.
+	const visible = box.clientWidth > 1;
 	const overflows =
 		box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1;
 
-	if (overflows) box.tabIndex = 0;
+	if (visible && overflows) box.tabIndex = 0;
 	else box.removeAttribute("tabindex");
 }
 

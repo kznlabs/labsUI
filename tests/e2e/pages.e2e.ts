@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
-import { clickable, hairlineScroll, wheelScroll, widgets } from "./checks";
+import { clickable, hairlineScroll, hiddenTabStops, wheelScroll, widgets } from "./checks";
 import { expect, full, open, pages, test } from "./fixtures";
 
 const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
@@ -50,6 +50,7 @@ for (const id of pages)
 		await overflow(page);
 		await hairlineScroll(page);
 		await clickable(page);
+		await hiddenTabStops(page);
 		await axe(page, "light", "main");
 		await axe(page, "dark", "main");
 

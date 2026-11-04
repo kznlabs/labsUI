@@ -42,7 +42,7 @@ export function Showcase() {
 						<a
 							href={withBase(componentPath(entry.id))}
 							className={cn(
-								"group flex items-center justify-between gap-3 border-t px-4 py-3 text-sm focus-visible:ring-inset",
+								"group flex items-center justify-between gap-3 rounded-b-[inherit] border-t px-4 py-3 text-sm focus-visible:ring-inset",
 								link,
 							)}
 						>

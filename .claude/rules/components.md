@@ -122,6 +122,11 @@ Controlled/uncontrolled props (`value`/`defaultValue`/`onValueChange`,
 ## Focus and WCAG
 
 - Focus: `outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50`.
+- The ring takes the shape of what it surrounds: same radius and box as the
+  visible surface. A parent that clips gets `focus-visible:ring-inset` plus
+  `rounded-b-[inherit]` at its edge. Children that fill it paint over its ring
+  and outline, so draw the ring on an overlay sibling (`peer-focus-visible:`,
+  see `CarouselContent`).
 - WCAG 2.2 AA is checked with axe (both themes, 375 and 1280 px).
 - Pointer targets are at least 24×24 px (wrap a smaller visual, e.g. a 6px dot,
   in a `size-6` button).

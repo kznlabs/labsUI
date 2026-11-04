@@ -272,7 +272,8 @@ export function Calendar(props: CalendarProps) {
 				</div>
 			</div>
 
-			<div className="relative overflow-hidden">
+			{/* The padding keeps the focus ring of an edge day inside the clip. */}
+			<div className="relative -m-1 overflow-hidden p-1">
 				<AnimatePresence mode="popLayout" initial={false} custom={last.dir}>
 					<motion.table
 						key={month ? key(month) : "pending"}

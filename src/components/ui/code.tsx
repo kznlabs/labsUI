@@ -439,7 +439,7 @@ export function Code({
 				<CopyButton code={code} />
 			</div>
 
-			<div className="overflow-x-auto font-mono text-xs leading-5 outline-none [--code-px:--spacing(3)] focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset">
+			<div className="overflow-x-auto rounded-b-[inherit] font-mono text-xs leading-5 outline-none [--code-px:--spacing(3)] focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset">
 				<CodeLines text={code} lines={lines} {...annotations} />
 
 				<OverflowFocus />
@@ -504,7 +504,10 @@ export function CodePanel({ files, format, collapse, className }: CodePanelProps
 				<TabsContent
 					key={tab.name}
 					value={tab.name}
-					className="min-h-0 flex-1 overflow-x-auto overflow-y-hidden rounded-none py-1 font-mono text-xs leading-5 [--code-px:--spacing(4)]"
+					className={cn(
+						"min-h-0 flex-1 overflow-x-auto overflow-y-hidden rounded-none py-1 font-mono text-xs leading-5 [--code-px:--spacing(4)] focus-visible:ring-inset",
+						!foldable && "rounded-b-[inherit]",
+					)}
 				>
 					{/* clip, not hidden: it folds without becoming a second scroll container. */}
 					<div
@@ -524,7 +527,7 @@ export function CodePanel({ files, format, collapse, className }: CodePanelProps
 					aria-expanded={expanded}
 					aria-controls={bodyId}
 					onClick={() => setExpanded((current) => !current)}
-					className="h-9 shrink-0 cursor-pointer border-t font-medium text-muted-foreground text-xs outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset"
+					className="h-9 shrink-0 cursor-pointer rounded-b-[inherit] border-t font-medium text-muted-foreground text-xs outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset"
 				>
 					{expanded ? "Show less" : `Show all ${lineCount} lines`}
 				</button>
