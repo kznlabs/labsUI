@@ -49,7 +49,8 @@ export async function clickable(page: Page) {
 			candidate.scrollIntoView({ block: "center", inline: "center", behavior: "instant" });
 
 			// What's left of the box after every clipping ancestor cut it.
-			let { left, top, right, bottom } = candidate.getBoundingClientRect();
+			// A link wrapped over two lines has its box's center off the text, so aim at its first line.
+			let { left, top, right, bottom } = candidate.getClientRects()[0];
 
 			for (let element = candidate.parentElement; element; element = element.parentElement) {
 				const style = getComputedStyle(element);
