@@ -423,7 +423,7 @@ export function Chart({
 											)
 										}
 										className={cn(
-											"flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-muted-foreground text-xs outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none",
+											"flex h-6 items-center gap-1.5 rounded-md px-1.5 text-muted-foreground text-xs outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none",
 											off && "opacity-50",
 										)}
 									>

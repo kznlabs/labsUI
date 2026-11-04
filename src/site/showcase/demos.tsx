@@ -40,7 +40,7 @@ import { toast } from "@/components/ui/toast";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Typewriter } from "@/components/ui/typewriter";
 import { useMediaQuery } from "@/lib/platform";
-import { cn, spring } from "@/lib/utils";
+import { spring } from "@/lib/utils";
 import { withBase } from "@/site/config";
 import { useSetDynamicCode } from "@/site/showcase-context";
 
@@ -601,21 +601,18 @@ export function AvatarGroupDemo() {
 				<div className="flex items-center gap-1.5">
 					<span className="mr-0.5 text-muted-foreground">Size:</span>
 
-					{(["sm", "default", "lg"] as const).map((option) => (
-						<button
-							key={option}
-							type="button"
-							onClick={() => setSize(option)}
-							className={cn(
-								"rounded px-2 py-0.5 text-xs capitalize transition-colors",
-								size === option
-									? "bg-primary font-medium text-primary-foreground"
-									: "bg-muted text-muted-foreground hover:text-foreground",
-							)}
-						>
-							{option}
-						</button>
-					))}
+					<ToggleGroup
+						size="sm"
+						aria-label="Size"
+						value={size}
+						onValueChange={(value) => setSize(value as typeof size)}
+					>
+						<ToggleGroupItem value="sm">Sm</ToggleGroupItem>
+
+						<ToggleGroupItem value="default">Default</ToggleGroupItem>
+
+						<ToggleGroupItem value="lg">Lg</ToggleGroupItem>
+					</ToggleGroup>
 				</div>
 			</div>
 
