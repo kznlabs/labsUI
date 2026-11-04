@@ -62,6 +62,12 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
 - `sidebar`: SidebarLayout, Sidebar, SidebarTrigger. ⌘B toggles the icon rail;
   below `md` it is a left Drawer; an item's `id` defaults to `href`, else label.
 - `tabs`: Tabs, TabsList, TabsTrigger, TabsContent. Panels stay in the DOM.
+- `pager`: Pager. Server-safe; `onNavigate` only from client parents. Layout
+  follows its container.
+- `table-of-contents`: TableOfContents. `useScrollSpy()` is in
+  `@/lib/scroll-spy`. Finds its scroller; on the page the browser does the jump,
+  in a nested scroller it scrolls only that. Keep `offset` at or above the
+  headings' `scroll-margin-top`; Prose sets `scroll-mt-20`.
 
 ## Layout
 
@@ -97,6 +103,8 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
 - `table`: Table and its parts. Server-safe; `onSort` only from client parents.
 - `data-table`: DataTable. Client-side search, sort, select and paging; columns
   typed `DataTableColumn<T>`.
+- `props-table`: PropsTable, `inlineCode()`. Server-safe; `labels.name` renames
+  the first column for a function's options. Layout follows its container.
 - `chart`: Chart. Tokens `chart-1…8` (fixed order, CVD-validated, at most 8
   series); legend hides series, crosshair tooltip, arrow keys, table view.
 - `carousel`: Carousel and its parts. Native scroll-snap.
@@ -157,6 +165,8 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
 - `comparison-table`: ComparisonTable. Text, numbers and booleans compare by
   themselves, a row with your own nodes needs `differs`. Narrow, two pickers
   choose the columns; pass `stickyTop` under a sticky site header.
+- `post-card`: PostCard. Server-safe; `onNavigate` only from client parents. The
+  link covers the card, so only `action` can hold other controls.
 - `clip-card`: ClipCard.
 - `stat-tile`: StatTile. Server-safe.
 - `changelog`: Changelog. Server-safe.

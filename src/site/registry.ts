@@ -222,6 +222,24 @@ export const registry: Entry[] = [
 		usage: "<Pagination page={2} total={12} href={(p) => `?page=${p}`} />",
 	},
 	{
+		id: "pager",
+		group: "Navigation",
+		name: "Pager",
+		file: "pager.tsx",
+		description:
+			"Server-safe links to the previous and next page of a guide or docs site, each with the page's title. Works without JS; on the first or last page the missing side stays empty.",
+		usage: `<Pager previous={{ title: "Install", href: "/docs/install" }} next={{ title: "Theming", href: "/docs/theming" }} />`,
+	},
+	{
+		id: "table-of-contents",
+		group: "Navigation",
+		name: "Table of Contents",
+		file: "table-of-contents.tsx",
+		description:
+			"Links to a page's sections that follow the reader on a sliding marker, on the page or in a nested scroller. Short sections at the end still get a turn, and a clicked link stays current where it lands. Links work without JS.",
+		usage: `<TableOfContents className="sticky top-24 max-h-[calc(100dvh-7rem)]" items={[{ id: "install", label: "Install" }, { id: "options", label: "Options", level: 3 }]} />`,
+	},
+	{
 		id: "sidebar",
 		group: "Navigation",
 		name: "Sidebar",
@@ -573,6 +591,15 @@ export const registry: Entry[] = [
 		mount: "<Confirmer />",
 	},
 	{
+		id: "props-table",
+		group: "Data display",
+		name: "Props Table",
+		file: "props-table.tsx",
+		description:
+			"The props or options of a component or function from rows of data: name, type, default and a description where backticks become code. A table, or a list where the container is too narrow for one. Server-safe.",
+		usage: `<PropsTable label="Retry options" labels={{ name: "Option" }} rows={[{ name: "attempts", type: "number", default: "3", description: "Tries before giving up." }, { name: "signal", type: "AbortSignal", required: true }]} />`,
+	},
+	{
 		id: "chart",
 		group: "Data display",
 		name: "Chart",
@@ -760,6 +787,15 @@ export const registry: Entry[] = [
 		description:
 			'Products, laptops, plans or ranks compared feature by feature, in groups, with a "differences only" switch. Checks and dashes carry text for screen readers. Wide, every item is a column, the names stay pinned at the top and the features at the left. Narrow, two pickers choose the items side by side and differences follow the two in view.',
 		usage: `<ComparisonTable items={[{ id: "air", name: "Air" }, { id: "pro", name: "Pro", badge: "Popular", featured: true }]} groups={[{ label: "Display", rows: [{ label: "Size", values: { air: "13 in", pro: "16 in" } }, { label: "Touch", values: { air: false, pro: true } }] }]} stickyTop="3.5rem" />`,
+	},
+	{
+		id: "post-card",
+		group: "Blocks",
+		name: "Post Card",
+		file: "blocks/post-card.tsx",
+		description:
+			"Tile for a blog post or portfolio project: cover, date, title, excerpt and tags. The whole card is one link with its focus ring on the card, your own action links stay clickable on top. Server-safe.",
+		usage: `<PostCard title="Keeping clips after a match" href="/blog/clips" time="Oct 21, 2026" dateTime="2026-10-21" meta="6 min read" excerpt="Where clips go and how long they stay." tags={["Guides"]} media={<img src="/cover.jpg" alt="" />} />`,
 	},
 	{
 		id: "clip-card",

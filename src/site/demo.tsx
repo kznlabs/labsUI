@@ -119,6 +119,18 @@ const demos = {
 	NumberInputDemo: dynamic(() =>
 		import("@/site/showcase/native-demos").then((module) => module.NumberInputDemo),
 	),
+	PagerDemo: dynamic(() =>
+		import("@/site/showcase/content-demos").then((module) => module.PagerDemo),
+	),
+	PostCardDemo: dynamic(() =>
+		import("@/site/showcase/content-demos").then((module) => module.PostCardDemo),
+	),
+	PropsTableDemo: dynamic(() =>
+		import("@/site/showcase/content-demos").then((module) => module.PropsTableDemo),
+	),
+	TableOfContentsDemo: dynamic(() =>
+		import("@/site/showcase/content-demos").then((module) => module.TableOfContentsDemo),
+	),
 	PaginationDemo: dynamic(() =>
 		import("@/site/showcase/demos").then((module) => module.PaginationDemo),
 	),

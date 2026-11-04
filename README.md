@@ -138,11 +138,11 @@ export function DeleteButton({ onDelete }: { onDelete: () => void }) {
 | ------------------- | --------------------------------------------------------------------------- |
 | Actions & inputs    | Button, Field, Select, Combobox, Date picker, Slider, OTP, Tag input        |
 | Overlays & feedback | Dialog, Drawer, Popover, Dropdown and context menus, Command palette, Toast |
-| Navigation          | Tabs, Sidebar, Menubar, Navigation menu, Breadcrumb, Pagination             |
+| Navigation          | Tabs, Sidebar, Navigation menu, Breadcrumb, Pagination, Table of contents   |
 | Data display        | Table, Data table, Chart, Carousel, Timeline, Code, Terminal                |
 | Layout              | Card, Accordion, App window, Resizable panels, Scroll area                  |
 | Motion              | Reveal, Count to, Typewriter, Text swap, Custom cursor                      |
-| Blocks              | Pricing, Site header, Stats strip, Product card, Cart, Comparison table     |
+| Blocks              | Pricing, Site header, Post card, Product card, Cart, Comparison table       |
 
 Theming is built on OKLCH tokens with light and dark mode and eight accent
 presets, or your own hue through `--accent-hue`.

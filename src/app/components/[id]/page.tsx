@@ -1,8 +1,8 @@
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Pager } from "@/components/ui/pager";
 import { ordered, sectionProps } from "@/site/catalog";
 import { componentPath, groupPath, site, withBase } from "@/site/config";
 import { ComponentStructuredData } from "@/site/seo/structured-data";
@@ -40,9 +40,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 		twitter: { title: `${title} · ${site.name}`, description: entry.description },
 	};
 }
-
-const pager =
-	"flex min-w-0 flex-col gap-1 rounded-xl border bg-card px-4 py-3 text-sm outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 export default async function ComponentPage({ params }: Props) {
 	const { id } = await params;
@@ -94,32 +91,12 @@ export default async function ComponentPage({ params }: Props) {
 
 					<ShowcaseSection {...sectionProps(entry, true)} titleAs="h1" />
 
-					<nav aria-label="More components" className="grid gap-3 border-t pt-8 sm:grid-cols-2">
-						{prev && (
-							<a href={withBase(componentPath(prev.id))} className={pager}>
-								<span className="inline-flex items-center gap-1 text-muted-foreground text-xs">
-									<ArrowLeft className="size-3.5" aria-hidden="true" />
-									Previous
-								</span>
-
-								<span className="truncate font-medium">{prev.name}</span>
-							</a>
-						)}
-
-						{next && (
-							<a
-								href={withBase(componentPath(next.id))}
-								className={`${pager} items-end text-right sm:col-start-2`}
-							>
-								<span className="inline-flex items-center gap-1 text-muted-foreground text-xs">
-									Next
-									<ArrowRight className="size-3.5" aria-hidden="true" />
-								</span>
-
-								<span className="max-w-full truncate font-medium">{next.name}</span>
-							</a>
-						)}
-					</nav>
+					<Pager
+						label="More components"
+						className="border-t pt-8"
+						previous={prev && { title: prev.name, href: withBase(componentPath(prev.id)) }}
+						next={next && { title: next.name, href: withBase(componentPath(next.id)) }}
+					/>
 				</main>
 			</div>
 		</SiteShell>

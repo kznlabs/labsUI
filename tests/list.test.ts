@@ -2,6 +2,7 @@
 import { describe, expect, test } from "bun:test";
 import { pageRange } from "@/components/ui/pagination";
 import { listKeyTarget, scrollIntoList } from "@/lib/list";
+import { spyIndex } from "@/lib/scroll-spy";
 import { matchesHotkey } from "@/lib/use-hotkey";
 import { clamp, formatMoney } from "@/lib/utils";
 
@@ -144,5 +145,46 @@ describe("pageRange", () => {
 
 		expect([...lengths]).toEqual([7]);
 		expect(pageRange(10, 30, 0)).toHaveLength(5);
+	});
+});
+
+describe("spyIndex", () => {
+	test("nothing is current before the first heading reaches the line", () => {
+		expect(spyIndex([500, 1500], 0, 3000, 100)).toBe(-1);
+		expect(spyIndex([500, 1500], 399, 3000, 100)).toBe(-1);
+	});
+
+	test("a heading is current from the line until the next one reaches it", () => {
+		expect(spyIndex([500, 1500], 400, 3000, 100)).toBe(0);
+		expect(spyIndex([500, 1500], 1399, 3000, 100)).toBe(0);
+		expect(spyIndex([500, 1500], 1400, 3000, 100)).toBe(1);
+	});
+
+	test("short last sections each get a turn, in order, before the end", () => {
+		const tops = [0, 1000, 1900, 1950];
+
+		expect(spyIndex(tops, 1100, 1500, 100)).toBe(1);
+		expect(spyIndex(tops, 1450, 1500, 100)).toBe(1);
+		expect(spyIndex(tops, 1480, 1500, 100)).toBe(2);
+		expect(spyIndex(tops, 1500, 1500, 100)).toBe(3);
+	});
+
+	test("the line stays put when every heading can reach it", () => {
+		expect(spyIndex([0, 900, 1500], 1000, 1500, 100)).toBe(1);
+		expect(spyIndex([0, 900, 1500], 1500, 1500, 100)).toBe(2);
+	});
+
+	test("a scroll position a pixel short of the end still counts as the end", () => {
+		expect(spyIndex([0, 1900], 1499.5, 1500, 100)).toBe(1);
+	});
+
+	test("a page that can't scroll has no end stretch", () => {
+		expect(spyIndex([50, 400], 0, 0, 100)).toBe(0);
+	});
+
+	test("a heading with no position is skipped", () => {
+		expect(spyIndex([0, Number.POSITIVE_INFINITY, 900], 1000, 3000, 100)).toBe(2);
+		expect(spyIndex([0, Number.POSITIVE_INFINITY], 1000, 1000, 100)).toBe(0);
+		expect(spyIndex([], 0, 0, 100)).toBe(-1);
 	});
 });

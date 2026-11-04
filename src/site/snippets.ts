@@ -1767,6 +1767,139 @@ export function ProductGrid({
 }`,
 		},
 	],
+	pager: [
+		{
+			name: "docs-pager.tsx",
+			code: `import { Pager } from "@/components/ui/pager";
+
+export function DocsPager() {
+  return (
+    <Pager
+      label="More guides"
+      previous={{ title: "Install", href: "/docs/install" }}
+      next={{ title: "Theming", href: "/docs/theming" }}
+    />
+  );
+}`,
+		},
+	],
+	"table-of-contents": [
+		{
+			name: "docs-page.tsx",
+			code: `import { Prose } from "@/components/ui/prose";
+import { TableOfContents } from "@/components/ui/table-of-contents";
+
+const sections = [
+  { id: "install", label: "Install" },
+  { id: "options", label: "Options" },
+  { id: "defaults", label: "Defaults", level: 3 },
+  { id: "faq", label: "FAQ" },
+];
+
+export function DocsPage() {
+  return (
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem]">
+      <Prose as="article">
+        <h2 id="install">Install</h2>
+        <p>Long text…</p>
+        <h2 id="options">Options</h2>
+        <p>Long text…</p>
+        <h3 id="defaults">Defaults</h3>
+        <p>Long text…</p>
+        <h2 id="faq">FAQ</h2>
+        <p>Short text.</p>
+      </Prose>
+
+      <aside className="max-lg:hidden">
+        <TableOfContents
+          items={sections}
+          className="sticky top-24 max-h-[calc(100dvh-7rem)]"
+        />
+      </aside>
+    </div>
+  );
+}`,
+		},
+	],
+	"props-table": [
+		{
+			name: "retry-options.tsx",
+			code: `import { PropsTable } from "@/components/ui/props-table";
+
+export function RetryOptions() {
+  return (
+    <PropsTable
+      label="Retry options"
+      labels={{ name: "Option" }}
+      rows={[
+        {
+          name: "signal",
+          type: "AbortSignal",
+          required: true,
+          description: "Stops waiting between tries.",
+        },
+        {
+          name: "attempts",
+          type: "number",
+          default: "3",
+          description: "Tries before giving up.",
+        },
+      ]}
+    />
+  );
+}`,
+		},
+	],
+	"post-card": [
+		{
+			name: "blog-list.tsx",
+			code: `import { PostCard } from "@/components/blocks/post-card";
+
+export function BlogList() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <PostCard
+        as="h2"
+        title="Keeping clips after a match"
+        href="/blog/keeping-clips"
+        time="Oct 21, 2026"
+        dateTime="2026-10-21"
+        meta="6 min read"
+        excerpt="Where clips go once a match ends and how long they stay."
+        tags={["Guides"]}
+        media={<img src="/covers/clips.jpg" alt="" />}
+      />
+      <PostCard
+        as="h2"
+        title="Why we moved to one spring"
+        href="/blog/one-spring"
+        time="Sep 3, 2026"
+        dateTime="2026-09-03"
+        excerpt="A text-only post needs no cover."
+      />
+    </div>
+  );
+}`,
+		},
+		{
+			name: "project.tsx",
+			code: `import { PostCard } from "@/components/blocks/post-card";
+
+export function Project() {
+  return (
+    <PostCard
+      title="Harbor booking"
+      href="/work/harbor"
+      time="2026"
+      meta="Client work"
+      excerpt="A booking flow for a small marina."
+      tags={["Next.js", "Postgres"]}
+      action={<a className="text-sm underline" href="https://example.com/harbor">Source</a>}
+    />
+  );
+}`,
+		},
+	],
 	"comparison-table": [
 		{
 			name: "laptops.tsx",

@@ -1,33 +1,10 @@
-import { Fragment, type ReactNode } from "react";
+import { Fragment } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
+import { inlineCode, PropsTable } from "@/components/ui/props-table";
 import { OverflowFocus } from "@/lib/overflow-focus";
 import { apiFor } from "@/site/api";
 
 const mono = "font-mono text-[0.8125rem]";
-
-function prose(text: string): ReactNode {
-	return text
-		.replace(/\s+/g, " ")
-		.split("`")
-		.map((part, i) =>
-			i % 2 ? (
-				// biome-ignore lint/suspicious/noArrayIndexKey: static split of one string
-				<code key={i} className={`${mono} rounded bg-foreground/[0.06] px-1 py-0.5`}>
-					{part}
-				</code>
-			) : (
-				part
-			),
-		);
-}
 
 /**
  * Props tables for the components a section documents, generated from their TypeScript types
@@ -68,7 +45,7 @@ export function ApiReference({
 
 						{entry.description && (
 							<p className="max-w-2xl text-muted-foreground text-sm leading-relaxed">
-								{prose(entry.description)}
+								{inlineCode(entry.description)}
 							</p>
 						)}
 
@@ -82,91 +59,7 @@ export function ApiReference({
 							</pre>
 						) : (
 							<>
-								{entry.props.length > 0 && (
-									<ul
-										className="divide-y rounded-xl border bg-card text-sm sm:hidden"
-										aria-label={`${entry.name} props`}
-									>
-										{entry.props.map((prop) => (
-											<li key={prop.name} className="grid gap-1.5 px-3 py-3">
-												<div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-													<code className={`${mono} font-medium text-foreground`}>
-														{prop.name}
-
-														{prop.required && <span className="text-destructive-ink">*</span>}
-													</code>
-
-													{prop.default && (
-														<span className="text-muted-foreground text-xs">
-															default{" "}
-															<code className={`${mono} text-foreground`}>{prop.default}</code>
-														</span>
-													)}
-												</div>
-
-												<code className={`${mono} text-primary-ink wrap-break-word`}>
-													{prop.type}
-												</code>
-
-												{prop.description && (
-													<p className="text-muted-foreground text-xs leading-relaxed">
-														{prose(prop.description)}
-													</p>
-												)}
-											</li>
-										))}
-									</ul>
-								)}
-
-								{entry.props.length > 0 && (
-									<Table containerClassName="shadow-none max-sm:hidden">
-										<TableHeader>
-											<TableRow>
-												<TableHead>Prop</TableHead>
-
-												<TableHead>Type</TableHead>
-
-												<TableHead>Default</TableHead>
-											</TableRow>
-										</TableHeader>
-
-										<TableBody>
-											{entry.props.map((prop) => (
-												<TableRow key={prop.name}>
-													<TableCell className="min-w-44 align-top">
-														<code className={`${mono} font-medium text-foreground`}>
-															{prop.name}
-
-															{prop.required && <span className="text-destructive-ink">*</span>}
-														</code>
-
-														{prop.description && (
-															<p className="mt-1 max-w-sm whitespace-normal text-muted-foreground text-xs leading-relaxed">
-																{prose(prop.description)}
-															</p>
-														)}
-													</TableCell>
-
-													<TableCell className="align-top">
-														<code
-															className={`${mono} whitespace-normal text-primary-ink wrap-anywhere`}
-														>
-															{prop.type}
-														</code>
-													</TableCell>
-
-													<TableCell className="align-top">
-														{prop.default ? (
-															<code className={`${mono} wrap-anywhere`}>{prop.default}</code>
-														) : (
-															<span className="text-muted-foreground">—</span>
-														)}
-													</TableCell>
-												</TableRow>
-											))}
-										</TableBody>
-									</Table>
-								)}
+								<PropsTable label={`${entry.name} props`} rows={entry.props} />
 
 								{entry.extends && (
 									<p className="text-muted-foreground text-xs">
@@ -194,8 +87,7 @@ export function ApiReference({
 				)}
 
 				<p className="text-muted-foreground text-xs">
-					<span className="text-destructive-ink">*</span> required. Every component also takes{" "}
-					<code className={mono}>className</code>.
+					Every component also takes <code className={mono}>className</code>.
 				</p>
 			</CollapsibleContent>
 		</Collapsible>
