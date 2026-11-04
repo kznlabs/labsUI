@@ -1552,7 +1552,10 @@ export function PricingPage() {
     <Pricing
       currency="EUR"
       locale="de-DE"
-      yearlyNote="−20%"
+      periods={[
+        { value: "monthly", label: "Monthly", priceNote: "/ month" },
+        { value: "yearly", label: "Yearly", note: "−20%", priceNote: "/ month" },
+      ]}
       plans={[
         {
           name: "Starter",
@@ -1564,7 +1567,7 @@ export function PricingPage() {
         {
           name: "Team",
           description: "For small teams shipping weekly.",
-          price: { monthly: 12, yearly: 10 },
+          price: { monthly: 12, yearly: 9.99 },
           features: ["10 projects", "Roles and audit log", "Email support"],
           featured: true,
           badge: "Popular",
@@ -1572,6 +1575,77 @@ export function PricingPage() {
         },
       ]}
     />
+  );
+}`,
+		},
+		{
+			name: "rank-shop.tsx",
+			code: `"use client";
+
+import { Pricing } from "@/components/blocks/pricing";
+import { Button } from "@/components/ui/button";
+
+// A rank for 30 days, 90 days or forever works like monthly and yearly.
+export function RankShop({ onBuy }: { onBuy: (rank: string, period: string) => void }) {
+  return (
+    <Pricing
+      label="Rank duration"
+      currency="PLN"
+      locale="pl-PL"
+      lowestPriceLabel="Najniższa cena z 30 dni przed obniżką"
+      periods={[
+        { value: "30", label: "30 days", priceNote: "for 30 days" },
+        { value: "90", label: "90 days", priceNote: "for 90 days" },
+        { value: "forever", label: "Forever", priceNote: "forever" },
+      ]}
+      plans={[
+        {
+          name: "Gold",
+          price: { 30: 19.99, 90: 49.99, forever: 129 },
+          // During a promotion only: the app owns the price history.
+          compareAt: { forever: 149 },
+          lowestPrice: { forever: 149 },
+          features: ["Gold name colour", "Cosmetic trail"],
+          cta: (period) => (
+            <Button className="w-full" onClick={() => onBuy("gold", period)}>
+              Buy Gold
+            </Button>
+          ),
+        },
+      ]}
+    />
+  );
+}`,
+		},
+	],
+	"plan-card": [
+		{
+			name: "rank-cards.tsx",
+			code: `import { PlanCard, PlanGrid } from "@/components/blocks/plan-card";
+import { buttonVariants } from "@/components/ui/button-variants";
+
+export function RankCards() {
+  return (
+    <PlanGrid>
+      <PlanCard
+        name="Iron"
+        price={9.99}
+        note="for 30 days"
+        features={["Iron name colour"]}
+        cta={<a className={buttonVariants({ variant: "outline", className: "w-full" })} href="/buy/iron">Buy</a>}
+      />
+      <PlanCard
+        name="Gold"
+        price={129}
+        compareAt={149}
+        lowestPrice={149}
+        note="forever"
+        badge="Sale"
+        featured
+        features={["Gold name colour", "Cosmetic trail"]}
+        cta={<a className={buttonVariants({ className: "w-full" })} href="/buy/gold">Buy</a>}
+      />
+    </PlanGrid>
   );
 }`,
 		},

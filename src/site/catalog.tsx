@@ -93,6 +93,7 @@ const demos: Record<
 	"scroll-area": { node: <Demo name="ScrollAreaDemo" />, tabs: true },
 	resizable: { node: <Demo name="ResizableDemo" />, tabs: true },
 	pricing: { node: <Demo name="PricingDemo" />, preview: "items-start" },
+	"plan-card": { node: <Demo name="PlanCardDemo" />, preview: "items-start" },
 	testimonial: { node: <Demo name="TestimonialDemo" /> },
 	"stats-strip": { node: <Demo name="StatsStripDemo" /> },
 	"product-card": { node: <Demo name="ProductCardDemo" /> },

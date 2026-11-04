@@ -1,33 +1,40 @@
 "use client";
 
-import { Check } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { type ReactNode, useState } from "react";
+import { PlanCard, PlanGrid } from "@/components/blocks/plan-card";
 import { Badge } from "@/components/ui/badge";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { cn, spring } from "@/lib/utils";
+import { useControllableState } from "@/lib/use-controllable-state";
+import { cn, formatMoney, spring } from "@/lib/utils";
 
-export type PricingPeriod = "monthly" | "yearly";
+export type PricingPeriodOption = {
+	/** Key of this period in each plan's `price`. */
+	value: string;
+	/** Text on the switcher, e.g. "Yearly" or "30 days". */
+	label: ReactNode;
+	/** Small badge on the switcher, e.g. "−20%". */
+	note?: string;
+	/** Beside each price, e.g. "/ month" or "forever". */
+	priceNote?: ReactNode;
+};
 
 export type PricingPlan = {
 	/** Plan name, the card's heading. */
 	name: string;
 	/** One line under the name. */
-	description?: string;
-	/** Price per month on each billing period, e.g. `{ monthly: 12, yearly: 10 }`. */
-	price: Record<PricingPeriod, number>;
-	features: string[];
-	/** Call to action, e.g. `<Button className="w-full">Start trial</Button>`. */
-	cta: ReactNode;
-	/** Outlined in the accent with a badge. */
+	description?: ReactNode;
+	/** Price per period value, e.g. `{ monthly: 12, yearly: 10 }`. A period left out hides the plan while it is selected. */
+	price: Record<string, number>;
+	/** Struck-through earlier price per period value. */
+	compareAt?: Record<string, number>;
+	/** Lowest price from the 30 days before a reduction, per period value. Pass it only during a promotion. */
+	lowestPrice?: Record<string, number>;
+	/** What the plan includes, one check mark each. */
+	features?: string[];
+	/** Call to action; a function gets the selected period, so a Buy button knows the choice. */
+	cta?: ReactNode | ((period: string) => ReactNode);
+	/** Outlined in the accent. */
 	featured?: boolean;
 	/** Small label on the card, e.g. "Popular". */
 	badge?: string;
@@ -36,119 +43,138 @@ export type PricingPlan = {
 type PricingProps = {
 	/** Plans in display order. */
 	plans: PricingPlan[];
+	/** Periods on the switcher, in order. With only one, the switcher stays out. */
+	periods: PricingPeriodOption[];
+	/** Controlled period value; pair with `onValueChange`. */
+	value?: string;
+	/** Period at first render (uncontrolled). Defaults to the first one. */
+	defaultValue?: string;
+	/** Called with the picked period value. */
+	onValueChange?: (value: string) => void;
+	/** Names the switcher for screen readers. */
+	label?: string;
 	/** ISO 4217 code for the price, e.g. "EUR". */
 	currency?: string;
 	/** BCP 47 locale for number formatting. */
 	locale?: string;
-	/** Billing period selected at first render. */
-	defaultPeriod?: PricingPeriod;
-	/** Next to "Yearly", e.g. "−17%". */
-	yearlyNote?: string;
+	/** Text before a plan's `lowestPrice`. Polish: "Najniższa cena z 30 dni przed obniżką". */
+	lowestPriceLabel?: ReactNode;
+	/** Read by screen readers between a struck-through price and the price. */
+	nowLabel?: string;
 	className?: string;
 };
 
+/** A price that rolls down when it drops and up when it rises. */
+function RollingPrice({
+	amount,
+	currency,
+	locale,
+}: {
+	amount: number;
+	currency?: string;
+	locale?: string;
+}) {
+	const [shown, setShown] = useState({ amount, direction: 1 });
+
+	if (shown.amount !== amount) setShown({ amount, direction: amount < shown.amount ? -1 : 1 });
+
+	return (
+		<span className="relative inline-flex overflow-hidden">
+			<AnimatePresence initial={false} mode="popLayout" custom={shown.direction}>
+				<motion.span
+					key={amount}
+					custom={shown.direction}
+					variants={{
+						enter: (direction: number) => ({ y: `${direction * 60}%`, opacity: 0 }),
+						center: { y: 0, opacity: 1 },
+						exit: (direction: number) => ({ y: `${direction * -60}%`, opacity: 0 }),
+					}}
+					initial="enter"
+					animate="center"
+					exit="exit"
+					transition={spring}
+				>
+					{formatMoney(amount, currency, locale)}
+				</motion.span>
+			</AnimatePresence>
+		</span>
+	);
+}
+
 /**
- * Plan cards with a monthly / yearly switch (segmented ToggleGroup). Prices swap on a spring,
- * rolling up when they drop and down when they rise.
+ * PlanCards with a switcher over any periods: months and years, or a rank for 30 days, 90 days and
+ * forever. Prices roll on a spring in the direction they moved.
  */
 export function Pricing({
 	plans,
-	currency = "USD",
-	locale = "en-US",
-	defaultPeriod = "monthly",
-	yearlyNote,
+	periods,
+	value,
+	defaultValue,
+	onValueChange,
+	label = "Billing period",
+	currency,
+	locale,
+	lowestPriceLabel,
+	nowLabel,
 	className,
 }: PricingProps) {
-	const [period, setPeriod] = useState<PricingPeriod>(defaultPeriod);
-	const money = new Intl.NumberFormat(locale, {
-		style: "currency",
-		currency,
-		maximumFractionDigits: 0,
-	});
-	const dir = period === "yearly" ? -1 : 1;
+	const [period, setPeriod] = useControllableState(
+		value,
+		defaultValue ?? periods[0]?.value ?? "",
+		onValueChange,
+	);
+	const priceNote = periods.find((option) => option.value === period)?.priceNote;
 
 	return (
 		<div className={cn("flex flex-col items-center gap-6", className)}>
-			<ToggleGroup
-				aria-label="Billing period"
-				value={period}
-				onValueChange={(value) => value && setPeriod(value as PricingPeriod)}
-			>
-				<ToggleGroupItem value="monthly">Monthly</ToggleGroupItem>
+			{periods.length > 1 && (
+				<ToggleGroup
+					aria-label={label}
+					value={period}
+					onValueChange={(next) => next && setPeriod(next)}
+				>
+					{periods.map((option) => (
+						<ToggleGroupItem key={option.value} value={option.value}>
+							{option.label}
 
-				<ToggleGroupItem value="yearly">
-					Yearly
-					{yearlyNote && (
-						<Badge variant="success" shape="pill" className="ml-1.5">
-							{yearlyNote}
-						</Badge>
-					)}
-				</ToggleGroupItem>
-			</ToggleGroup>
+							{option.note && (
+								<Badge variant="success" shape="pill" className="ml-1.5">
+									{option.note}
+								</Badge>
+							)}
+						</ToggleGroupItem>
+					))}
+				</ToggleGroup>
+			)}
 
-			<div className="grid w-full gap-4 sm:grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]">
-				{plans.map((plan) => (
-					<Card
-						key={plan.name}
-						className={cn("gap-5", plan.featured && "border-primary ring-1 ring-primary")}
-					>
-						<CardHeader>
-							<div className="flex min-h-6 items-center justify-between gap-2">
-								<CardTitle>{plan.name}</CardTitle>
+			<PlanGrid>
+				{plans.map((plan) => {
+					const amount = plan.price[period];
+					const compareAt = plan.compareAt?.[period];
 
-								{plan.badge && (
-									<Badge variant={plan.featured ? "default" : "secondary"} shape="pill">
-										{plan.badge}
-									</Badge>
-								)}
-							</div>
+					if (amount === undefined) return null;
 
-							{plan.description && <CardDescription>{plan.description}</CardDescription>}
-						</CardHeader>
-
-						<CardContent className="flex flex-col gap-5">
-							<p className="flex items-baseline gap-1">
-								<span className="relative inline-flex overflow-hidden font-semibold text-4xl tabular-nums tracking-tight">
-									<AnimatePresence initial={false} mode="popLayout" custom={dir}>
-										<motion.span
-											key={`${period}-${plan.price[period]}`}
-											custom={dir}
-											variants={{
-												enter: (direction: number) => ({ y: `${direction * 60}%`, opacity: 0 }),
-												center: { y: 0, opacity: 1 },
-												exit: (direction: number) => ({ y: `${direction * -60}%`, opacity: 0 }),
-											}}
-											initial="enter"
-											animate="center"
-											exit="exit"
-											transition={spring}
-										>
-											{money.format(plan.price[period])}
-										</motion.span>
-									</AnimatePresence>
-								</span>
-
-								<span className="text-muted-foreground text-sm">
-									/ month
-									<span className="sr-only">, billed {period}</span>
-								</span>
-							</p>
-
-							<ul className="flex flex-col gap-2 text-sm">
-								{plan.features.map((feature) => (
-									<li key={feature} className="flex gap-2">
-										<Check className="mt-0.5 size-4 shrink-0 text-primary-ink" aria-hidden="true" />
-
-										{feature}
-									</li>
-								))}
-							</ul>
-						</CardContent>
-
-						<CardFooter className="mt-auto">{plan.cta}</CardFooter>
-					</Card>
-				))}
-			</div>
+					return (
+						<PlanCard
+							key={plan.name}
+							name={plan.name}
+							description={plan.description}
+							price={<RollingPrice amount={amount} currency={currency} locale={locale} />}
+							compareAt={compareAt !== undefined && compareAt > amount ? compareAt : undefined}
+							note={priceNote}
+							lowestPrice={plan.lowestPrice?.[period]}
+							lowestPriceLabel={lowestPriceLabel}
+							nowLabel={nowLabel}
+							features={plan.features}
+							cta={typeof plan.cta === "function" ? plan.cta(period) : plan.cta}
+							featured={plan.featured}
+							badge={plan.badge}
+							currency={currency}
+							locale={locale}
+						/>
+					);
+				})}
+			</PlanGrid>
 		</div>
 	);
 }

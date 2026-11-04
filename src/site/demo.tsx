@@ -125,6 +125,9 @@ const demos = {
 	PopoverDemo: dynamic(() =>
 		import("@/site/showcase/floating-demos").then((module) => module.PopoverDemo),
 	),
+	PlanCardDemo: dynamic(() =>
+		import("@/site/showcase/block-demos").then((module) => module.PlanCardDemo),
+	),
 	PricingDemo: dynamic(() =>
 		import("@/site/showcase/block-demos").then((module) => module.PricingDemo),
 	),

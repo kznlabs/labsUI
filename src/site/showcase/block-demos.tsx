@@ -18,6 +18,7 @@ import { Changelog } from "@/components/blocks/changelog";
 import { ClipCard } from "@/components/blocks/clip-card";
 import { Hero } from "@/components/blocks/hero";
 import { Newsletter } from "@/components/blocks/newsletter";
+import { PlanCard, PlanGrid } from "@/components/blocks/plan-card";
 import { Pricing } from "@/components/blocks/pricing";
 import { ProductCard } from "@/components/blocks/product-card";
 import { SiteFooter } from "@/components/blocks/site-footer";
@@ -39,7 +40,10 @@ export function PricingDemo() {
 	return (
 		<Pricing
 			className="w-full max-w-3xl"
-			yearlyNote="−20%"
+			periods={[
+				{ value: "monthly", label: "Monthly", priceNote: "/ month" },
+				{ value: "yearly", label: "Yearly", note: "−20%", priceNote: "/ month" },
+			]}
 			plans={[
 				{
 					name: "Hobby",
@@ -63,8 +67,11 @@ export function PricingDemo() {
 					features: ["10 servers", "Custom commands", "90-day logs", "Clip uploads"],
 					featured: true,
 					badge: "Popular",
-					cta: (
-						<Button className="w-full" onClick={() => toast.success("Trial started")}>
+					cta: (period) => (
+						<Button
+							className="w-full"
+							onClick={() => toast.success(`Trial started, billed ${period}`)}
+						>
 							Start free trial
 						</Button>
 					),
@@ -86,6 +93,44 @@ export function PricingDemo() {
 				},
 			]}
 		/>
+	);
+}
+
+const buyRank = (rank: string) => () => toast(`Demo mode: would buy ${rank}`);
+
+export function PlanCardDemo() {
+	return (
+		<PlanGrid className="max-w-2xl">
+			<PlanCard
+				name="Iron"
+				description="A month to try it out."
+				price={9.99}
+				note="for 30 days"
+				features={["Iron name colour", "Chat tag"]}
+				cta={
+					<Button variant="outline" className="w-full" onClick={buyRank("Iron")}>
+						Buy Iron
+					</Button>
+				}
+			/>
+
+			<PlanCard
+				name="Gold"
+				description="Yours for good."
+				price={129}
+				compareAt={149}
+				lowestPrice={149}
+				note="forever"
+				badge="Sale"
+				featured
+				features={["Gold name colour", "Chat tag", "Cosmetic trail"]}
+				cta={
+					<Button className="w-full" onClick={buyRank("Gold")}>
+						Buy Gold
+					</Button>
+				}
+			/>
+		</PlanGrid>
 	);
 }
 

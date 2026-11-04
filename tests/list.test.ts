@@ -3,7 +3,7 @@ import { describe, expect, test } from "bun:test";
 import { pageRange } from "@/components/ui/pagination";
 import { listKeyTarget, scrollIntoList } from "@/lib/list";
 import { matchesHotkey } from "@/lib/use-hotkey";
-import { clamp } from "@/lib/utils";
+import { clamp, formatMoney } from "@/lib/utils";
 
 const key = (pressed: string, mods: Partial<KeyboardEvent> = {}) =>
 	({ key: pressed, ctrlKey: false, metaKey: false, altKey: false, ...mods }) as KeyboardEvent;
@@ -16,6 +16,20 @@ describe("clamp", () => {
 		expect(clamp(5, 0, 10)).toBe(5);
 		expect(clamp(-1, 0, 10)).toBe(0);
 		expect(clamp(11, 0, 10)).toBe(10);
+	});
+});
+
+describe("formatMoney", () => {
+	test("whole amounts drop their decimals, others keep them", () => {
+		expect(formatMoney(49)).toBe("$49");
+		expect(formatMoney(49.99)).toBe("$49.99");
+		expect(formatMoney(49.5)).toBe("$49.50");
+		expect(formatMoney(0)).toBe("$0");
+	});
+
+	test("follows the currency and locale", () => {
+		expect(formatMoney(49.99, "PLN", "pl-PL").replace(/\s/g, " ")).toBe("49,99 zł");
+		expect(formatMoney(49, "PLN", "pl-PL").replace(/\s/g, " ")).toBe("49 zł");
 	});
 });
 

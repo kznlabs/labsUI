@@ -695,8 +695,17 @@ export const registry: Entry[] = [
 		name: "Pricing",
 		file: "blocks/pricing.tsx",
 		description:
-			"Plan cards with a monthly / yearly segmented switch. Prices roll on a spring in the direction they moved; the featured plan is outlined in the accent. Card, Badge, ToggleGroup, Button.",
-		usage: `<Pricing yearlyNote="−20%" plans={[{ name: "Pro", price: { monthly: 9, yearly: 7 }, features: ["10 servers"], featured: true, badge: "Popular", cta: <Button className="w-full">Start trial</Button> }]} />`,
+			"PlanCards with a segmented switch over any periods: months and years, or a rank for 30 days, 90 days and forever. Prices roll on a spring in the direction they moved, and a Buy button can read the selected period.",
+		usage: `<Pricing periods={[{ value: "monthly", label: "Monthly", priceNote: "/ month" }, { value: "yearly", label: "Yearly", note: "−20%", priceNote: "/ month" }]} plans={[{ name: "Pro", price: { monthly: 9, yearly: 7 }, features: ["10 servers"], featured: true, badge: "Popular", cta: (period) => <Button className="w-full" onClick={() => buy(period)}>Buy</Button> }]} />`,
+	},
+	{
+		id: "plan-card",
+		group: "Blocks",
+		name: "Plan Card",
+		file: "blocks/plan-card.tsx",
+		description:
+			"One plan or rank at one price: earlier price, note, features and a call to action; PlanGrid lays out several. Server-safe. During a price reduction, `lowestPrice` shows the lowest price from the 30 days before it as visible text; the EU's Omnibus rule (Art. 6a of Directive 98/6) asks for this. A pointer, not legal advice: your app owns the price history and passes it only during a promotion, and no discount percentage is computed.",
+		usage: `<PlanCard name="Gold" price={129} compareAt={149} lowestPrice={149} note="forever" features={["Cosmetic trail"]} cta={<Button className="w-full">Buy</Button>} />`,
 	},
 	{
 		id: "testimonial",

@@ -13,3 +13,12 @@ export const spring = { type: "spring", stiffness: 400, damping: 30 } as const;
 
 export const clamp = (value: number, min: number, max: number) =>
 	Math.min(Math.max(value, min), max);
+
+/** An amount of money, with decimals only when it has any: `$49`, `$49.99`, `49,99 zł`. */
+export function formatMoney(amount: number, currency = "USD", locale = "en-US") {
+	return new Intl.NumberFormat(locale, {
+		style: "currency",
+		currency,
+		trailingZeroDisplay: "stripIfInteger",
+	}).format(amount);
+}

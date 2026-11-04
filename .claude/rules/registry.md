@@ -141,7 +141,10 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
 
 ## Blocks
 
-- `pricing`: Pricing.
+- `pricing`: Pricing. PlanCards plus a switcher over any `periods`; `cta` can be
+  a function of the period; a plan without a price for a period hides.
+- `plan-card`: PlanCard, PlanGrid. Server-safe, no state. `lowestPrice` shows
+  only when passed, never a computed percentage.
 - `testimonial`: Testimonial. Server-safe.
 - `stats-strip`: StatsStrip. Server-safe; Reveal + CountTo.
 - `product-card`: ProductCard. 2+ media become a Carousel.
