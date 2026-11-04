@@ -119,6 +119,18 @@ export default function DisplayProbe() {
 								<NavigationMenuLink href="#bot" title="Closed panel link" description="Bot" />
 							</NavigationMenuContent>
 						</NavigationMenuItem>
+
+						<NavigationMenuItem>
+							<NavigationMenuTrigger>Guides</NavigationMenuTrigger>
+
+							<NavigationMenuContent className="w-80">
+								<NavigationMenuLink href="#bot" title="Install" description="Bot" />
+
+								<NavigationMenuLink href="#bot" title="Theming" description="Bot" />
+
+								<NavigationMenuLink href="#bot" title="Motion" description="Bot" />
+							</NavigationMenuContent>
+						</NavigationMenuItem>
 					</NavigationMenuList>
 				</NavigationMenu>
 

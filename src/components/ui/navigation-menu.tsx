@@ -497,22 +497,17 @@ function Panel({
 	const nav = useNav();
 	const ref = useRef<HTMLDivElement>(null);
 	const present = useIsPresent();
-	const presentRef = useRef(present);
 	const { setSize, focusPanel } = nav;
 
-	useLayoutEffect(() => {
-		presentRef.current = present;
-	}, [present]);
-
+	// Keyed on `present`: a panel called back mid-exit never remounts, but it has to size the viewport
+	// again. One sliding out no longer does.
 	useLayoutEffect(() => {
 		const element = ref.current;
 
-		if (!element) return;
+		if (!element || !present) return;
 
-		// offsetWidth ignores the slide transform. A panel sliding out no longer sizes the viewport.
-		const measure = () => {
-			if (presentRef.current) setSize({ w: element.offsetWidth, h: element.offsetHeight });
-		};
+		// offsetWidth ignores the slide transform.
+		const measure = () => setSize({ w: element.offsetWidth, h: element.offsetHeight });
 
 		measure();
 
@@ -526,7 +521,7 @@ function Panel({
 		}
 
 		return () => observer.disconnect();
-	}, [setSize, focusPanel]);
+	}, [present, setSize, focusPanel]);
 
 	const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (event.key !== "Tab") return;

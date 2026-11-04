@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import { expect, open, selected, test } from "./fixtures";
 
 function only(...ids: string[]) {
@@ -396,6 +397,57 @@ test.describe("navigation-menu link", () => {
 		await expect(trigger).toHaveAttribute("aria-expanded", "true");
 		await page.getByRole("link", { name: /Closed panel link/ }).click();
 		await expect(trigger).toHaveAttribute("aria-expanded", "false");
+	});
+
+	// Both clicks land a frame apart, so the first panel is still on its way out when it comes back.
+	const clickTwice = (page: Page, first: string, second: string) =>
+		page.evaluate(
+			async ([firstName, secondName]) => {
+				const trigger = (name: string) =>
+					[...document.querySelectorAll("button")].find((button) => button.textContent === name);
+
+				trigger(firstName)?.click();
+				await new Promise(requestAnimationFrame);
+				trigger(secondName)?.click();
+			},
+			[first, second],
+		);
+
+	test("a panel called back mid-exit sizes the viewport again", async ({ page }) => {
+		await open(page, "e2e/display");
+
+		const nav = page.getByRole("navigation", { name: "Main" });
+		const guides = page.getByRole("button", { name: "Guides" });
+		const panel = nav.getByRole("region", { name: "Guides" });
+		const viewport = nav.locator("[data-floating]");
+
+		await guides.click();
+		await expect(panel).toBeVisible();
+
+		const height = await panel.evaluate((element: HTMLElement) => element.offsetHeight);
+
+		await expect
+			.poll(() => viewport.evaluate((element: HTMLElement) => element.offsetHeight))
+			.toBe(height);
+		await clickTwice(page, "Products", "Guides");
+		await expect(guides).toHaveAttribute("aria-expanded", "true");
+		await expect
+			.poll(() => viewport.evaluate((element: HTMLElement) => element.offsetHeight))
+			.toBe(height);
+	});
+
+	test("reopening a panel mid-exit shows it", async ({ page }) => {
+		await open(page, "e2e/display");
+
+		const nav = page.getByRole("navigation", { name: "Main" });
+		const guides = page.getByRole("button", { name: "Guides" });
+		const viewport = nav.locator("[data-floating]");
+
+		await guides.click();
+		await expect(viewport).toHaveCSS("opacity", "1");
+		await clickTwice(page, "Guides", "Guides");
+		await expect(guides).toHaveAttribute("aria-expanded", "true");
+		await expect(viewport).toHaveCSS("opacity", "1");
 	});
 });
 
