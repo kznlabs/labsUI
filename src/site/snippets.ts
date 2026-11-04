@@ -1545,6 +1545,21 @@ export function AppearanceSettings() {
 }`,
 		},
 		{
+			name: "header-actions.tsx",
+			code: `import { AccentPicker } from "@/components/ui/accent-picker";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+
+// A dot in the current color; the others slide out over what sits to its left.
+export function HeaderActions() {
+  return (
+    <div className="ml-auto flex items-center gap-2">
+      <AccentPicker folded />
+      <ThemeToggle />
+    </div>
+  );
+}`,
+		},
+		{
 			name: "brand-accent.ts",
 			code: `import { setAccent } from "@/lib/theme";
 

@@ -236,7 +236,7 @@ export const registry: Entry[] = [
 		group: "Actions & inputs",
 		file: "accent-picker.tsx",
 		description:
-			"Accent color row: eight swatches (red to slate) that retint primary, focus rings, selection, switches and checkboxes app-wide. Persisted, applied before paint, or set your own hue with --accent-hue.",
+			"Accent color row: eight swatches (red to slate) that retint primary, focus rings, selection, switches and checkboxes app-wide, or folded behind a dot in the current color for a header. Persisted, applied before paint, or set your own hue with --accent-hue.",
 		usage: `<AccentPicker />`,
 	},
 	{

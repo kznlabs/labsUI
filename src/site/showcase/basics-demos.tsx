@@ -280,6 +280,14 @@ export function AccentPickerDemo() {
 			<Separator />
 
 			<div className="flex items-center justify-between gap-4 px-4 py-3">
+				<span className="text-sm">Folded</span>
+
+				<AccentPicker folded />
+			</div>
+
+			<Separator />
+
+			<div className="flex items-center justify-between gap-4 px-4 py-3">
 				<Label htmlFor="ap-switch" className="font-normal">
 					Preview
 				</Label>

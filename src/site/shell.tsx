@@ -38,7 +38,7 @@ export function SiteShell({ current, children }: { current?: string; children: R
 				current={current}
 				actions={
 					<>
-						<AccentPicker className="hidden xl:flex" />
+						<AccentPicker folded />
 
 						<SiteCommand />
 

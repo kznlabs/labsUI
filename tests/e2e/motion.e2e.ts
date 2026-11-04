@@ -166,6 +166,20 @@ test("tabs pill slides to the picked tab", async ({ page }) => {
 	expect(new Set(offsets).size, `x per frame: ${offsets.join(", ")}`).toBeGreaterThan(2);
 });
 
+const foldedColors = '[data-probe=folded] [id$="-colors"] > div';
+const foldedDot = "[data-probe=folded] button[aria-expanded]";
+
+test("the folded accent picker slides its colors out", async ({ page }) => {
+	test.skip(!selected("accent-picker"), "page not in this run");
+	await open(page, "e2e/accent");
+
+	// x in percent runs on the main thread, there is no Web Animation to seek.
+	const seen = await frames(page, foldedColors, foldedDot);
+
+	expect(new Set(seen).size, `transforms: ${seen.join(" | ")}`).toBeGreaterThan(2);
+	await settles(page, foldedColors);
+});
+
 test("a button dips while pressed", async ({ page }) => {
 	test.skip(!selected("button"), "page not in this run");
 	await open(page, "components/button");
@@ -201,5 +215,16 @@ test.describe("reduced motion", () => {
 
 		expect(moving.size, `transforms: ${shown.join(" | ")}`).toBeLessThanOrEqual(1);
 		await settles(page, popoverPanel);
+	});
+
+	test("the folded accent picker shows its colors without a slide", async ({ page }) => {
+		test.skip(!selected("accent-picker"), "page not in this run");
+		await open(page, "e2e/accent");
+
+		const seen = await frames(page, foldedColors, foldedDot);
+		const moving = new Set(seen.filter((transform) => !isIdentity(transform)));
+
+		expect(moving.size, `transforms: ${seen.join(" | ")}`).toBeLessThanOrEqual(1);
+		await settles(page, foldedColors);
 	});
 });

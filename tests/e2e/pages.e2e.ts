@@ -1,33 +1,6 @@
-import AxeBuilder from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
-import { clickable, hairlineScroll, hiddenTabStops, wheelScroll, widgets } from "./checks";
+import { axe, clickable, hairlineScroll, hiddenTabStops, wheelScroll, widgets } from "./checks";
 import { expect, full, open, pages, test } from "./fixtures";
-
-const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
-
-// Dark only changes colors, so it runs just the contrast rule. "page" skips the demos, their own
-// pages check them.
-async function axe(page: Page, theme: "light" | "dark", scope: "main" | "page") {
-	await page.emulateMedia({ colorScheme: theme });
-	await expect(page.locator("html")).toHaveClass(theme === "dark" ? /\bdark\b/ : /^(?!.*\bdark\b)/);
-	// Retried: fades, hydration and late code formatting can fail a rule for a moment. One gallery
-	// pass alone takes ~15 s.
-	await expect(async () => {
-		let builder = new AxeBuilder({ page });
-
-		builder = scope === "main" ? builder.include("main") : builder.exclude("[data-preview]");
-		builder = theme === "light" ? builder.withTags(WCAG) : builder.withRules(["color-contrast"]);
-
-		const { violations } = await builder.analyze();
-
-		expect(
-			violations.map(
-				(value) => `${value.id} (${value.nodes.length}): ${value.nodes[0]?.target.join(" ")}`,
-			),
-			`axe, ${theme} theme`,
-		).toEqual([]);
-	}).toPass({ timeout: scope === "main" ? 15_000 : 90_000 });
-}
 
 async function overflow(page: Page) {
 	const extra = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);

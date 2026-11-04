@@ -45,7 +45,8 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
 - `date-picker`: DatePicker. Popover + Calendar; submits ISO `2026-10-21` or
   `from/to`; works in Field.
 - `theme-toggle`: ThemeToggle.
-- `accent-picker`: AccentPicker. `setAccent()` is in `@/lib/theme`.
+- `accent-picker`: AccentPicker. `setAccent()` is in `@/lib/theme`. `folded`
+  takes a dot's room, the colors slide over what sits left of it.
 
 ## Navigation
 
