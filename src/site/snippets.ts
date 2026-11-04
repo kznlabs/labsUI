@@ -1767,6 +1767,75 @@ export function ProductGrid({
 }`,
 		},
 	],
+	"comparison-table": [
+		{
+			name: "laptops.tsx",
+			code: `import { ComparisonTable } from "@/components/blocks/comparison-table";
+import { buttonVariants } from "@/components/ui/button-variants";
+
+export function Laptops() {
+  return (
+    <ComparisonTable
+      label="Laptops compared"
+      stickyTop="3.5rem"
+      items={[
+        { id: "lumen", name: "Lumen 13", details: "$899" },
+        {
+          id: "harbor",
+          name: "Harbor 15",
+          details: "$1,399",
+          badge: "Popular",
+          featured: true,
+          action: <a className={buttonVariants({ size: "sm" })} href="/buy/harbor">Buy</a>,
+        },
+      ]}
+      groups={[
+        {
+          label: "Display",
+          rows: [
+            { label: "Size", values: { lumen: "13.3 in", harbor: "15.6 in" } },
+            { label: "Touch screen", values: { lumen: false, harbor: true } },
+          ],
+        },
+        {
+          label: "Ports",
+          rows: [{ label: "USB-C", values: { lumen: 2, harbor: 2 } }],
+        },
+      ]}
+    />
+  );
+}`,
+		},
+		{
+			name: "own-cells.tsx",
+			code: `import { ComparisonTable } from "@/components/blocks/comparison-table";
+import { Badge } from "@/components/ui/badge";
+
+// Your own nodes can't be compared, so say whether the row differs.
+export function Support() {
+  return (
+    <ComparisonTable
+      items={[
+        { id: "iron", name: "Iron" },
+        { id: "gold", name: "Gold" },
+      ]}
+      groups={[
+        {
+          label: "Support",
+          rows: [
+            {
+              label: "Reply within",
+              differs: true,
+              values: { iron: <Badge variant="secondary">48 h</Badge>, gold: <Badge>4 h</Badge> },
+            },
+          ],
+        },
+      ]}
+    />
+  );
+}`,
+		},
+	],
 	"product-gallery": [
 		{
 			name: "product-photos.tsx",

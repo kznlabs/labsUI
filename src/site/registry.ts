@@ -753,6 +753,15 @@ export const registry: Entry[] = [
 		usage: `<CartList><CartLine name="Clip camera" price={279} quantity={qty} onQuantityChange={setQty} onRemove={remove} /></CartList><OrderSummary lines={[{ label: "Shipping", amount: "Free" }]} total={279 * qty} action={<Button className="w-full">Checkout</Button>} />`,
 	},
 	{
+		id: "comparison-table",
+		group: "Blocks",
+		name: "Comparison Table",
+		file: "blocks/comparison-table.tsx",
+		description:
+			'Products, laptops, plans or ranks compared feature by feature, in groups, with a "differences only" switch. Checks and dashes carry text for screen readers. Wide, every item is a column, the names stay pinned at the top and the features at the left. Narrow, two pickers choose the items side by side and differences follow the two in view.',
+		usage: `<ComparisonTable items={[{ id: "air", name: "Air" }, { id: "pro", name: "Pro", badge: "Popular", featured: true }]} groups={[{ label: "Display", rows: [{ label: "Size", values: { air: "13 in", pro: "16 in" } }, { label: "Touch", values: { air: false, pro: true } }] }]} stickyTop="3.5rem" />`,
+	},
+	{
 		id: "clip-card",
 		group: "Blocks",
 		name: "Clip Card",

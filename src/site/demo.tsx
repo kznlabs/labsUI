@@ -129,6 +129,9 @@ const demos = {
 		import("@/site/showcase/block-demos").then((module) => module.PlanCardDemo),
 	),
 	CartDemo: dynamic(() => import("@/site/showcase/shop-demos").then((module) => module.CartDemo)),
+	ComparisonTableDemo: dynamic(() =>
+		import("@/site/showcase/shop-demos").then((module) => module.ComparisonTableDemo),
+	),
 	ProductGalleryDemo: dynamic(() =>
 		import("@/site/showcase/shop-demos").then((module) => module.ProductGalleryDemo),
 	),

@@ -99,6 +99,10 @@ const demos: Record<
 	"product-card": { node: <Demo name="ProductCardDemo" /> },
 	"product-gallery": { node: <Demo name="ProductGalleryDemo" /> },
 	cart: { node: <Demo name="CartDemo" />, preview: "items-start" },
+	"comparison-table": {
+		node: <Demo name="ComparisonTableDemo" />,
+		preview: "items-start p-3 sm:p-8",
+	},
 	"clip-card": { node: <Demo name="ClipCardDemo" /> },
 	"stat-tile": { node: <Demo name="StatTileDemo" /> },
 	changelog: { node: <Demo name="ChangelogDemo" />, preview: "items-start" },

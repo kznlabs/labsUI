@@ -154,6 +154,9 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
   which also works in your own Carousel, one slide in view.
 - `cart`: CartList, CartLine, OrderSummary. UI only, your app owns the numbers;
   removing a line moves focus to the next. Add opens it through `useDisclosure()`.
+- `comparison-table`: ComparisonTable. Text, numbers and booleans compare by
+  themselves, a row with your own nodes needs `differs`. Narrow, two pickers
+  choose the columns; pass `stickyTop` under a sticky site header.
 - `clip-card`: ClipCard.
 - `stat-tile`: StatTile. Server-safe.
 - `changelog`: Changelog. Server-safe.
