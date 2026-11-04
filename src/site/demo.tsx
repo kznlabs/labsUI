@@ -87,6 +87,7 @@ const demos = {
 	),
 	FieldDemo: dynamic(() => import("@/site/showcase/form-demos").then((module) => module.FieldDemo)),
 	FormDemo: dynamic(() => import("@/site/showcase/demos").then((module) => module.FormDemo)),
+	HeroDemo: dynamic(() => import("@/site/showcase/block-demos").then((module) => module.HeroDemo)),
 	HoverCardDemo: dynamic(() =>
 		import("@/site/showcase/floating-demos").then((module) => module.HoverCardDemo),
 	),
@@ -133,6 +134,7 @@ const demos = {
 	ProgressDemo: dynamic(() =>
 		import("@/site/showcase/feedback-demos").then((module) => module.ProgressDemo),
 	),
+	ProseDemo: dynamic(() => import("@/site/showcase/prose-demo").then((module) => module.ProseDemo)),
 	QuoteDemo: dynamic(() => import("@/site/showcase/demos").then((module) => module.QuoteDemo)),
 	RadioGroupDemo: dynamic(() =>
 		import("@/site/showcase/form-demos").then((module) => module.RadioGroupDemo),
@@ -161,6 +163,9 @@ const demos = {
 	),
 	SidebarDemo: dynamic(() =>
 		import("@/site/showcase/sidebar-demo").then((module) => module.SidebarDemo),
+	),
+	SiteFooterDemo: dynamic(() =>
+		import("@/site/showcase/block-demos").then((module) => module.SiteFooterDemo),
 	),
 	SiteHeaderDemo: dynamic(() =>
 		import("@/site/showcase/block-demos").then((module) => module.SiteHeaderDemo),

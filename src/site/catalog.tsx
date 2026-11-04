@@ -101,6 +101,9 @@ const demos: Record<
 	changelog: { node: <Demo name="ChangelogDemo" />, preview: "items-start" },
 	newsletter: { node: <Demo name="NewsletterDemo" /> },
 	"site-header": { node: <Demo name="SiteHeaderDemo" />, preview: "p-3 sm:p-8", tabs: true },
+	"site-footer": { node: <Demo name="SiteFooterDemo" />, preview: "p-3 sm:p-8", tabs: true },
+	hero: { node: <Demo name="HeroDemo" />, preview: "items-start p-3 sm:p-8", tabs: true },
+	prose: { node: <Demo name="ProseDemo" />, preview: "items-start", tabs: true },
 };
 
 /** Registry entries in group order: the nav and the page read top to bottom the same way. */

@@ -2,7 +2,9 @@
 
 import { Home, Settings } from "lucide-react";
 import { useState } from "react";
+import { Hero } from "@/components/blocks/hero";
 import { Newsletter } from "@/components/blocks/newsletter";
+import { SiteFooter } from "@/components/blocks/site-footer";
 import {
 	Accordion,
 	AccordionContent,
@@ -30,6 +32,7 @@ import {
 	NavigationMenuList,
 	NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { Prose } from "@/components/ui/prose";
 import { Quote } from "@/components/ui/quote";
 import { SearchInput } from "@/components/ui/search-input";
 import { Sidebar, SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
@@ -45,6 +48,7 @@ const people = Array.from({ length: 14 }, (_, i) => ({
 
 export default function DisplayProbe() {
 	const [query, setQuery] = useState("");
+	const [footerHref, setFooterHref] = useState("");
 	const [lines, setLines] = useState(
 		Array.from({ length: 30 }, (_, i) => ({
 			id: String(i),
@@ -213,6 +217,65 @@ export default function DisplayProbe() {
 				<HoverCard content={<p>Card preview</p>}>
 					<a href="#jane">@jane</a>
 				</HoverCard>
+
+				<Prose data-probe="prose" className="w-80">
+					<h2>Prose heading</h2>
+
+					<p>
+						A paragraph with a <a href="#prose-link">prose link</a>.
+					</p>
+
+					<pre data-probe="pre-short">
+						<code>short</code>
+					</pre>
+
+					<pre data-probe="pre-wide">
+						<code>{"wide ".repeat(60)}</code>
+					</pre>
+
+					<table data-probe="table-wide">
+						<thead>
+							<tr>
+								{["One", "Two", "Three", "Four", "Five", "Six"].map((name) => (
+									<th key={name}>{`${name} long column heading`}</th>
+								))}
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr>
+								{["a", "b", "c", "d", "e", "f"].map((cell) => (
+									<td key={cell}>{cell}</td>
+								))}
+							</tr>
+						</tbody>
+					</table>
+
+					<div data-probe="prose-embedded">
+						<h2 className="mt-1">Embedded heading</h2>
+					</div>
+				</Prose>
+
+				<Prose
+					data-probe="prose-html"
+					className="w-80"
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: a constant string in a test page
+					dangerouslySetInnerHTML={{
+						__html: `<pre data-probe="pre-html"><code>${"html ".repeat(60)}</code></pre>`,
+					}}
+				/>
+
+				<Hero as="h2" title="Hero probe title" description="Hero probe text" />
+
+				<SiteFooter
+					label="Probe footer"
+					onNavigate={(href, event) => {
+						event.preventDefault();
+						setFooterHref(href);
+					}}
+					columns={[{ title: "Probe links", links: [{ label: "Footer link", href: "/footer" }] }]}
+					legal={<output>{footerHref || "not clicked"}</output>}
+				/>
 			</main>
 		</SidebarLayout>
 	);

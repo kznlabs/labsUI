@@ -70,6 +70,8 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
   (`aria-current`), not a tablist.
 - `collapsible`: Collapsible, CollapsibleTrigger, CollapsibleContent.
 - `separator`: Separator. Server-safe.
+- `prose`: Prose. Server-safe; styles direct-child tags only, so embedded
+  components keep their look. Wide `pre` and `table` scroll by keyboard too.
 - `aspect-ratio`: AspectRatio. Server-safe; a direct img/video child fills it.
 - `scroll-area`: ScrollArea. Overlay thumbs over native scroll; horizontal takes
   the mouse wheel.
@@ -149,3 +151,7 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
 - `newsletter`: Newsletter. A rejection's message becomes an error toast.
 - `site-header`: SiteHeader. Sticky; NavigationMenu from `md`, right Drawer below,
   hairline on scroll.
+- `site-footer`: SiteFooter. Server-safe; `onNavigate` only from client parents.
+  Layout follows its container.
+- `hero`: Hero. Server-safe, no entrance motion; `as="h2"` when the page already
+  has an `h1`. Layout follows its container.

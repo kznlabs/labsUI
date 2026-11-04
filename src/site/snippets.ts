@@ -1834,4 +1834,81 @@ export function Header({ pathname }: { pathname: string }) {
 }`,
 		},
 	],
+	"site-footer": [
+		{
+			name: "footer.tsx",
+			code: `import { SiteFooter } from "@/components/blocks/site-footer";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+
+export function Footer() {
+  return (
+    <SiteFooter
+      brand={<a href="/">Acme</a>}
+      description="Clips, bots and merch for game communities."
+      actions={<ThemeToggle />}
+      columns={[
+        {
+          title: "Product",
+          links: [
+            { label: "Clips", href: "/clips" },
+            { label: "Shop", href: "/shop" },
+          ],
+        },
+        {
+          title: "Company",
+          links: [
+            { label: "About", href: "/about" },
+            { label: "Blog", href: "/blog" },
+          ],
+        },
+      ]}
+      legal="© 2026 Acme"
+    />
+  );
+}`,
+		},
+	],
+	hero: [
+		{
+			name: "landing.tsx",
+			code: `import { Hero } from "@/components/blocks/hero";
+import { buttonVariants } from "@/components/ui/button-variants";
+
+export function Landing() {
+  return (
+    <Hero
+      title="Every clip your server remembers"
+      description="Record, trim and share highlights without leaving the match."
+      actions={
+        <a className={buttonVariants()} href="/start">
+          Start recording
+        </a>
+      }
+      media={<img src="/clips.png" alt="A wall of match highlights" />}
+    />
+  );
+}`,
+		},
+	],
+	prose: [
+		{
+			name: "post.tsx",
+			code: `import { Prose } from "@/components/ui/prose";
+
+// Children: an MDX body, or your own markup.
+export function Post() {
+  return (
+    <Prose as="article">
+      <h2>Keeping clips after a match</h2>
+      <p>Clips stay on your server until you delete them.</p>
+    </Prose>
+  );
+}
+
+// Rendered Markdown: sanitize it first if users wrote any of it.
+export function RenderedPost({ html }: { html: string }) {
+  return <Prose as="article" dangerouslySetInnerHTML={{ __html: html }} />;
+}`,
+		},
+	],
 };

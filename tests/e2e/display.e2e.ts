@@ -34,6 +34,84 @@ test.describe("server HTML", () => {
 	});
 });
 
+test.describe("prose", () => {
+	only("prose");
+	test("wide blocks scroll by keyboard, short ones stay out of the tab order", async ({ page }) => {
+		await open(page, "e2e/display");
+
+		const wide = page.locator("[data-probe=pre-wide]");
+
+		await expect(wide).toHaveAttribute("tabindex", "0");
+		await expect(page.locator("[data-probe=table-wide]")).toHaveAttribute("tabindex", "0");
+		await expect(page.locator("[data-probe=pre-short]")).not.toHaveAttribute("tabindex");
+		await expect(page.locator("[data-probe=pre-html]")).toHaveAttribute("tabindex", "0");
+
+		await wide.focus();
+		await page.keyboard.press("ArrowRight");
+		await expect.poll(() => wide.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+	});
+
+	test("a scrolling table keeps its roles", async ({ page }) => {
+		await open(page, "e2e/display");
+
+		const table = page.locator("[data-probe=table-wide]");
+
+		await expect(table).toHaveAttribute("role", "table");
+		await expect(table.locator("tr").first()).toHaveAttribute("role", "row");
+		await expect(table.locator("th").first()).toHaveAttribute("role", "columnheader");
+		await expect(table.locator("td").first()).toHaveAttribute("role", "cell");
+	});
+
+	test("embedded components keep their look, a child's utility wins", async ({ page }) => {
+		await open(page, "e2e/display");
+
+		const prose = page.locator("[data-probe=prose]");
+		const size = (name: string) =>
+			prose
+				.getByRole("heading", { name })
+				.evaluate((element) => getComputedStyle(element).fontSize);
+
+		expect(await size("Prose heading")).not.toBe(await size("Embedded heading"));
+		await expect(prose.getByRole("heading", { name: "Embedded heading" })).toHaveCSS(
+			"margin-top",
+			"4px",
+		);
+		await expect(prose.getByRole("link", { name: "prose link" })).toHaveCSS(
+			"text-decoration-line",
+			"underline",
+		);
+	});
+});
+
+test.describe("site footer", () => {
+	only("site-footer");
+	test("names its navigation, targets are at least 24px, onNavigate gets the href", async ({
+		page,
+	}) => {
+		await open(page, "e2e/display");
+
+		const link = page
+			.getByRole("navigation", { name: "Probe footer" })
+			.getByRole("link", { name: "Footer link" });
+
+		expect((await link.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(24);
+
+		await link.click();
+		await expect(page.locator("footer output")).toHaveText("/footer");
+	});
+});
+
+test.describe("hero", () => {
+	only("hero");
+	test("is a region named by its title at the level asked for", async ({ page }) => {
+		await open(page, "e2e/display");
+
+		const hero = page.getByRole("region", { name: "Hero probe title" });
+
+		await expect(hero.getByRole("heading", { level: 2, name: "Hero probe title" })).toBeVisible();
+	});
+});
+
 test.describe("sidebar shortcut", () => {
 	only("sidebar");
 	test("mod+B toggles the rail, but not while typing in a field", async ({ page }) => {

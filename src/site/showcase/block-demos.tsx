@@ -13,21 +13,27 @@ import {
 	ShoppingBag,
 	Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { type MouseEvent, useState } from "react";
 import { Changelog } from "@/components/blocks/changelog";
 import { ClipCard } from "@/components/blocks/clip-card";
+import { Hero } from "@/components/blocks/hero";
 import { Newsletter } from "@/components/blocks/newsletter";
 import { Pricing } from "@/components/blocks/pricing";
 import { ProductCard } from "@/components/blocks/product-card";
+import { SiteFooter } from "@/components/blocks/site-footer";
 import { SiteHeader } from "@/components/blocks/site-header";
 import { StatTile } from "@/components/blocks/stat-tile";
 import { StatsStrip } from "@/components/blocks/stats-strip";
 import { Testimonial } from "@/components/blocks/testimonial";
 import { AppWindow } from "@/components/ui/app-window";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { ContextMenuItem, ContextMenuSeparator } from "@/components/ui/context-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { toast } from "@/components/ui/toast";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export function PricingDemo() {
 	return (
@@ -389,5 +395,130 @@ export function SiteHeaderDemo() {
 				))}
 			</div>
 		</AppWindow>
+	);
+}
+
+const demoLink =
+	(href: string) =>
+	(event: MouseEvent<HTMLAnchorElement>): void => {
+		event.preventDefault();
+		toast(`Demo mode: would open ${href}`);
+	};
+
+export function SiteFooterDemo() {
+	return (
+		<AppWindow title="acme.gg" className="w-full max-w-4xl" bodyClassName="flex-none p-0">
+			<SiteFooter
+				className="border-t-0"
+				brand={
+					<a
+						href="/"
+						onClick={demoLink("/")}
+						className="flex items-center gap-2 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+					>
+						<Bot className="size-5 text-primary-ink" aria-hidden="true" />
+						Acme
+					</a>
+				}
+				description="Clips, bots and merch for game communities."
+				actions={<ThemeToggle />}
+				label="Acme"
+				onNavigate={(href, event) => demoLink(href)(event)}
+				columns={[
+					{
+						title: "Product",
+						links: [
+							{ label: "Discord bot", href: "/bot" },
+							{ label: "Clips", href: "/clips" },
+							{ label: "Shop", href: "/shop" },
+						],
+					},
+					{
+						title: "Resources",
+						links: [
+							{ label: "Docs", href: "/docs" },
+							{ label: "Changelog", href: "/changelog" },
+							{ label: "Status", href: "/status" },
+						],
+					},
+					{
+						title: "Company",
+						links: [
+							{ label: "About", href: "/about" },
+							{ label: "Blog", href: "/blog" },
+							{ label: "Contact", href: "/contact" },
+						],
+					},
+				]}
+				legal={
+					<div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+						<span>© 2026 Acme. Sample company.</span>
+
+						<span className="flex gap-4">
+							{["Privacy", "Terms"].map((page) => (
+								<a
+									key={page}
+									href={`/${page.toLowerCase()}`}
+									onClick={demoLink(`/${page.toLowerCase()}`)}
+									className="inline-flex min-h-6 items-center rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+								>
+									{page}
+								</a>
+							))}
+						</span>
+					</div>
+				}
+			/>
+		</AppWindow>
+	);
+}
+
+export function HeroDemo() {
+	const [align, setAlign] = useState("start");
+
+	return (
+		<div className="flex w-full flex-col items-center gap-4">
+			<ToggleGroup
+				type="single"
+				aria-label="Hero alignment"
+				value={align}
+				onValueChange={(value) => {
+					if (value) setAlign(value);
+				}}
+			>
+				<ToggleGroupItem value="start">Beside</ToggleGroupItem>
+
+				<ToggleGroupItem value="center">Centered</ToggleGroupItem>
+			</ToggleGroup>
+
+			<AppWindow title="acme.gg" className="w-full max-w-5xl" bodyClassName="flex-none p-0">
+				<Hero
+					as="h2"
+					align={align === "center" ? "center" : "start"}
+					title="Every clip your server remembers"
+					description="Record, trim and share highlights without leaving the match. Your community keeps the moments, you keep the files."
+					actions={
+						<>
+							<a href="/start" onClick={demoLink("/start")} className={buttonVariants()}>
+								Start recording
+							</a>
+
+							<a
+								href="/clips"
+								onClick={demoLink("/clips")}
+								className={buttonVariants({ variant: "outline" })}
+							>
+								See sample clips
+							</a>
+						</>
+					}
+					media={
+						<AspectRatio ratio={16 / 10} className="overflow-hidden rounded-2xl border">
+							{tile(Clapperboard, "bg-chart-2/12 text-chart-2")}
+						</AspectRatio>
+					}
+				/>
+			</AppWindow>
+		</div>
 	);
 }

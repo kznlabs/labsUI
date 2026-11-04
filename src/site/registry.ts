@@ -437,6 +437,15 @@ export const registry: Entry[] = [
 		usage: `<Separator label="or" />`,
 	},
 	{
+		id: "prose",
+		group: "Layout",
+		name: "Prose",
+		file: "prose.tsx",
+		description:
+			"Typography for a Markdown or MDX body: spacing, headings, lists, quotes, code, images and tables from tokens alone. A Card or demo placed inside keeps its own look; wide code blocks and tables scroll on their own, by keyboard too.",
+		usage: `<Prose as="article"><h2>Release notes</h2><p>Clips now upload in the background.</p></Prose>`,
+	},
+	{
 		id: "meter",
 		name: "Meter",
 		group: "Data display",
@@ -760,5 +769,23 @@ export const registry: Entry[] = [
 		description:
 			"Sticky, translucent site header from one nav array: brand, NavigationMenu panels from md up, a right Drawer with the same links below it, and your actions on the right. The hairline underneath appears only once content scrolls beneath it.",
 		usage: `<SiteHeader brand={<a href="/">Acme</a>} current="/blog" nav={[{ label: "Products", items: [{ title: "Bot", href: "/bot", icon: <Bot /> }] }, { label: "Blog", href: "/blog" }]} actions={<ThemeToggle />} />`,
+	},
+	{
+		id: "site-footer",
+		group: "Blocks",
+		name: "Site Footer",
+		file: "blocks/site-footer.tsx",
+		description:
+			"Server-safe page footer: brand, description and actions, link columns under one navigation, and a legal line. Every part is optional; the layout follows the width of its container.",
+		usage: `<SiteFooter brand={<a href="/">Acme</a>} columns={[{ title: "Product", links: [{ label: "Pricing", href: "/pricing" }] }]} legal="© 2026 Acme" />`,
+	},
+	{
+		id: "hero",
+		group: "Blocks",
+		name: "Hero",
+		file: "blocks/hero.tsx",
+		description:
+			"Server-safe opening section: title, text, actions and media, side by side or centered. Follows the width of its container, labels itself with its title and adds no entrance motion, so the headline paints at once.",
+		usage: `<Hero title="Ship clips faster" description="Record, trim and share." actions={<a className={buttonVariants()} href="/start">Get started</a>} />`,
 	},
 ] as const;
