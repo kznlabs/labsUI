@@ -587,7 +587,7 @@ export const registry: Entry[] = [
 		name: "Carousel",
 		file: "carousel.tsx",
 		description:
-			"Native scroll-snap row, so touch, trackpad and no-JS scrolling work, with spring-driven arrows, page dots, arrow keys and mouse drag that throws to the next snap point. APG carousel semantics: a labeled region of slides announced as 3 of 8.",
+			"Native scroll-snap row, so touch, trackpad and no-JS scrolling work, with spring-driven arrows, page dots or thumbnails, arrow keys and mouse drag that throws to the next snap point. APG carousel semantics: a labeled region of slides announced as 3 of 8.",
 		usage: `<Carousel label="Projects"><CarouselContent className="sm:[--per-view:2]"><CarouselItem>…</CarouselItem></CarouselContent><CarouselPrevious /><CarouselNext /><CarouselDots /></Carousel>`,
 	},
 	{
@@ -733,6 +733,24 @@ export const registry: Entry[] = [
 		description:
 			"Shop tile: photos in an AspectRatio (a swipeable Carousel with dots when there are several), sale price, read-only Rating, sold-out state, and an add-to-cart Button or your own action. During a price reduction, `lowestPrice` shows the lowest price from the 30 days before it as visible text; the EU's Omnibus rule (Art. 6a of Directive 98/6) asks for this. A pointer, not legal advice: your app owns the price history and passes it only during a promotion, and no discount percentage is computed.",
 		usage: `<ProductCard name="Clip camera" price={279} compareAt={349} lowestPrice={349} badge="−20%" rating={4.6} ratingNote="128 reviews" media={[<img src={front} alt="Front" />, <img src={back} alt="Back" />]} onAddToCart={add} />`,
+	},
+	{
+		id: "product-gallery",
+		group: "Blocks",
+		name: "Product Gallery",
+		file: "blocks/product-gallery.tsx",
+		description:
+			"A product page's photos: a swipeable Carousel with arrows and a wrapping row of thumbnails, each a labeled button to its slide. One photo stays a plain picture.",
+		usage: `<ProductGallery label="Clip camera photos" media={[<img src={front} alt="Front" />, <img src={back} alt="Back" />]} />`,
+	},
+	{
+		id: "cart",
+		group: "Blocks",
+		name: "Cart",
+		file: "blocks/cart.tsx",
+		description:
+			"CartList and CartLine (photo, name, line total, quantity, remove) and OrderSummary (rows, a total screen readers hear change, your checkout action), usually in a Drawer. UI only: state, totals, payment and delivery stay in your app. To open the cart on add, call `show()` from `useDisclosure()` in ProductCard's `onAddToCart`, or show a toast instead.",
+		usage: `<CartList><CartLine name="Clip camera" price={279} quantity={qty} onQuantityChange={setQty} onRemove={remove} /></CartList><OrderSummary lines={[{ label: "Shipping", amount: "Free" }]} total={279 * qty} action={<Button className="w-full">Checkout</Button>} />`,
 	},
 	{
 		id: "clip-card",

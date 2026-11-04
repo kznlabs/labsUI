@@ -8,6 +8,7 @@ import {
 	createContext,
 	isValidElement,
 	type PointerEvent,
+	type ReactNode,
 	type RefObject,
 	use,
 	useEffect,
@@ -362,6 +363,53 @@ export function CarouselPrevious({ className }: { className?: string }) {
 /** Overlaid at the right edge by default; hides at the end. */
 export function CarouselNext({ className }: { className?: string }) {
 	return <Arrow dir={1} className={className} />;
+}
+
+/**
+ * Small pictures that wrap into rows, one per slide, for a row showing one slide at a time. Each is
+ * a button to its slide; the picture inside is decorative, the button's label names it.
+ */
+export function CarouselThumbs({
+	items,
+	label = (slide, total) => `Show photo ${slide} of ${total}`,
+	className,
+}: {
+	/** One small picture (`<img>`) per slide. */
+	items: ReactNode[];
+	/** Names a button for screen readers, from its slide number and the total. */
+	label?: (slide: number, total: number) => string;
+	className?: string;
+}) {
+	const { page, goTo } = useCarousel();
+
+	return (
+		<div className={cn("flex flex-wrap gap-2", className)}>
+			{items.map((item, i) => (
+				<button
+					// biome-ignore lint/suspicious/noArrayIndexKey: thumbnails are positions
+					key={i}
+					type="button"
+					aria-label={label(i + 1, items.length)}
+					aria-current={i === page || undefined}
+					onClick={() => goTo(i)}
+					// The ring sits on an overlay: a picture that fills the button would paint over its own.
+					className={cn(
+						"relative size-14 cursor-pointer overflow-hidden rounded-lg bg-muted outline-none transition-opacity after:absolute after:inset-0 after:rounded-[inherit] after:ring-inset focus-visible:opacity-100 focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50",
+						i === page
+							? "after:ring-2 after:ring-primary"
+							: "opacity-70 after:ring-1 after:ring-border hover:opacity-100",
+					)}
+				>
+					<span
+						aria-hidden="true"
+						className="block size-full [&>img]:size-full [&>img]:object-cover"
+					>
+						{item}
+					</span>
+				</button>
+			))}
+		</div>
+	);
 }
 
 /** One dot per page (not per slide: with two slides in view there are fewer pages). */

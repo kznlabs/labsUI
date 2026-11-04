@@ -97,6 +97,8 @@ const demos: Record<
 	testimonial: { node: <Demo name="TestimonialDemo" /> },
 	"stats-strip": { node: <Demo name="StatsStripDemo" /> },
 	"product-card": { node: <Demo name="ProductCardDemo" /> },
+	"product-gallery": { node: <Demo name="ProductGalleryDemo" /> },
+	cart: { node: <Demo name="CartDemo" />, preview: "items-start" },
 	"clip-card": { node: <Demo name="ClipCardDemo" /> },
 	"stat-tile": { node: <Demo name="StatTileDemo" /> },
 	changelog: { node: <Demo name="ChangelogDemo" />, preview: "items-start" },

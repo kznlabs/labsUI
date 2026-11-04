@@ -142,7 +142,7 @@ export function DeleteButton({ onDelete }: { onDelete: () => void }) {
 | Data display        | Table, Data table, Chart, Carousel, Timeline, Code, Terminal                |
 | Layout              | Card, Accordion, App window, Resizable panels, Scroll area                  |
 | Motion              | Reveal, Count to, Typewriter, Text swap, Custom cursor                      |
-| Blocks              | Pricing, Site header, Stats strip, Product card, Changelog, Newsletter      |
+| Blocks              | Pricing, Site header, Stats strip, Product card, Cart, Newsletter           |
 
 Theming is built on OKLCH tokens with light and dark mode and eight accent
 presets, or your own hue through `--accent-hue`.

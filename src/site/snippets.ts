@@ -1752,6 +1752,110 @@ export function ProductGrid({
 }`,
 		},
 	],
+	"product-gallery": [
+		{
+			name: "product-photos.tsx",
+			code: `import { ProductGallery } from "@/components/blocks/product-gallery";
+
+type Photo = { src: string; thumb: string; alt: string };
+
+export function ProductPhotos({ name, photos }: { name: string; photos: Photo[] }) {
+  return (
+    <ProductGallery
+      label={\`\${name} photos\`}
+      media={photos.map((photo) => <img key={photo.src} src={photo.src} alt={photo.alt} />)}
+      thumbnails={photos.map((photo) => <img key={photo.thumb} src={photo.thumb} alt="" />)}
+    />
+  );
+}`,
+		},
+	],
+	cart: [
+		{
+			name: "shop.tsx",
+			code: `"use client";
+
+import { useState } from "react";
+import { CartLine, CartList, OrderSummary } from "@/components/blocks/cart";
+import { ProductCard } from "@/components/blocks/product-card";
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import { useDisclosure } from "@/lib/use-disclosure";
+
+type Product = { id: string; name: string; price: number; image: string };
+
+export function Shop({ products, onCheckout }: { products: Product[]; onCheckout: () => void }) {
+  // One Drawer for the page. Adding opens it; call toast() there instead to stay on the page.
+  const cart = useDisclosure();
+  const [lines, setLines] = useState<Record<string, number>>({});
+  const inCart = products.filter((product) => lines[product.id]);
+  const total = inCart.reduce((sum, product) => sum + product.price * (lines[product.id] ?? 0), 0);
+
+  const setQuantity = (id: string, quantity: number) =>
+    setLines((current) => ({ ...current, [id]: quantity }));
+
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-3">
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            name={product.name}
+            price={product.price}
+            media={[<img key={product.image} src={product.image} alt="" />]}
+            onAddToCart={() => {
+              setQuantity(product.id, (lines[product.id] ?? 0) + 1);
+              cart.show();
+            }}
+          />
+        ))}
+      </div>
+
+      <Drawer {...cart.props}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Your cart</DrawerTitle>
+          </DrawerHeader>
+
+          <DrawerBody>
+            <CartList>
+              {inCart.map((product) => (
+                <CartLine
+                  key={product.id}
+                  name={product.name}
+                  price={product.price}
+                  quantity={lines[product.id]}
+                  media={<img src={product.image} alt="" />}
+                  onQuantityChange={(quantity) => setQuantity(product.id, quantity)}
+                  onRemove={() => setQuantity(product.id, 0)}
+                />
+              ))}
+            </CartList>
+          </DrawerBody>
+
+          <DrawerFooter className="border-t">
+            <OrderSummary
+              className="w-full"
+              lines={[{ label: "Shipping", amount: "Free" }]}
+              total={total}
+              // Payment and delivery plug in here: your app owns them.
+              action={<Button className="w-full" onClick={onCheckout}>Checkout</Button>}
+            />
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </>
+  );
+}`,
+		},
+	],
 	"clip-card": [
 		{
 			name: "clip-list.tsx",

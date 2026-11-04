@@ -128,6 +128,10 @@ const demos = {
 	PlanCardDemo: dynamic(() =>
 		import("@/site/showcase/block-demos").then((module) => module.PlanCardDemo),
 	),
+	CartDemo: dynamic(() => import("@/site/showcase/shop-demos").then((module) => module.CartDemo)),
+	ProductGalleryDemo: dynamic(() =>
+		import("@/site/showcase/shop-demos").then((module) => module.ProductGalleryDemo),
+	),
 	PricingDemo: dynamic(() =>
 		import("@/site/showcase/block-demos").then((module) => module.PricingDemo),
 	),

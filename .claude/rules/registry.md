@@ -149,6 +149,10 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
 - `stats-strip`: StatsStrip. Server-safe; Reveal + CountTo.
 - `product-card`: ProductCard. 2+ media become a Carousel; `action` replaces the
   add button, also when `soldOut` disables it.
+- `product-gallery`: ProductGallery. Carousel with arrows and `CarouselThumbs`,
+  which also works in your own Carousel, one slide in view.
+- `cart`: CartList, CartLine, OrderSummary. UI only, your app owns the numbers;
+  removing a line moves focus to the next. Add opens it through `useDisclosure()`.
 - `clip-card`: ClipCard.
 - `stat-tile`: StatTile. Server-safe.
 - `changelog`: Changelog. Server-safe.
