@@ -10,7 +10,8 @@ export type TranscriptStep =
 	| { kind: "note"; text: string }
 	| { kind: "command"; command: string; lines: TranscriptLine[]; took: number; hold: number };
 
-const LABSUI = "bunx @kznlabs/labsui";
+// With @latest, bunx asks the registry instead of reusing a cached older version.
+const LABSUI = "bunx @kznlabs/labsui@latest";
 const EDITED_FILE = "src/components/ui/tabs.tsx";
 
 // create-next-app commits, and a global signing key would ask for a passphrase.

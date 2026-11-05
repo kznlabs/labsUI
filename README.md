@@ -21,7 +21,7 @@ Hand-made, accessible, and copied into your project so you own the code.
     <img
       src=".github/assets/hero-light.gif"
       width="720"
-      alt="Tabs, accordion, select, pagination, toasts and a drawer, one spring"
+      alt="labsUI site demos, then the CLI creating an app and checking changes"
     >
   </picture>
 </a>
