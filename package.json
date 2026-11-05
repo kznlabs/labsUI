@@ -17,7 +17,8 @@
 		"test": "bun test",
 		"e2e:build": "E2E=1 STATIC_EXPORT=1 NEXT_PUBLIC_BASE_PATH=/labsUI bun run build",
 		"e2e": "playwright test -c tests/e2e",
-		"e2e:affected": "bun scripts/affected.ts"
+		"e2e:affected": "bun scripts/affected.ts",
+		"hero": "bun scripts/hero/index.ts"
 	},
 	"dependencies": {
 		"clsx": "^2.1.1",
