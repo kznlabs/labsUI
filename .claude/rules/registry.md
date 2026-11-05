@@ -8,16 +8,18 @@ paths:
 # Component index
 
 Import from `@/components/ui/<file>` or `@/components/blocks/<file>`. This index
-says what exists and what the props don't tell you. Exact props, types and
-examples are in `public/components/<id>.md` (written by `bun run registry`) or
-`labsui view <id>`; each entry starts with its `id`.
+says what exists and what the props don't tell you. Each entry starts with its
+docs page `id`; exact props, types and examples are in
+`public/components/<id>.md` (written by `bun run registry`). `labsui add` and
+`labsui view` take the same name, unless the entry says "CLI:".
 
 ## Actions and inputs
 
 - `button`: Button. `buttonVariants()` styles an `<a>`, also on the server.
 - `button-group`: ButtonGroup.
-- `forms`: Input, Textarea, Label, Switch. Textarea grows by itself, so cap it
-  with `max-h-*`; its counter warns near the limit.
+- `forms`: Input, Textarea, Label, Switch. CLI: `input`, `textarea`, `label`,
+  `switch`. Textarea grows by itself, so cap it with `max-h-*`; its counter warns
+  near the limit.
 - `field`: Field. Controls wire `id` and `aria-*` through `useFieldControl()`.
 - `input-group`: InputGroup, InputGroupAddon. Server-safe.
 - `search-input`: SearchInput. Esc clears; its shortcut steps aside if the input
@@ -91,7 +93,7 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
 - `badge`: Badge.
 - `avatar`: Avatar.
 - `avatar-group`: AvatarGroup.
-- `chat`: MessageBubble.
+- `chat`: MessageBubble. CLI: `message-bubble`.
 - `quote`: Quote. Sample quotes are famous Polish poetry in public-domain English
   translation, verified verbatim.
 - `kbd`: Kbd, KbdGroup. Server-safe.
@@ -141,7 +143,8 @@ examples are in `public/components/<id>.md` (written by `bun run registry`) or
 
 ## Motion
 
-- `cursor`: CustomCursor. Opt-in; off on touch and reduced motion.
+- `cursor`: CustomCursor. CLI: `custom-cursor`. Opt-in; off on touch and reduced
+  motion.
 - `count-to`: CountTo. Springs up once in view.
 - `reveal`: Reveal. Fades and rises on scroll.
 - `typewriter`: Typewriter.
