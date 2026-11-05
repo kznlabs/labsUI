@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { createContext, type ReactNode, use, useId } from "react";
+import { createContext, isValidElement, type ReactNode, use, useId } from "react";
 import { Label } from "@/components/ui/label";
 import { cn, spring } from "@/lib/utils";
 
@@ -62,7 +62,7 @@ type FieldProps = {
 	disabled?: boolean;
 	/** "horizontal": control first, label beside it (Checkbox, Switch). */
 	orientation?: "vertical" | "horizontal";
-	/** Use when the control renders its own id (it must match). */
+	/** Sets the control's id. An `id` on the control itself works too; the label follows it. */
 	id?: string;
 	className?: string;
 	/** One form control; it picks up id, aria and state from the Field. */
@@ -82,7 +82,8 @@ export function Field({
 	children,
 }: FieldProps) {
 	const auto = useId();
-	const id = idProp ?? auto;
+	const childId = isValidElement<{ id?: string }>(children) ? children.props.id : undefined;
+	const id = idProp ?? childId ?? auto;
 	const descId = description ? `${id}-description` : undefined;
 	const errorId = error ? `${id}-error` : undefined;
 	const labelId = label ? `${id}-label` : undefined;

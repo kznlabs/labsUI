@@ -79,8 +79,9 @@ docs page `id`; exact props, types and examples are in
   (`aria-current`), not a tablist.
 - `collapsible`: Collapsible, CollapsibleTrigger, CollapsibleContent.
 - `separator`: Separator. Server-safe.
-- `prose`: Prose. Server-safe; styles direct-child tags only, so embedded
-  components keep their look. Wide `pre` and `table` scroll by keyboard too.
+- `prose`: Prose. Server-safe; styles known tags as direct children or one
+  `<section>` down, so embedded components keep their look. Wide `pre` and
+  `table` scroll by keyboard too.
 - `aspect-ratio`: AspectRatio. Server-safe; a direct img/video child fills it.
 - `scroll-area`: ScrollArea. Overlay thumbs over native scroll; horizontal takes
   the mouse wheel.
@@ -113,7 +114,8 @@ docs page `id`; exact props, types and examples are in
 - `marker`: Marker, Highlight. Render `<mark>`; `draw` sweeps on in view.
 - `code`: Code, CodePanel. `format` = Prettier defaults at display, lazy-loaded;
   `tokens` from `highlightCode()` (`@/lib/highlight`, server or build) keep Shiki
-  out of the browser; line refs are the shown numbers.
+  out of the browser (in a `"use cache"` function under Next's
+  `cacheComponents`); line refs are the shown numbers.
 - `terminal`: Terminal. `typing` = install snippet; `log` = live, follows bottom.
 - `timeline`: Timeline, TimelineItem. Server-safe.
 

@@ -11,6 +11,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { CodePanel } from "@/components/ui/code";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -49,6 +50,7 @@ const people = Array.from({ length: 14 }, (_, i) => ({
 export default function DisplayProbe() {
 	const [query, setQuery] = useState("");
 	const [footerHref, setFooterHref] = useState("");
+	const [picked, setPicked] = useState("");
 	const [lines, setLines] = useState(
 		Array.from({ length: 30 }, (_, i) => ({
 			id: String(i),
@@ -61,6 +63,12 @@ export default function DisplayProbe() {
 		<SidebarLayout>
 			<Sidebar
 				label="Probe"
+				onSelect={(id, event) => {
+					if (id !== "#settings") return;
+
+					event.preventDefault();
+					setPicked(id);
+				}}
 				groups={[
 					{
 						label: "Pages",
@@ -74,6 +82,14 @@ export default function DisplayProbe() {
 
 			<main className="grid min-w-0 flex-1 gap-6 p-4">
 				<h1>Display probes</h1>
+
+				<p data-probe="sidebar-picked">{picked}</p>
+
+				<p className="flex gap-2">
+					<Badge variant="destructive">Sale</Badge>
+
+					<Badge variant="success">Online</Badge>
+				</p>
 
 				<SidebarTrigger />
 
@@ -266,6 +282,22 @@ export default function DisplayProbe() {
 					<div data-probe="prose-embedded">
 						<h2 className="mt-1">Embedded heading</h2>
 					</div>
+				</Prose>
+
+				<Prose data-probe="prose-section" className="w-80">
+					<section>
+						<h2>Section heading</h2>
+
+						<p>Section text</p>
+					</section>
+
+					<section>
+						<h2>Second section heading</h2>
+
+						<pre data-probe="pre-section">
+							<code>{"wide ".repeat(60)}</code>
+						</pre>
+					</section>
 				</Prose>
 
 				<Prose

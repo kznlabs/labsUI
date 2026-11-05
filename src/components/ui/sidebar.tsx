@@ -2,7 +2,14 @@
 
 import { PanelLeft } from "lucide-react";
 import { motion } from "motion/react";
-import { type ComponentProps, createContext, type ReactNode, use, useState } from "react";
+import {
+	type ComponentProps,
+	createContext,
+	type MouseEvent,
+	type ReactNode,
+	use,
+	useState,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
@@ -113,8 +120,11 @@ type SidebarProps = {
 	footer?: SidebarItem[];
 	/** Id of the current item: highlighted, `aria-current="page"` on links. */
 	current?: string;
-	/** Called with an item's id when it is picked (links too, e.g. for client routing). */
-	onSelect?: (id: string) => void;
+	/**
+	 * Called with an item's id when it is picked. On a link the id defaults to its href, so client
+	 * routing is `event.preventDefault()`, then your router's push.
+	 */
+	onSelect?: (id: string, event: MouseEvent<HTMLElement>) => void;
 	className?: string;
 };
 
@@ -133,8 +143,8 @@ export function Sidebar({
 }: SidebarProps) {
 	const { collapsed, mobile, openMobile, setOpenMobile } = useSidebar();
 
-	const select = (id: string) => {
-		onSelect?.(id);
+	const select = (id: string, event: MouseEvent<HTMLElement>) => {
+		onSelect?.(id, event);
 		if (mobile) setOpenMobile(false);
 	};
 
@@ -204,6 +214,7 @@ export function Sidebar({
 
 	return (
 		<motion.aside
+			aria-label={label}
 			data-state={collapsed ? "collapsed" : "expanded"}
 			initial={false}
 			animate={{ width: collapsed ? "3.25rem" : "15rem" }}
@@ -227,7 +238,7 @@ function Entry({
 	item: SidebarItem;
 	active: boolean;
 	collapsed: boolean;
-	onSelect: (id: string) => void;
+	onSelect: (id: string, event: MouseEvent<HTMLElement>) => void;
 }) {
 	const cls = cn(
 		"flex h-8 w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 text-left outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-primary-ink",
@@ -248,7 +259,7 @@ function Entry({
 	);
 	// Rail shows only the icon, `title` gives the label back on hover.
 	const title = collapsed ? item.label : undefined;
-	const pick = () => onSelect(itemId(item));
+	const pick = (event: MouseEvent<HTMLElement>) => onSelect(itemId(item), event);
 
 	return item.href ? (
 		<a

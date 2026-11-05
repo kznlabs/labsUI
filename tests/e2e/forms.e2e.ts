@@ -327,6 +327,15 @@ test.describe("form reset", () => {
 	});
 });
 
+test.describe("field and the control's own id", () => {
+	only("field");
+	test("the label follows an id set on the control", async ({ page }) => {
+		const form = await probe(page, "field-own-id");
+
+		await expect(form.getByLabel("Nickname")).toHaveAttribute("id", "nickname");
+	});
+});
+
 test.describe("field label on groups", () => {
 	only("field", "rating", "radio-group");
 	test("names a Rating and a RadioGroup", async ({ page }) => {

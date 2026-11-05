@@ -11,13 +11,15 @@ import { cn, formatMoney } from "@/lib/utils";
 type ProductCardProps = {
 	/** Product name, the card's heading. */
 	name: string;
+	/** Heading level, to fit the page's outline. */
+	as?: "h2" | "h3" | "h4";
 	/** Current price in major units, e.g. 49.99. */
 	price: number;
 	/** Struck-through original price for a sale. */
 	compareAt?: number;
 	/** Lowest price from the 30 days before a reduction, shown as text under the price. Pass it only during a promotion. */
 	lowestPrice?: number;
-	/** Text before `lowestPrice`. Polish: "Najniższa cena z 30 dni przed obniżką". */
+	/** Text before `lowestPrice`, without a colon: one follows. Polish: "Najniższa cena z 30 dni przed obniżką". */
 	lowestPriceLabel?: ReactNode;
 	/** Read by screen readers between `compareAt` and the price. */
 	nowLabel?: string;
@@ -53,6 +55,7 @@ type ProductCardProps = {
 /** Shop tile: photos in an AspectRatio (a Carousel when there are several), name, price, rating, badge, add button or your own action. */
 export function ProductCard({
 	name,
+	as: Heading = "h3",
 	price,
 	compareAt,
 	lowestPrice,
@@ -117,7 +120,7 @@ export function ProductCard({
 			<div className="flex flex-1 flex-col gap-3 p-3">
 				<div className="grid gap-1.5">
 					<div className="flex items-baseline justify-between gap-2">
-						<h3 className="min-w-0 truncate font-medium text-sm">
+						<Heading className="min-w-0 truncate font-medium text-sm">
 							{href ? (
 								<a href={href} className="outline-none hover:underline focus-visible:underline">
 									{name}
@@ -125,7 +128,7 @@ export function ProductCard({
 							) : (
 								name
 							)}
-						</h3>
+						</Heading>
 
 						<p className="shrink-0 text-sm tabular-nums">
 							{compareAt !== undefined && compareAt > price && (

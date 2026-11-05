@@ -460,7 +460,7 @@ export const registry: Entry[] = [
 		name: "Prose",
 		file: "prose.tsx",
 		description:
-			"Typography for a Markdown or MDX body: spacing, headings, lists, quotes, code, images and tables from tokens alone. A Card or demo placed inside keeps its own look; wide code blocks and tables scroll on their own, by keyboard too.",
+			"Typography for a Markdown or MDX body: spacing, headings, lists, quotes, code, images and tables from tokens alone. Styles known tags as direct children or one `<section>` down, so a Card or demo placed inside keeps its own look; wide code blocks and tables scroll on their own, by keyboard too.",
 		usage: `<Prose as="article"><h2>Release notes</h2><p>Clips now upload in the background.</p></Prose>`,
 	},
 	{
@@ -632,7 +632,7 @@ export const registry: Entry[] = [
 		name: "Code",
 		file: "code.tsx",
 		description:
-			"Shiki-highlighted code that follows light and dark through light-dark() token colors, as a block, an inline one-liner or a tabbed file panel. Line numbers (from any start line), tinted lines with an accent bar, <mark>ed words or column ranges, and per-line notes in a tooltip that keyboard users can tab to. Optional Prettier at display time; copy hands out exactly what is shown.",
+			'Shiki-highlighted code that follows light and dark through light-dark() token colors, as a block, an inline one-liner or a tabbed file panel. Line numbers (from any start line), tinted lines with an accent bar, <mark>ed words or column ranges, and per-line notes in a tooltip that keyboard users can tab to. Optional Prettier at display time; copy hands out exactly what is shown. Pass `tokens` from `highlightCode()` to highlight on the server; with Next\'s `cacheComponents`, call it from a `"use cache"` function, or the prerender fails.',
 		usage: `<Code code={src} language="ts" lineNumbers highlight={[[8, 13]]} marks={["t.Object"]} notes={{ 2: "Remember to add it: bun add @elysiajs/cors" }} />`,
 	},
 	{

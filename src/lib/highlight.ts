@@ -6,7 +6,8 @@ export type CodeToken = { content: string; color?: string; fontStyle?: number };
 /**
  * Lines of colored tokens, with Shiki loaded on demand. Runs anywhere: Code calls it in the
  * browser, and a Server Component or a build can call it ahead of time and pass the result as
- * `tokens`, so the browser never loads Shiki. Null for unknown languages.
+ * `tokens`, so the browser never loads Shiki. Null for unknown languages. With Next's
+ * `cacheComponents`, call it from a `"use cache"` function, or the prerender fails.
  */
 export async function highlightCode(code: string, language: string): Promise<CodeToken[][] | null> {
 	try {

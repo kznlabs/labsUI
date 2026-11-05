@@ -92,6 +92,12 @@ export default function FormsProbe() {
 				<TagInput name="tags" defaultValue={["alpha"]} disabled aria-label="Tags" />
 			</Probe>
 
+			<Probe id="field-own-id">
+				<Field label="Nickname">
+					<Input id="nickname" name="nickname" />
+				</Field>
+			</Probe>
+
 			<Probe id="field-groups">
 				<Field label="How was it?">
 					<Rating name="score" />

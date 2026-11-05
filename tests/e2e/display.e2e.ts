@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
 import { expect, open, selected, test } from "./fixtures";
 
@@ -81,6 +82,66 @@ test.describe("prose", () => {
 			"text-decoration-line",
 			"underline",
 		);
+	});
+});
+
+test.describe("prose sections", () => {
+	only("prose");
+	test("a direct section is styled like the body, its wide code scrolls by keyboard", async ({
+		page,
+	}) => {
+		await open(page, "e2e/display");
+
+		const plain = page
+			.locator("[data-probe=prose]")
+			.getByRole("heading", { name: "Prose heading" });
+		const prose = page.locator("[data-probe=prose-section]");
+		const nested = prose.getByRole("heading", { name: "Section heading", exact: true });
+		const fontSize = await plain.evaluate((element) => getComputedStyle(element).fontSize);
+
+		await expect(nested).toHaveCSS("font-size", fontSize);
+		await expect(nested).toHaveCSS("scroll-margin-top", "80px");
+		await expect(prose.getByText("Section text")).toHaveCSS("margin-top", "12px");
+		await expect(prose.locator("section").nth(1)).toHaveCSS("margin-top", "48px");
+		await expect(prose.locator("[data-probe=pre-section]")).toHaveAttribute("tabindex", "0");
+	});
+});
+
+test.describe("tinted badges", () => {
+	only("badge", "pricing");
+
+	for (const theme of ["light", "dark"] as const) {
+		test(`clear AA on the page and the period switcher, ${theme}`, async ({ page }) => {
+			await page.emulateMedia({ colorScheme: theme });
+
+			for (const route of ["e2e/display", "e2e/shop"]) {
+				await open(page, route);
+
+				const { violations } = await new AxeBuilder({ page })
+					.withRules(["color-contrast"])
+					.analyze();
+				const tinted = violations
+					.flatMap((violation) => violation.nodes)
+					.map((node) => node.html)
+					.filter((html) => html.includes("bg-success/") || html.includes("bg-destructive/"));
+
+				expect(tinted).toEqual([]);
+			}
+		});
+	}
+});
+
+test.describe("sidebar routing", () => {
+	only("sidebar");
+	test("names its landmark, onSelect can stop a link's own navigation", async ({ page }) => {
+		await open(page, "e2e/display");
+		await expect(page.getByRole("complementary", { name: "Probe" })).toBeVisible();
+
+		const url = page.url();
+
+		await page.getByRole("link", { name: "Settings" }).click();
+		await expect(page.locator("[data-probe=sidebar-picked]")).toHaveText("#settings");
+		expect(page.url()).toBe(url);
 	});
 });
 
