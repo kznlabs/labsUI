@@ -17,11 +17,11 @@ Hand-made, accessible, and copied into your project so you own the code.
 
 <a href="https://kznlabs.github.io/labsUI">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/hero-dark.gif">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kznlabs/labsUI/hero/hero-dark.gif">
     <img
-      src=".github/assets/hero-light.gif"
+      src="https://raw.githubusercontent.com/kznlabs/labsUI/hero/hero-light.gif"
       width="720"
-      alt="labsUI site demos, then the CLI creating an app and checking changes"
+      alt="The labsUI site, then the CLI building an app from its components"
     >
   </picture>
 </a>

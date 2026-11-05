@@ -1,9 +1,9 @@
-// Composes the page clips and the terminal. Every frame depends only on its time.
+// Composes the clips and the terminal. Every frame depends only on its time.
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "@playwright/test";
-import type { TranscriptStep } from "./cli-run";
-import { type Clip, SITE, type Theme, VIEWPORT } from "./page-run";
+import { APP_URL, type TranscriptStep } from "./cli-run";
+import { type Clip, RESULT_VIEWPORT, SITE, type Theme, VIEWPORT } from "./page-run";
 
 export const FPS = 20;
 
@@ -12,11 +12,16 @@ type RowKind = "command" | "note" | "output" | "success" | "warn" | "error" | "m
 type Row = { at: number; kind: RowKind; text: string; charTime?: number };
 
 type Timeline = {
-	clips: Clip[];
-	clipStarts: number[];
+	site: Clip;
+	result: Clip;
 	rows: Row[];
 	pushes: number[];
+	/** The terminal slides in. */
 	enter: number;
+	/** The terminal slides out as the browser slides in. */
+	swap: number;
+	resultStart: number;
+	/** The browser slides out and the site comes back. */
 	leave: number;
 	duration: number;
 };
@@ -25,22 +30,24 @@ type TerminalRow = { kind: RowKind; text: string };
 
 type StageState = {
 	base: string;
-	over: string | null;
-	overOpacity: number;
+	result: string;
 	pageScale: number;
 	pageBlur: number;
 	pageDim: number;
 	terminalX: number;
-	terminalBlur: number;
 	terminalScale: number;
+	browserX: number;
+	browserScale: number;
+	motionBlur: number;
 	rows: TerminalRow[];
 };
 
-const CROSSFADE = 0.22;
 const SLOWEST_RUN = 0.8;
+const SETTLE = 0.55;
 const LEAVE_SETTLE = 1.1;
 const FAST_TYPING = 0.014;
 const NOTE_TYPING = 0.012;
+const OFFSCREEN = VIEWPORT.width + 40;
 
 // labsUI's spring (stiffness 400, damping 30) at 0.7 speed, so a frame sequence can show it.
 const SPRING_SPEED = 0.7;
@@ -61,10 +68,12 @@ function spring(seconds: number) {
 }
 
 function classify(text: string): RowKind {
-	if (text.startsWith("✓")) return "success";
-	if (text.startsWith("!")) return "warn";
-	if (text.startsWith("✗")) return "error";
-	if (text.startsWith("•") || text.startsWith("$ ")) return "muted";
+	const start = text.trimStart();
+
+	if (start.startsWith("✓")) return "success";
+	if (start.startsWith("!")) return "warn";
+	if (start.startsWith("✗")) return "error";
+	if (start.startsWith("•") || start.startsWith("$ ")) return "muted";
 
 	return "output";
 }
@@ -98,7 +107,7 @@ function scheduleTerminal(steps: TranscriptStep[], start: number) {
 
 		clock += step.took / speed;
 
-		if (step.took > 0) {
+		if (step.took > 0 && !step.keepsRunning) {
 			const shown = speed > 1.05 ? ` · shown at ${Number(speed.toFixed(1))}×` : "";
 
 			rows.push({ at: clock, kind: "took", text: `took ${formatTook(step.took)}${shown}` });
@@ -111,19 +120,27 @@ function scheduleTerminal(steps: TranscriptStep[], start: number) {
 }
 
 function buildTimeline(clips: Clip[], steps: TranscriptStep[]): Timeline {
-	const clipStarts: number[] = [];
-	let clock = 0;
+	const site = clips.find((clip) => clip.name === "site");
+	const result = clips.find((clip) => clip.name === "result");
 
-	for (const clip of clips) {
-		clipStarts.push(clock);
-		clock += clip.duration;
-	}
+	if (!site || !result) throw new Error("Both clips are needed: site and result");
 
-	const enter = clock;
-	const { rows, pushes, end } = scheduleTerminal(steps, enter + 0.55);
-	const leave = end;
+	const enter = site.duration;
+	const { rows, pushes, end: swap } = scheduleTerminal(steps, enter + SETTLE);
+	const resultStart = swap + SETTLE;
+	const leave = resultStart + result.duration;
 
-	return { clips, clipStarts, rows, pushes, enter, leave, duration: leave + LEAVE_SETTLE };
+	return {
+		site,
+		result,
+		rows,
+		pushes,
+		enter,
+		swap,
+		resultStart,
+		leave,
+		duration: leave + LEAVE_SETTLE,
+	};
 }
 
 function frameSource(clip: Clip, seconds: number) {
@@ -138,12 +155,12 @@ function frameSource(clip: Clip, seconds: number) {
 	return `${clip.name}/${found.file}`;
 }
 
-function terminalPosition(timeline: Timeline, time: number) {
-	const entering = spring(time - timeline.enter);
-	const leaving = spring(time - timeline.leave);
-	const offscreen = VIEWPORT.width + 40;
+function terminalPosition({ enter, swap }: Timeline, time: number) {
+	return (spring(time - enter) - 1) * OFFSCREEN + spring(time - swap) * OFFSCREEN;
+}
 
-	return (entering - 1) * offscreen + leaving * offscreen;
+function browserPosition({ swap, leave }: Timeline, time: number) {
+	return (spring(time - swap) - 1) * OFFSCREEN + spring(time - leave) * OFFSCREEN;
 }
 
 function visibleRows(timeline: Timeline, time: number) {
@@ -167,38 +184,27 @@ function visibleRows(timeline: Timeline, time: number) {
 }
 
 function stateAt(timeline: Timeline, time: number): StageState {
-	const { clips, clipStarts, enter, leave, pushes } = timeline;
-	const home = clips[0];
-	const last = clips.length - 1;
+	const { site, result, enter, swap, resultStart, leave, pushes } = timeline;
 
-	let index = last;
+	const speedOf = (position: (line: Timeline, at: number) => number) =>
+		Math.abs(position(timeline, time + 0.01) - position(timeline, time)) / 0.01;
 
-	while (index > 0 && clipStarts[index] > time) index--;
-
-	const local = time - clipStarts[index];
-	const base = time >= leave ? frameSource(home, 0) : frameSource(clips[index], local);
-
-	const fading = index > 0 && local < CROSSFADE;
-	const lastOfPrevious = index > 0 ? clips[index - 1] : home;
-
+	const fastest = Math.max(speedOf(terminalPosition), speedOf(browserPosition));
+	const blurAmount = Math.min(36, fastest * 0.018);
 	const covered = spring(time - enter) * (1 - spring(time - leave));
-	const velocity =
-		(terminalPosition(timeline, time + 0.01) - terminalPosition(timeline, time)) / 0.01;
-	const blurAmount = Math.min(36, Math.abs(velocity) * 0.018);
-
-	const zoom = pushes.reduce((sum, push) => sum + 0.007 * spring(time - push), 0);
-	const entranceZoom = 0.05 * (1 - spring(time - enter));
+	const pushed = pushes.reduce((sum, push) => sum + 0.007 * spring(time - push), 0);
 
 	return {
-		base: fading ? frameSource(lastOfPrevious, lastOfPrevious.duration) : base,
-		over: fading ? base : null,
-		overOpacity: fading ? local / CROSSFADE : 0,
+		base: frameSource(site, time >= leave ? 0 : time),
+		result: frameSource(result, time - resultStart),
 		pageScale: 1 - 0.06 * covered,
 		pageBlur: 7 * covered,
 		pageDim: 0.32 * covered,
 		terminalX: terminalPosition(timeline, time),
-		terminalBlur: blurAmount < 0.4 ? 0 : blurAmount,
-		terminalScale: (1 + entranceZoom) * (1 + zoom),
+		terminalScale: (1 + 0.05 * (1 - spring(time - enter))) * (1 + pushed),
+		browserX: browserPosition(timeline, time),
+		browserScale: 1 + 0.05 * (1 - spring(time - swap)),
+		motionBlur: blurAmount < 0.4 ? 0 : blurAmount,
 		rows: visibleRows(timeline, time),
 	};
 }
@@ -206,14 +212,11 @@ function stateAt(timeline: Timeline, time: number): StageState {
 // Runs in the page; takes the state and nothing else.
 function paint(state: StageState) {
 	const byId = (id: string) => document.getElementById(id) as HTMLElement;
-	const base = byId("base") as HTMLImageElement;
-	const over = byId("over") as HTMLImageElement;
-	const page = byId("page");
-	const terminal = byId("terminal");
 	const body = byId("terminal-body");
-	const blur = byId("motion-blur-amount");
 
-	const setSource = (image: HTMLImageElement, source: string) => {
+	const setSource = (id: string, source: string) => {
+		const image = byId(id) as HTMLImageElement;
+
 		if (image.dataset.source === source) return Promise.resolve();
 
 		image.dataset.source = source;
@@ -222,16 +225,19 @@ function paint(state: StageState) {
 		return image.decode();
 	};
 
-	page.style.scale = String(state.pageScale);
-	page.style.filter = state.pageBlur > 0.05 ? `blur(${state.pageBlur}px)` : "none";
+	const moving = (element: HTMLElement, x: number, scale: number) => {
+		element.style.translate = `${x}px 0`;
+		element.style.scale = String(scale);
+		element.style.filter = state.motionBlur > 0 ? "url(#motion-blur)" : "none";
+	};
+
+	byId("page").style.scale = String(state.pageScale);
+	byId("page").style.filter = state.pageBlur > 0.05 ? `blur(${state.pageBlur}px)` : "none";
 	byId("dim").style.opacity = String(state.pageDim);
+	byId("motion-blur-amount").setAttribute("stdDeviation", `${state.motionBlur} 0`);
 
-	over.style.opacity = String(state.overOpacity);
-
-	terminal.style.translate = `${state.terminalX}px 0`;
-	terminal.style.scale = String(state.terminalScale);
-	blur.setAttribute("stdDeviation", `${state.terminalBlur} 0`);
-	terminal.style.filter = state.terminalBlur > 0 ? "url(#motion-blur)" : "none";
+	moving(byId("terminal"), state.terminalX, state.terminalScale);
+	moving(byId("browser"), state.browserX, state.browserScale);
 
 	body.replaceChildren(
 		...state.rows.map((row) => {
@@ -249,20 +255,23 @@ function paint(state: StageState) {
 	cursor.id = "terminal-cursor";
 	body.lastElementChild?.append(cursor);
 
-	return Promise.all([
-		setSource(base, state.base),
-		state.over ? setSource(over, state.over) : null,
-	]);
+	return Promise.all([setSource("base", state.base), setSource("result", state.result)]);
 }
 
+const WINDOW_DOTS = "<i></i><i></i><i></i>";
+
 const STAGE_HTML = `
-	<div id="page"><img id="base" alt=""><img id="over" alt=""><div id="dim"></div></div>
+	<div id="page"><img id="base" alt=""><div id="dim"></div></div>
 	<svg width="0" height="0" style="position:absolute"><filter id="motion-blur" x="-20%" width="140%">
 		<feGaussianBlur id="motion-blur-amount" stdDeviation="0 0" />
 	</filter></svg>
-	<section id="terminal">
-		<header><i></i><i></i><i></i><span>~/projects</span></header>
+	<section id="terminal" class="window">
+		<header>${WINDOW_DOTS}<span>~/projects</span></header>
 		<div id="terminal-body"></div>
+	</section>
+	<section id="browser" class="window">
+		<header>${WINDOW_DOTS}<span class="address">${APP_URL.replace("http://", "")}</span></header>
+		<img id="result" alt="">
 	</section>
 `;
 
@@ -271,23 +280,27 @@ const STAGE_CSS = `
 	html, body { margin: 0; width: 720px; height: 540px; overflow: hidden; background: var(--background); }
 	#page, #page img, #dim { position: absolute; inset: 0; width: 720px; height: 540px; }
 	#dim { background: #000; opacity: 0; }
-	#terminal {
+	.window {
 		position: absolute; inset: 22px 26px; display: flex; flex-direction: column; overflow: hidden;
-		border: 1px solid var(--border); border-radius: 14px; background: var(--card);
+		box-sizing: border-box; border: 1px solid var(--border); border-radius: 14px; background: var(--card);
 		box-shadow: 0 18px 50px rgb(0 0 0 / 0.35);
 		font: 13px/19px "SF Mono", ui-monospace, Menlo, "JetBrains Mono", Consolas, monospace;
 	}
-	#terminal header {
-		display: flex; align-items: center; gap: 7px; padding: 10px 14px; border-bottom: 1px solid var(--border);
-		color: var(--muted-foreground); font-size: 12px;
+	.window header {
+		flex: none; box-sizing: border-box; height: 38px; display: flex; align-items: center; gap: 7px;
+		padding: 0 14px; border-bottom: 1px solid var(--border); color: var(--muted-foreground); font-size: 12px;
 	}
-	#terminal header i { width: 11px; height: 11px; border-radius: 50%; }
-	#terminal header i:nth-child(1) { background: #f2554e; }
-	#terminal header i:nth-child(2) { background: #f5b730; }
-	#terminal header i:nth-child(3) { background: #30bd4c; }
-	#terminal header span { margin-left: 8px; }
+	.window header i { width: 11px; height: 11px; border-radius: 50%; }
+	.window header i:nth-child(1) { background: #f2554e; }
+	.window header i:nth-child(2) { background: #f5b730; }
+	.window header i:nth-child(3) { background: #30bd4c; }
+	.window header span { margin-left: 8px; }
+	.window header .address {
+		padding: 2px 12px; border-radius: 999px; background: color-mix(in oklch, var(--foreground) 8%, transparent);
+	}
+	#result { display: block; width: ${RESULT_VIEWPORT.width}px; height: ${RESULT_VIEWPORT.height}px; }
 	#terminal-body {
-		flex: 1; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;
+		flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;
 		padding: 12px 16px; color: color-mix(in oklch, var(--foreground) 80%, transparent);
 	}
 	#terminal-body div { white-space: pre-wrap; overflow-wrap: anywhere; min-height: 19px; flex: none; }
