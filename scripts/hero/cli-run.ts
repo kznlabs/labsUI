@@ -34,6 +34,9 @@ const SERVER_READY = /Ready in/;
 // The machine's address on its own network has no place in a public recording.
 const LOCAL_ADDRESS = /Network:\s+http/;
 
+// bunx fetching the package: repeated before every command, it buries each result.
+const FETCH_PROGRESS = /^(Resolving dependencies|Resolved, downloaded and extracted)/;
+
 // Stays after the run: `--from site` records this app again.
 const WORKSPACE = join(tmpdir(), "labsui-hero");
 const APP = join(WORKSPACE, "shop");
@@ -105,7 +108,7 @@ function runCommand(command: string, cwd: string, hold: number, until?: RegExp) 
 
 				if (isDone) return;
 
-				if (LOCAL_ADDRESS.test(text)) continue;
+				if (LOCAL_ADDRESS.test(text) || FETCH_PROGRESS.test(text)) continue;
 
 				lines.push({ at: elapsed(), text });
 
@@ -188,13 +191,13 @@ export async function runCli(outFile: string) {
 	await run(
 		"bunx --bun create-next-app@latest shop --tailwind --src-dir --use-bun --yes",
 		WORKSPACE,
-		0.3,
+		0.6,
 	);
 
 	steps.push({ kind: "command", command: "cd shop", lines: [], took: 0, hold: 0.1 });
 
-	await run(`${LABSUI} init`, APP, 0.45);
-	await run(`${LABSUI} add tabs select toast field input button card`, APP, 0.45);
+	await run(`${LABSUI} init`, APP, 1.2);
+	await run(`${LABSUI} add tabs select accordion switch label rating toast button`, APP, 1.6);
 
 	wireApp();
 	steps.push({ kind: "note", text: "wire layout.tsx and globals.css, as init printed" });
@@ -205,13 +208,13 @@ export async function runCli(outFile: string) {
 	appendFileSync(join(APP, EDITED_FILE), "// a change of mine\n");
 	steps.push({ kind: "note", text: `edit ${EDITED_FILE}` });
 
-	await run(`${LABSUI} diff`, APP, 1.1);
+	await run(`${LABSUI} diff`, APP, 1.8);
 
-	const report = await run(`${LABSUI} doctor`, APP, 1.1);
+	const report = await run(`${LABSUI} doctor`, APP, 2.2);
 
 	if (/warning/.test(report)) throw new Error(`doctor is not clean:\n${report}`);
 
-	const server = await run("bun dev", APP, 0.7, SERVER_READY);
+	const server = await run("bun dev", APP, 0.9, SERVER_READY);
 
 	if (!server.includes(APP_URL)) throw new Error(`The app is not on ${APP_URL}:\n${server}`);
 

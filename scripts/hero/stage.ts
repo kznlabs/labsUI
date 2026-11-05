@@ -42,11 +42,11 @@ type StageState = {
 	rows: TerminalRow[];
 };
 
-const SLOWEST_RUN = 0.8;
+const SLOWEST_RUN = 1.4;
 const SETTLE = 0.55;
 const LEAVE_SETTLE = 1.1;
-const FAST_TYPING = 0.014;
-const NOTE_TYPING = 0.012;
+const FAST_TYPING = 0.024;
+const NOTE_TYPING = 0.018;
 const OFFSCREEN = VIEWPORT.width + 40;
 
 // labsUI's spring (stiffness 400, damping 30) at 0.7 speed, so a frame sequence can show it.
@@ -90,7 +90,7 @@ function scheduleTerminal(steps: TranscriptStep[], start: number) {
 	for (const step of steps) {
 		if (step.kind === "note") {
 			rows.push({ at: clock, kind: "note", text: `# ${step.text}`, charTime: NOTE_TYPING });
-			clock += step.text.length * NOTE_TYPING + 0.25;
+			clock += step.text.length * NOTE_TYPING + 0.45;
 
 			continue;
 		}

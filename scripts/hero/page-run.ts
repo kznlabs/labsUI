@@ -114,7 +114,11 @@ const SCENES: Scene[] = [
 		pointerStart: { x: 660, y: 505 },
 		act: async (page, pointer) => {
 			await sleep(2300);
-			await pointer.click(page.getByRole("link", { name: "read the 5-step setup" }), 1500);
+			await pointer.click(page.getByRole("link", { name: "read the 5-step setup" }), 1100);
+
+			// The link stops at the section's edge; a little further brings the command up.
+			await page.evaluate(() => window.scrollBy({ top: 60, behavior: "smooth" }));
+			await sleep(1000);
 
 			await pointer.click(
 				page.locator("#getting-started").getByRole("button", { name: "Copy code" }).first(),
@@ -133,11 +137,14 @@ const SCENES: Scene[] = [
 		pointerStart: { x: 560, y: 400 },
 		css: "nextjs-portal { display: none !important; }",
 		act: async (page, pointer) => {
-			await sleep(450);
-			await pointer.click(page.getByRole("tab", { name: "Invite" }), 420);
-			await pointer.click(page.getByRole("combobox"), 320);
-			await pointer.click(page.getByRole("option", { name: "Moderator" }), 380);
-			await pointer.click(page.getByRole("button", { name: "Send invite" }), 1400);
+			await sleep(500);
+			await pointer.click(page.getByRole("tab", { name: "Preview" }), 350);
+			await pointer.click(page.getByRole("combobox"), 280);
+			await pointer.click(page.getByRole("option", { name: "Lisbon" }), 320);
+			await pointer.click(page.getByRole("button", { name: "Keyboard" }), 420);
+			await pointer.click(page.getByRole("switch"), 300);
+			await pointer.click(page.locator("label", { hasText: "4 stars" }), 350);
+			await pointer.click(page.getByRole("button", { name: "Save", exact: true }), 1300);
 		},
 	},
 ];

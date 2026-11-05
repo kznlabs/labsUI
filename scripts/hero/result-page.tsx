@@ -1,83 +1,104 @@
-// The page the CLI run ends on: copied into the fresh app, built from what it just added.
+// The page the CLI run ends on: copied into the fresh app, each tile one file it just added.
 "use client";
 
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Rating } from "@/components/ui/rating";
 import { Select } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
 
-const roles = [
-	{ value: "admin", label: "Admin" },
-	{ value: "moderator", label: "Moderator" },
-	{ value: "member", label: "Member" },
+const cities = [
+	{ value: "warsaw", label: "Warsaw" },
+	{ value: "lisbon", label: "Lisbon" },
+	{ value: "tokyo", label: "Tokyo" },
 ];
 
-const members = [
-	{ name: "Maya Chen", role: "Admin" },
-	{ name: "Tom Reed", role: "Moderator" },
-	{ name: "Ines Costa", role: "Member" },
-];
+function Tile({ file, children }: { file: string; children: ReactNode }) {
+	return (
+		<section className="flex min-w-0 flex-col gap-3 rounded-2xl border bg-card p-4">
+			<h2 className="font-mono text-muted-foreground text-xs">{file}</h2>
+
+			{children}
+		</section>
+	);
+}
 
 export default function Home() {
-	const [role, setRole] = useState("member");
-
-	function sendInvite(event: React.FormEvent) {
-		event.preventDefault();
-
-		toast.success("Invite sent", {
-			action: { label: "Undo", onClick: () => toast("Invite cancelled") },
-		});
-	}
+	const [city, setCity] = useState("warsaw");
+	const [stars, setStars] = useState(2);
 
 	return (
-		<main className="grid min-h-dvh place-items-center bg-background p-6 text-foreground">
-			<Card className="w-full max-w-md">
-				<CardHeader>
-					<CardTitle>Your team</CardTitle>
+		<main className="grid min-h-dvh auto-rows-[11.5rem] grid-cols-3 content-center gap-3 bg-background p-4 text-foreground">
+			<Tile file="tabs.tsx">
+				<Tabs defaultValue="code">
+					<TabsList aria-label="View">
+						<TabsTrigger value="code">Code</TabsTrigger>
 
-					<CardDescription>Three people, one open seat.</CardDescription>
-				</CardHeader>
+						<TabsTrigger value="preview">Preview</TabsTrigger>
+					</TabsList>
 
-				<CardContent>
-					<Tabs defaultValue="members">
-						<TabsList aria-label="Team">
-							<TabsTrigger value="members">Members</TabsTrigger>
+					<TabsContent className="pt-3 text-sm" value="code">
+						Yours to edit.
+					</TabsContent>
 
-							<TabsTrigger value="invite">Invite</TabsTrigger>
-						</TabsList>
+					<TabsContent className="pt-3 text-sm" value="preview">
+						Springs between tabs.
+					</TabsContent>
+				</Tabs>
+			</Tile>
 
-						<TabsContent value="members">
-							<ul className="flex flex-col gap-3 pt-4 text-sm">
-								{members.map((member) => (
-									<li className="flex justify-between" key={member.name}>
-										<span>{member.name}</span>
+			<Tile file="select.tsx">
+				<Select aria-label="City" onValueChange={setCity} options={cities} value={city} />
+			</Tile>
 
-										<span className="text-muted-foreground">{member.role}</span>
-									</li>
-								))}
-							</ul>
-						</TabsContent>
+			<Tile file="accordion.tsx">
+				<Accordion type="single">
+					<AccordionItem value="keys">
+						<AccordionTrigger>Keyboard</AccordionTrigger>
 
-						<TabsContent value="invite">
-							<form className="flex flex-col gap-4 pt-4" onSubmit={sendInvite}>
-								<Field label="Email">
-									<Input defaultValue="sam@example.com" name="email" type="email" />
-								</Field>
+						<AccordionContent>Arrows, Home, End.</AccordionContent>
+					</AccordionItem>
 
-								<Field label="Role">
-									<Select name="role" onValueChange={setRole} options={roles} value={role} />
-								</Field>
+					<AccordionItem value="motion">
+						<AccordionTrigger>Motion</AccordionTrigger>
 
-								<Button type="submit">Send invite</Button>
-							</form>
-						</TabsContent>
-					</Tabs>
-				</CardContent>
-			</Card>
+						<AccordionContent>One spring.</AccordionContent>
+					</AccordionItem>
+				</Accordion>
+			</Tile>
+
+			<Tile file="switch.tsx">
+				<div className="flex items-center justify-between gap-3">
+					<Label htmlFor="updates">Updates</Label>
+
+					<Switch id="updates" />
+				</div>
+			</Tile>
+
+			<Tile file="rating.tsx">
+				<Rating label="Rating" onValueChange={setStars} value={stars} />
+			</Tile>
+
+			<Tile file="toast.tsx">
+				<Button
+					onClick={() =>
+						toast.success("Saved", {
+							action: { label: "Undo", onClick: () => toast("Change undone") },
+						})
+					}
+				>
+					Save
+				</Button>
+			</Tile>
 		</main>
 	);
 }
