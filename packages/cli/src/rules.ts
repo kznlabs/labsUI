@@ -39,5 +39,8 @@ labsUI components live in this project as source: edit them like your own code.
   \`<Confirmer />\` are mounted once in the root layout.
 - Server components pass only serializable props to client components: icons
   as elements (\`icon={<Mail />}\`).
+- Links in blocks are plain \`<a>\`, so a click reloads the page. For client
+  routing, pass \`onNavigate\` (or Sidebar's \`onSelect\`) from a client
+  component: \`event.preventDefault()\`, then your router's push.
 - Pointer targets are at least 24×24 px. Prefer native validation
   (\`required\`, \`type\`, \`pattern\`).`;

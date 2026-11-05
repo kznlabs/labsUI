@@ -37,8 +37,13 @@ async function callTool(ctx: Context, name: string, args: Json) {
 			const index = await fetchIndex(source);
 			const query = String(args.query ?? "");
 			const kind = typeof args.kind === "string" ? args.kind : undefined;
-			const limit = Number(args.limit ?? 12);
-			const hits = searchIndex(index, query, kind).slice(0, limit);
+			const matches = searchIndex(index, query, kind);
+			const limit = Number(args.limit ?? (query.trim() ? 12 : matches.length));
+			const hits = matches.slice(0, limit);
+			const cut =
+				hits.length < matches.length
+					? `\n\nShowing ${hits.length} of ${matches.length}. Raise \`limit\` to see the rest.`
+					: "";
 			const body = hits.length
 				? hits
 						.map((hit) => `- \`${hit.name}\` (${hit.kind}): ${hit.description ?? hit.title ?? ""}`)
@@ -47,7 +52,7 @@ async function callTool(ctx: Context, name: string, args: Json) {
 						.map((suggestion, i) => `${i ? "," : " Did you mean"} ${suggestion}`)
 						.join("")}`;
 
-			return text(body, { hits });
+			return text(body + cut, { hits, total: matches.length });
 		}
 
 		case "view": {

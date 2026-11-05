@@ -242,6 +242,29 @@ describe("mcp", () => {
 		expect(unknown.result.protocolVersion).not.toBe("1999-01-01");
 	});
 
+	test("search says what a limit left out, no query lists everything", async () => {
+		const search = async (args: Record<string, unknown>) => {
+			const response = (await call("tools/call", { name: "search", arguments: args })) as {
+				result: {
+					content: { text: string }[];
+					structuredContent: { hits: unknown[]; total: number };
+				};
+			};
+
+			return { text: response.result.content[0].text, ...response.result.structuredContent };
+		};
+
+		const cut = await search({ limit: 1 });
+
+		expect(cut.hits).toHaveLength(1);
+		expect(cut.text).toContain(`Showing 1 of ${cut.total}.`);
+
+		const all = await search({});
+
+		expect(all.hits).toHaveLength(all.total);
+		expect(all.text).not.toContain("Showing");
+	});
+
 	test("answers requests, stays silent on notifications", async () => {
 		expect(await call("notifications/initialized", undefined, null)).toBeUndefined();
 		expect(await call("ping")).toEqual({ jsonrpc: "2.0", id: 1, result: {} });

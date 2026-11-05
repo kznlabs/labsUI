@@ -32,7 +32,7 @@ export const TOOLS = [
 		name: "search",
 		title: "Search labsUI",
 		description:
-			"Find labsUI components, blocks, hooks and helpers by name, export (useModal) or intent (date range, toast promise). All words must match, best match first; no query lists everything. Returns one line per hit: name, kind and summary. Start here when you don't know an item's name, then call view on the hits.",
+			"Find labsUI components, blocks, hooks and helpers by name, export (useModal) or intent (date range, toast promise). All words must match, best match first; no query lists everything. Returns one line per hit: name, kind and summary, and says how many a limit left out. Start here when you don't know an item's name, then call view on the hits.",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -47,8 +47,7 @@ export const TOOLS = [
 					type: "integer",
 					minimum: 1,
 					maximum: 200,
-					default: 12,
-					description: "Most results to return.",
+					description: "Most results to return. Default: 12 with a query, everything without one.",
 				},
 			},
 		},
