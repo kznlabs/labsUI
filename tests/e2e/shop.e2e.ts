@@ -8,6 +8,41 @@ function only(...ids: string[]) {
 
 const section = (page: Page, name: string) => page.locator(`[data-probe=${name}]`);
 
+test.describe("pricing on a phone", () => {
+	test.skip(!selected("pricing"), "page not in this run");
+	test.skip(({ viewport }) => (viewport?.width ?? 0) > 390);
+
+	test("three periods and a note fit a narrow card", async ({ page }) => {
+		await open(page, "e2e/shop");
+
+		const card = section(page, "pricing-note");
+		const group = card.getByRole("group", { name: "Rank duration" });
+
+		await expect(group.getByText("Best value")).toBeVisible();
+
+		// Pixels the switcher, or a label or note inside it, sticks out of the card.
+		const outside = await group.evaluate((element) => {
+			const outer = element.closest("section")?.getBoundingClientRect();
+
+			if (!outer) return Number.POSITIVE_INFINITY;
+
+			return Math.max(
+				0,
+				...[element, ...element.querySelectorAll("*")].map((child) => {
+					const inner = child.getBoundingClientRect();
+
+					return Math.max(outer.left - inner.left, inner.right - outer.right);
+				}),
+			);
+		});
+
+		expect(outside).toBe(0);
+		expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+			390,
+		);
+	});
+});
+
 test.describe("pricing", () => {
 	only("pricing");
 	test("the switcher changes prices, notes and what a cta knows", async ({ page }) => {

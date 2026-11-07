@@ -126,7 +126,7 @@ export function Pricing({
 	const priceNote = periods.find((option) => option.value === period)?.priceNote;
 
 	return (
-		<div className={cn("flex flex-col items-center gap-6", className)}>
+		<div className={cn("@container flex flex-col items-center gap-6", className)}>
 			{periods.length > 1 && (
 				<ToggleGroup
 					aria-label={label}
@@ -134,11 +134,16 @@ export function Pricing({
 					onValueChange={(next) => next && setPeriod(next)}
 				>
 					{periods.map((option) => (
-						<ToggleGroupItem key={option.value} value={option.value}>
+						// A narrow card puts the note under its label, so the switcher keeps to one row.
+						<ToggleGroupItem
+							key={option.value}
+							value={option.value}
+							className="@max-md:h-auto @max-md:min-h-7 @max-md:flex-col @max-md:gap-0.5 @max-md:self-stretch @max-md:py-1"
+						>
 							{option.label}
 
 							{option.note && (
-								<Badge variant="success" shape="pill" className="ml-1.5">
+								<Badge variant="success" shape="pill" className="@md:ml-1.5">
 									{option.note}
 								</Badge>
 							)}

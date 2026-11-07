@@ -25,6 +25,12 @@ const periods = [
 	{ value: "forever", label: "Forever", priceNote: "forever" },
 ];
 
+const notedPeriods = [
+	{ value: "30", label: "30 days" },
+	{ value: "90", label: "90 days" },
+	{ value: "forever", label: "Forever", note: "Best value" },
+];
+
 function ControlledPricing() {
 	const [period, setPeriod] = useState("90");
 
@@ -115,6 +121,15 @@ export default function ShopProbe() {
 			</section>
 
 			<ControlledPricing />
+
+			{/* As narrow as a rank card on a phone. */}
+			<section data-probe="pricing-note" className="w-72 rounded-xl border p-4">
+				<Pricing
+					label="Rank duration"
+					periods={notedPeriods}
+					plans={[{ name: "Noted", price: { 30: 4.99, 90: 12.99, forever: 29.99 } }]}
+				/>
+			</section>
 
 			<section data-probe="plan-card">
 				<PlanCard name="Plain" price={9.99} />
