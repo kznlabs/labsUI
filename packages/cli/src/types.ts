@@ -51,3 +51,19 @@ export type IndexItem = {
 	/** Words from the API docs and prop names. */
 	keywords?: string[];
 };
+/** A prompt checked on a fresh app: what to ask for, the items it uses and what to know. */
+export type Recipe = {
+	id: string;
+	title: string;
+	description: string;
+	/** The prompt, as a user would paste it into a coding agent. */
+	prompt: string;
+	/** Registry items the checked run used. */
+	items: string[];
+	/** Patterns the result needs that no single item's docs cover. */
+	notes: { title: string; body: string; code?: string }[];
+	/** The recipe's page on the site. */
+	docs: string;
+	/** The run that passed: labsui version, model and date. */
+	checked: { version: string; model: string; date: string };
+};

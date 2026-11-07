@@ -101,5 +101,7 @@ export function printSearch(hits: Hit[], query: string, suggestions: string[]) {
 		);
 	}
 
-	console.log(`\n${dim(`labsui view ${hits[0]?.name} shows props and an example.`)}`);
+	const shows = hits[0]?.kind === "recipe" ? "its prompt and components" : "props and an example";
+
+	console.log(`\n${dim(`labsui view ${hits[0]?.name} shows ${shows}.`)}`);
 }

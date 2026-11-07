@@ -167,6 +167,7 @@ export const sectionProps = (entry: Entry, page = false) => ({
 export const headerNav = [
 	{ label: "Get started", href: withBase("/#getting-started") },
 	{ label: "Why", href: withBase("/why") },
+	{ label: "Recipes", href: withBase("/recipes") },
 	{
 		label: "Components",
 		items: nav

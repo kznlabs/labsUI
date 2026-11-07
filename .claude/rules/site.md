@@ -23,6 +23,11 @@ paths:
 - `/why` says what labsUI does, how it is checked and when it is not a fit. Its
   `update` transcript (`guide.updateRun`) is real output; rerun it if the
   CLI's wording changes.
+- `/recipes` and `/recipes/[id]`: prompts for a whole app from
+  `src/site/recipes.ts`, which the CLI bundles too (`search`, `view`, MCP
+  prompts). Add one only after its prompt passed a run on a fresh app (build,
+  axe, console, no sideways scroll at 390 px; TODO "Test setups"), with the
+  run's screenshots in `public/recipes/<id>-{light,dark}.webp`.
 - `/llms.txt` is an index, a link per component's Markdown; `/llms-full.txt`
   holds usage and exact props for all of them (`src/site/llms.ts`).
 

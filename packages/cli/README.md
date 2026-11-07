@@ -80,7 +80,12 @@ description, and every word must match:
 labsui search useModal         # finds dialog
 labsui search toast promise    # finds toast
 labsui search --kind hook      # every hook
+labsui search shop             # finds the shop recipe too
 ```
+
+It also finds recipes: a prompt for a whole app (blog, docs, shop, comparison,
+portfolio) that ran on a fresh app before it shipped, with the components it
+used. `labsui view shop` prints one.
 
 ### `view`
 
@@ -93,6 +98,8 @@ terminal:
 - What to mount in the root layout, if anything.
 
 Imports in the examples use your alias. `--source` adds the files themselves.
+For a recipe, `view` prints its prompt, its components and the patterns the
+result needs.
 
 ### `update` and `diff`
 
@@ -164,13 +171,16 @@ it `--cwd`. On Windows, Desktop starts `npx` through `cmd`:
 
 | Tool     | Does                                                     |
 | -------- | -------------------------------------------------------- |
-| `search` | find items by name, export or intent                     |
-| `view`   | exact props, examples, dependencies, optional source     |
+| `search` | find items and recipes by name, export or intent         |
+| `view`   | exact props, examples, dependencies; a recipe's prompt   |
 | `add`    | install items into the project (never overwrites a file) |
 | `init`   | one-time setup; returns the root layout code             |
 | `diff`   | patches from this version to your edited files           |
 | `update` | update items, merging your edits three ways              |
 | `doctor` | the setup checks, each problem with its fix              |
+
+Recipes are MCP prompts too (`prompts/list`), so a client that shows prompts
+offers them by name.
 
 On connect, the server also sends the labsUI coding rules (imports, tokens,
 motion, mounting), so the agent writes code the way the library expects. It

@@ -5,10 +5,10 @@ import { doctor } from "./commands/doctor.ts";
 import { init } from "./commands/init.ts";
 import { searchIndex, suggest } from "./commands/search.ts";
 import { update } from "./commands/update.ts";
-import { describe, viewMarkdown } from "./commands/view.ts";
+import { describeAny, recipeMarkdown, viewMarkdown } from "./commands/view.ts";
 import { CliError } from "./log.ts";
 import { readConfig } from "./project.ts";
-import { fetchIndex } from "./registry.ts";
+import { findRecipe, recipes, searchable } from "./registry.ts";
 import { rules } from "./rules.ts";
 import { TOOLS } from "./tools.ts";
 
@@ -34,7 +34,7 @@ async function callTool(ctx: Context, name: string, args: Json) {
 
 	switch (name) {
 		case "search": {
-			const index = await fetchIndex(source);
+			const index = await searchable(source);
 			const query = String(args.query ?? "");
 			const kind = typeof args.kind === "string" ? args.kind : undefined;
 			const matches = searchIndex(index, query, kind);
@@ -58,7 +58,7 @@ async function callTool(ctx: Context, name: string, args: Json) {
 		case "view": {
 			const views = await Promise.all(
 				list(args.names).map((name) =>
-					describe(source, name, { withSource: args.source === true, alias }),
+					describeAny(source, name, { withSource: args.source === true, alias }),
 				),
 			);
 
@@ -196,7 +196,7 @@ export async function handle(ctx: Context, msg: Request): Promise<Json | undefin
 
 			return reply({
 				protocolVersion: PROTOCOLS.includes(asked) ? asked : PROTOCOLS[0],
-				capabilities: { tools: { listChanged: false } },
+				capabilities: { tools: { listChanged: false }, prompts: { listChanged: false } },
 				serverInfo: { name: "labsui", title: "labsUI", version: ctx.version },
 				instructions: rules(config?.alias),
 			});
@@ -206,6 +206,35 @@ export async function handle(ctx: Context, msg: Request): Promise<Json | undefin
 			return reply({});
 		case "tools/list":
 			return reply({ tools: TOOLS });
+		case "prompts/list":
+			return reply({
+				prompts: recipes.map((recipe) => ({
+					name: recipe.id,
+					title: recipe.title,
+					description: recipe.description,
+				})),
+			});
+
+		case "prompts/get": {
+			const recipe = findRecipe(String(msg.params?.name ?? ""));
+
+			if (!recipe) return fail(-32602, `Unknown prompt: ${String(msg.params?.name ?? "")}`);
+
+			return reply({
+				description: recipe.description,
+				messages: [
+					{
+						role: "user",
+						content: {
+							type: "text",
+							text: `${recipe.prompt}
+
+${recipeMarkdown(recipe)}`,
+						},
+					},
+				],
+			});
+		}
 
 		case "tools/call": {
 			const name = String(msg.params?.name ?? "");

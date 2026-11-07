@@ -1,7 +1,8 @@
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import apiJson from "../src/site/api.generated.json";
-import { componentPath, site } from "../src/site/config";
+import { componentPath, recipePath, site } from "../src/site/config";
+import { recipes } from "../src/site/recipes";
 import { registry as showcase } from "../src/site/registry";
 import { snippets } from "../src/site/snippets";
 import { imports, local, ROOT, SRC, stem } from "./imports";
@@ -240,9 +241,24 @@ writeJson("index.json", {
 	homepage: site.url,
 	items: index,
 });
+
+for (const recipe of recipes) {
+	if (items.has(recipe.id)) throw new Error(`Recipe "${recipe.id}" has an item's name`);
+
+	const unknown = recipe.items.filter((name) => !items.has(name));
+
+	if (unknown.length)
+		throw new Error(`Recipe "${recipe.id}" uses unknown items: ${unknown.join(", ")}`);
+}
+
+const bundledRecipes = recipes.map((recipe) => ({
+	...recipe,
+	docs: `${site.url}${recipePath(recipe.id)}`,
+}));
+
 // The CLI ships the whole registry, so `npx @kznlabs/labsui add` needs no server and each CLI version
 // pins the components it installs.
-writeFileSync(CLI_BUNDLE, `${JSON.stringify({ items: bundle, index })}\n`);
+writeFileSync(CLI_BUNDLE, `${JSON.stringify({ items: bundle, index, recipes: bundledRecipes })}\n`);
 
 console.log(
 	`registry: ${index.length} items → ${relative(ROOT, OUT)} (${BASE}) + ${relative(ROOT, CLI_BUNDLE)}`,

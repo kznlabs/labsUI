@@ -1,6 +1,6 @@
 import { CliError } from "./log.ts";
 import bundled from "./registry.json" with { type: "json" };
-import type { IndexItem, RegistryItem, Source } from "./types.ts";
+import type { IndexItem, Recipe, RegistryItem, Source } from "./types.ts";
 
 const trimSlash = (url: string) => url.replace(/\/+$/, "");
 
@@ -12,7 +12,31 @@ export const KINDS: Record<string, string> = {
 	"registry:lib": "helper",
 	"registry:component": "setup",
 	"registry:file": "setup",
+	recipe: "recipe",
 };
+
+/** Recipes this version ships: prompts for a whole app, checked on a fresh one. */
+export const recipes = (bundled as { recipes?: Recipe[] }).recipes ?? [];
+
+export const findRecipe = (id: string) => recipes.find((recipe) => recipe.id === id);
+
+/** Items and recipes, for `search`. Recipes come with the CLI, not from a hosted registry. */
+export async function searchable(source: Source): Promise<IndexItem[]> {
+	return [
+		...(await fetchIndex(source)),
+		...recipes.map((recipe) => ({
+			name: recipe.id,
+			type: "recipe",
+			title: recipe.title,
+			description: recipe.description,
+			keywords: [
+				...new Set(
+					`${recipe.prompt} ${recipe.items.join(" ")}`.toLowerCase().match(/[a-z][a-z0-9]{2,}/g),
+				),
+			],
+		})),
+	];
+}
 
 function distance(a: string, b: string) {
 	let prev = Array.from({ length: b.length + 1 }, (_, i) => i);

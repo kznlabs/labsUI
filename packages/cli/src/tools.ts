@@ -32,16 +32,16 @@ export const TOOLS = [
 		name: "search",
 		title: "Search labsUI",
 		description:
-			"Find labsUI components, blocks, hooks and helpers by name, export (useModal) or intent (date range, toast promise). All words must match, best match first; no query lists everything. Returns one line per hit: name, kind and summary, and says how many a limit left out. Start here when you don't know an item's name, then call view on the hits.",
+			"Find labsUI components, blocks, hooks and helpers by name, export (useModal) or intent (date range, toast promise), and recipes for a whole app (blog, shop): a prompt checked on a fresh app with the items it used. All words must match, best match first; no query lists everything. Returns one line per hit: name, kind and summary, and says how many a limit left out. Start here when you don't know an item's name, then call view on the hits.",
 		inputSchema: {
 			type: "object",
 			properties: {
 				query: { type: "string", description: "Words to match. Empty lists everything." },
 				kind: {
 					type: "string",
-					enum: ["component", "block", "hook", "helper", "setup"],
+					enum: ["component", "block", "hook", "helper", "setup", "recipe"],
 					description:
-						"Only this kind: component (primitive), block (composed section), hook, helper or setup.",
+						"Only this kind: component (primitive), block (composed section), hook, helper, setup or recipe (a prompt for a whole app).",
 				},
 				limit: {
 					type: "integer",
@@ -57,7 +57,7 @@ export const TOOLS = [
 		name: "view",
 		title: "View labsUI items",
 		description:
-			"Read the docs of labsUI items by name: exact props and types, a usage line, full examples, and the items and npm packages each brings along. Call it before writing code with a component instead of guessing props; find names with search, install with add.",
+			"Read the docs of labsUI items by name: exact props and types, a usage line, full examples, and the items and npm packages each brings along; for a recipe, its prompt, the items it uses and the patterns the result needs. Call it before writing code with a component instead of guessing props; find names with search, install with add.",
 		inputSchema: {
 			type: "object",
 			properties: {

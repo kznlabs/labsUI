@@ -22,11 +22,11 @@ import { init, printInit } from "./commands/init.ts";
 import { list } from "./commands/list.ts";
 import { printSearch, searchIndex, suggest } from "./commands/search.ts";
 import { printUpdate, update } from "./commands/update.ts";
-import { describe, printView } from "./commands/view.ts";
+import { describeAny, printView } from "./commands/view.ts";
 import { bold, CliError, dim, red } from "./log.ts";
 import { serve } from "./mcp.ts";
 import { loadConfig, readConfig } from "./project.ts";
-import { fetchIndex } from "./registry.ts";
+import { fetchIndex, searchable } from "./registry.ts";
 import { rules } from "./rules.ts";
 import { VERSION } from "./version.ts";
 
@@ -37,8 +37,8 @@ ${bold("Usage")}
   labsui add <name...>         add components and everything they import
   labsui add --all             add every component and block
   labsui list                  list what can be added
-  labsui search <words...>     find by name, export or intent (--kind hook)
-  labsui view <name...>        props, examples, what it installs (--source)
+  labsui search <words...>     find items and recipes by name or intent (--kind hook)
+  labsui view <name...>        props, examples, what it installs (--source); a recipe's prompt
   labsui diff [name...]        how installed items differ from this version
   labsui update [name...]      bring installed items to this version, keeping your edits
   labsui doctor                check the setup; exits 1 on a problem
@@ -117,7 +117,7 @@ async function main() {
 			return out(await fetchIndex(registry ?? readConfig(cwd)?.registry), list);
 
 		case "search": {
-			const index = await fetchIndex(registry ?? readConfig(cwd)?.registry);
+			const index = await searchable(registry ?? readConfig(cwd)?.registry);
 			const query = names.join(" ");
 			const hits = searchIndex(index, query, values.kind);
 			const suggestions = hits.length ? [] : suggest(index, query);
@@ -133,7 +133,7 @@ async function main() {
 			const config = readConfig(cwd);
 			const views = await Promise.all(
 				names.map((name) =>
-					describe(registry ?? config?.registry, name, {
+					describeAny(registry ?? config?.registry, name, {
 						withSource: values.source,
 						alias: config?.alias,
 					}),

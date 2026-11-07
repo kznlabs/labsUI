@@ -2,6 +2,7 @@ import { writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { format } from "prettier";
 import { highlightCode, languageOf } from "../src/lib/highlight";
+import { recipeInstall, recipes } from "../src/site/recipes";
 import { registry } from "../src/site/registry";
 import { snippets } from "../src/site/snippets";
 import { guide, installCommand } from "../src/site/static-code";
@@ -51,6 +52,10 @@ const statics: [code: string, language: string][] = [
 	[guide.mcp, "json"],
 	[guide.updateRun, "console"],
 	[guide.theming, "ts"],
+	...recipes.flatMap((recipe) => [
+		[recipeInstall(recipe.items), "bash"] as [string, string],
+		...recipe.notes.flatMap((note) => (note.code ? [[note.code, "tsx"] as [string, string]] : [])),
+	]),
 ];
 
 for (const [code, language] of statics) {

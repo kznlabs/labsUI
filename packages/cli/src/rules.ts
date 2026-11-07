@@ -13,6 +13,9 @@ labsUI components live in this project as source: edit them like your own code.
   guess props.
 - Find one by intent: \`labsui search date range\`. Add it with
   \`labsui add <name>\`; it brings everything it imports.
+- For a whole page or app (blog, docs, shop), \`labsui search\` also finds
+  recipes: \`labsui view <recipe>\` lists the components a checked build used
+  and the patterns it needed.
 - After changing the setup, run \`labsui doctor\`.
 
 ## Writing code
@@ -26,8 +29,9 @@ labsUI components live in this project as source: edit them like your own code.
 - Colors are tokens: \`background\`, \`foreground\`, \`card\`, \`popover\`,
   \`primary\`, \`secondary\`, \`muted\`, \`accent\`, \`destructive\`,
   \`success\`, \`warning\`, \`border\`, \`input\`, \`ring\` (each with
-  \`-foreground\`). Text in a status color on a surface uses the \`-ink\` twin
-  (\`text-destructive-ink\`), never \`text-destructive\`.
+  \`-foreground\`). Text in \`primary\` or a status color on a surface uses the
+  \`-ink\` twin (\`text-primary-ink\`, \`text-destructive-ink\`), never
+  \`text-primary\`.
 - No gradients or glows. Radii \`rounded-lg|xl|2xl\`, shadows
   \`shadow-xs|sm|md\`.
 - Focus ring: \`outline-none focus-visible:ring-[3px]

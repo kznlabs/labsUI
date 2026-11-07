@@ -7,11 +7,11 @@ import { projectBase, rewriteAlias, safeTarget } from "../packages/cli/src/comma
 import { unifiedDiff } from "../packages/cli/src/commands/diff.ts";
 import { doctor } from "../packages/cli/src/commands/doctor.ts";
 import { searchIndex } from "../packages/cli/src/commands/search.ts";
-import { describe as view, viewMarkdown } from "../packages/cli/src/commands/view.ts";
+import { describeAny, describe as view, viewMarkdown } from "../packages/cli/src/commands/view.ts";
 import { sameCode } from "../packages/cli/src/lines.ts";
 import { handle } from "../packages/cli/src/mcp.ts";
 import { findCss } from "../packages/cli/src/project.ts";
-import { closest, fetchIndex } from "../packages/cli/src/registry.ts";
+import { closest, fetchIndex, recipes, searchable } from "../packages/cli/src/registry.ts";
 
 const index = await fetchIndex(undefined);
 const top = (query: string, kind?: string) => searchIndex(index, query, kind)[0]?.name;
@@ -37,6 +37,40 @@ describe("search", () => {
 
 		expect(hooks.length).toBeGreaterThan(3);
 		expect(hooks.every((hook) => hook.kind === "hook")).toBe(true);
+	});
+});
+
+describe("recipes", () => {
+	test("search finds a recipe by intent, and --kind recipe lists them all", async () => {
+		const all = await searchable(undefined);
+
+		expect(searchIndex(all, "shop")[0]?.name).toBe("shop");
+		expect(searchIndex(all, "", "recipe").map((hit) => hit.name)).toEqual(
+			recipes.map((recipe) => recipe.id).sort(),
+		);
+		expect(index.some((item) => item.type === "recipe")).toBe(false);
+	});
+
+	test("view prints the prompt, the items and the notes", async () => {
+		const markdown = viewMarkdown(await describeAny(undefined, "blog"));
+
+		expect(markdown).toContain("(`blog`, recipe)");
+		expect(markdown).toContain("Using labsUI, build a blog");
+		expect(markdown).toContain("npx @kznlabs/labsui add site-header");
+		expect(markdown).toContain("### Highlight code on the server");
+	});
+
+	test("every recipe names known items and has a page", () => {
+		const names = new Set(index.map((item) => item.name));
+
+		for (const recipe of recipes) {
+			expect(names.has(recipe.id), recipe.id).toBe(false);
+			expect(
+				recipe.items.filter((item) => !names.has(item)),
+				recipe.id,
+			).toEqual([]);
+			expect(recipe.docs).toEndWith(`/recipes/${recipe.id}`);
+		}
 	});
 });
 
@@ -263,6 +297,20 @@ describe("mcp", () => {
 
 		expect(all.hits).toHaveLength(all.total);
 		expect(all.text).not.toContain("Showing");
+	});
+
+	test("serves recipes as prompts", async () => {
+		const listed = (await call("prompts/list")) as { result: { prompts: { name: string }[] } };
+
+		expect(listed.result.prompts.map((prompt) => prompt.name)).toContain("shop");
+
+		const got = (await call("prompts/get", { name: "shop" })) as {
+			result: { messages: { role: string; content: { text: string } }[] };
+		};
+
+		expect(got.result.messages[0]?.role).toBe("user");
+		expect(got.result.messages[0]?.content.text).toStartWith("Using labsUI, build a shop");
+		expect(await call("prompts/get", { name: "nope" })).toMatchObject({ error: { code: -32602 } });
 	});
 
 	test("answers requests, stays silent on notifications", async () => {

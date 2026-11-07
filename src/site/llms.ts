@@ -1,5 +1,6 @@
 import { apiFor } from "@/site/api";
-import { componentPath, site } from "@/site/config";
+import { componentPath, recipePath, site } from "@/site/config";
+import { recipes } from "@/site/recipes";
 import { groups, registry } from "@/site/registry";
 
 const pageUrl = (id: string) => `${site.url}${componentPath(id)}`;
@@ -56,6 +57,15 @@ export function llmsIndex() {
 		`- [Why labsUI](${site.url}/why): what it does, how it is checked, when it is not a fit`,
 		"- [CLI and MCP reference](https://github.com/kznlabs/labsUI/blob/main/packages/cli/README.md): every command, option and MCP tool",
 		`- [Registry index](${site.url}/r/index.json): installable items as JSON, each at /r/<name>.json`,
+		"",
+		"## Recipes",
+		"",
+		"Prompts for a whole app, each checked on a fresh Next.js app with the MCP server. `labsui view <id>` gives the prompt, the components and what the result needs; MCP clients get them as prompts.",
+		"",
+		...recipes.map(
+			(recipe) =>
+				`- [${recipe.title}](${site.url}${recipePath(recipe.id)}) (\`${recipe.id}\`): ${recipe.description}`,
+		),
 		"",
 		...groups.flatMap((group) => [
 			`## ${group}`,

@@ -1,6 +1,6 @@
 import { bold } from "../log.ts";
-import { KINDS, resolveItems } from "../registry.ts";
-import type { ApiEntry, RegistryItem, Source } from "../types.ts";
+import { findRecipe, KINDS, resolveItems } from "../registry.ts";
+import type { ApiEntry, Recipe, RegistryItem, Source } from "../types.ts";
 import { rewriteAlias } from "./add.ts";
 
 export type View = {
@@ -21,6 +21,9 @@ export type View = {
 	/** Source, with `source: true`. */
 	files?: { path: string; content: string }[];
 };
+
+/** A recipe as `view` returns it: the prompt, the items it uses and what to know. */
+export type RecipeView = Recipe & { kind: "recipe"; name: string };
 
 /** Everything an author (or an agent) needs before using an item, imports in the project's alias. */
 export async function describe(
@@ -60,6 +63,17 @@ export async function describe(
 	};
 }
 
+/** What `view` shows for a name: the recipe of that id, else the item. */
+export async function describeAny(
+	source: Source,
+	name: string,
+	options: { withSource?: boolean; alias?: string } = {},
+): Promise<View | RecipeView> {
+	const recipe = findRecipe(name);
+
+	return recipe ? { ...recipe, kind: "recipe", name: recipe.id } : describe(source, name, options);
+}
+
 function apiLines(entry: ApiEntry) {
 	if (entry.kind === "function")
 		return [
@@ -87,8 +101,33 @@ const fence = (code: string, lang: string) => {
 
 const lang = (path: string) => path.split(".").pop() ?? "text";
 
+/** A recipe as Markdown: what `view` shows and the MCP prompt sends, prompt first. */
+export function recipeMarkdown(recipe: Recipe) {
+	const out = [
+		`## ${recipe.title} (\`${recipe.id}\`, recipe)`,
+		"",
+		recipe.description,
+		"",
+		`- Prompt: ${recipe.prompt}`,
+		`- Items: ${recipe.items.join(", ")}`,
+		`- Add them: \`npx @kznlabs/labsui add ${recipe.items.join(" ")}\``,
+		`- Docs: <${recipe.docs}>`,
+		`- Checked: labsui ${recipe.checked.version}, ${recipe.checked.model}, ${recipe.checked.date}`,
+		"",
+	];
+
+	for (const note of recipe.notes) {
+		out.push(`### ${note.title}`, "", note.body, "");
+		if (note.code) out.push(fence(note.code, "tsx"), "");
+	}
+
+	return out.join("\n").trimEnd();
+}
+
 /** The view as Markdown: what `labsui view` prints and the MCP `view` tool returns. */
-export function viewMarkdown(value: View) {
+export function viewMarkdown(value: View | RecipeView) {
+	if ("prompt" in value) return recipeMarkdown(value);
+
 	const out = [`## ${value.title ?? value.name} (\`${value.name}\`, ${value.kind})`, ""];
 
 	if (value.description) out.push(value.description, "");
@@ -119,7 +158,7 @@ export function viewMarkdown(value: View) {
 	return out.join("\n").trimEnd();
 }
 
-export function printView(views: View[]) {
+export function printView(views: (View | RecipeView)[]) {
 	const md = views.map(viewMarkdown).join("\n\n");
 
 	console.log(md.replace(/^(#{2,3} .*)$/gm, (line) => bold(line)));
