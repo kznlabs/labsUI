@@ -357,7 +357,7 @@ function CodeLines({
 								<span
 									aria-hidden="true"
 									className={cn(
-										"mr-4 flex shrink-0 select-none items-center justify-end gap-1.5 text-right text-muted-foreground/60 tabular-nums",
+										"mr-4 flex shrink-0 select-none items-center justify-end gap-1.5 text-right text-muted-foreground tabular-nums",
 										lit && "text-foreground/70",
 									)}
 								>

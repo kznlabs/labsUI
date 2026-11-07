@@ -16,8 +16,16 @@ export async function highlightCode(code: string, language: string): Promise<Cod
 			lang: language as BundledLanguage,
 			// "-default" is the AA-tuned pair (the classic one has 3.5:1 strings and comments).
 			themes: { light: "github-light-default", dark: "github-dark-default" },
-			// Its light comment gray is 4.1:1 on the muted code surface, this one clears 4.5:1.
-			colorReplacements: { "github-light-default": { "#6e7781": "#59636e" } },
+			// Darker or lighter twins that clear 4.5:1 on the code surface and on a highlighted line's
+			// primary tint, for every accent preset (comments, purple and red in light, comments in dark).
+			colorReplacements: {
+				"github-light-default": {
+					"#6e7781": "#59636e",
+					"#8250df": "#7340cc",
+					"#cf222e": "#b91d29",
+				},
+				"github-dark-default": { "#8b949e": "#9aa2ac" },
+			},
 			defaultColor: false,
 		});
 
