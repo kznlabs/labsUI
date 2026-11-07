@@ -48,6 +48,10 @@ const demoPages = [
 	"shop/demo/checkout",
 	"portfolio/demo/work/harbor-booking",
 	"portfolio/demo/work/grain",
+	"admin-panel/demo#orders",
+	"admin-panel/demo#products",
+	"admin-panel/demo#customers",
+	"admin-panel/demo#settings",
 ];
 
 for (const path of demoPages)
@@ -106,6 +110,46 @@ test("the game shop demo takes an order for a nickname and moves the goal", asyn
 	await expect(order.getByText("Order placed", { exact: true })).toBeVisible();
 	await expect(page.getByText(/^Demo mode:/)).toBeVisible();
 	await expect(goal).toHaveAttribute("aria-valuenow", "69");
+});
+
+test("the admin demo ships an order, undoes a delete and flags stock by the threshold", async ({
+	page,
+}) => {
+	// The hash picks the view, so this runs the same where the sidebar is a drawer.
+	const view = (name: string) => page.evaluate((hash) => (location.hash = hash), name);
+
+	await open(page, "recipes/admin-panel/demo#orders");
+	await page.getByRole("button", { name: "To fulfil 5" }).click();
+	await page.getByRole("button", { name: "#1312", exact: true }).click();
+
+	const drawer = page.getByRole("dialog", { name: "Order #1312" });
+
+	await drawer.getByRole("combobox", { name: "Status" }).click();
+	await page.getByRole("option", { name: "Shipped" }).click();
+	await drawer.getByRole("button", { name: "Save changes" }).click();
+	await expect(drawer.getByText("Use the carrier's format, like FH123456789IE.")).toBeVisible();
+
+	await drawer.getByLabel("Tracking number").fill("fh204118731ie");
+	await drawer.getByRole("button", { name: "Save changes" }).click();
+	await expect(page.getByText("Order #1312 saved")).toBeVisible();
+	await expect(page.getByRole("button", { name: "To fulfil 4" })).toBeVisible();
+
+	await page.getByRole("button", { name: "All 120" }).click();
+	await page.getByRole("button", { name: "#1311", exact: true }).click();
+	await page
+		.getByRole("dialog", { name: "Order #1311" })
+		.getByRole("button", { name: "Delete" })
+		.click();
+	await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
+	await expect(page.getByRole("button", { name: "All 119" })).toBeVisible();
+	await page.getByRole("button", { name: "Undo" }).click();
+	await expect(page.getByRole("button", { name: "#1311", exact: true })).toBeVisible();
+
+	await view("settings");
+	await page.getByLabel("Low stock at").fill("20");
+	await page.getByRole("button", { name: "Save settings" }).click();
+	await view("products");
+	await expect(page.getByText("Low", { exact: true })).toHaveCount(7);
 });
 
 test("the portfolio demo filters projects and answers a message in demo mode", async ({ page }) => {
