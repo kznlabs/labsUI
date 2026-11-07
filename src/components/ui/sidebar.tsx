@@ -212,6 +212,7 @@ export function Sidebar({
 			</Drawer>
 		);
 
+	// The server can't know the width, so below md the rail hides until the drawer takes over.
 	return (
 		<motion.aside
 			aria-label={label}
@@ -220,7 +221,7 @@ export function Sidebar({
 			animate={{ width: collapsed ? "3.25rem" : "15rem" }}
 			transition={spring}
 			className={cn(
-				"group/sidebar flex shrink-0 flex-col overflow-hidden border-r bg-background/60 text-sm backdrop-blur-2xl backdrop-saturate-[1.8]",
+				"group/sidebar flex shrink-0 flex-col overflow-hidden border-r bg-background/60 text-sm backdrop-blur-2xl backdrop-saturate-[1.8] max-md:hidden",
 				className,
 			)}
 		>
@@ -253,7 +254,8 @@ function Entry({
 			<span className="min-w-0 flex-1 truncate">{item.label}</span>
 
 			{item.badge != null && (
-				<span className="ml-auto text-muted-foreground text-xs tabular-nums">{item.badge}</span>
+				// The row's own color: muted on the current item's tint falls under 4.5:1.
+				<span className="ml-auto font-normal text-xs tabular-nums">{item.badge}</span>
 			)}
 		</>
 	);
