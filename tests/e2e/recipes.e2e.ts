@@ -46,6 +46,8 @@ const demoPages = [
 	"shop/demo/products/ridge-leather-boot",
 	"shop/demo/products/storm-rain-shell",
 	"shop/demo/checkout",
+	"portfolio/demo/work/harbor-booking",
+	"portfolio/demo/work/grain",
 ];
 
 for (const path of demoPages)
@@ -75,6 +77,19 @@ test("the shop demo takes an order from size to confirmation", async ({ page }) 
 	await page.getByLabel("City").fill("Dublin");
 	await page.getByRole("button", { name: "Place order" }).click();
 	await expect(page.getByText("Order placed", { exact: true })).toBeVisible();
+	await expect(page.getByText(/^Demo mode:/)).toBeVisible();
+});
+
+test("the portfolio demo filters projects and answers a message in demo mode", async ({ page }) => {
+	await open(page, "recipes/portfolio/demo");
+	await page.getByRole("button", { name: /^Open source/ }).click();
+	await expect(page.getByText("1 project", { exact: true })).toBeVisible();
+
+	await page.getByLabel("Name").fill("Jane Doe");
+	await page.getByLabel("Email").fill("jane@example.com");
+	await page.getByLabel("Message").fill("We need a booking flow for three ferry routes by spring.");
+	await page.getByRole("button", { name: "Send message" }).click();
+	await expect(page.getByText("Thanks, Jane!")).toBeVisible();
 	await expect(page.getByText(/^Demo mode:/)).toBeVisible();
 });
 

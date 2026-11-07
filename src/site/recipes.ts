@@ -258,6 +258,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 			"aspect-ratio",
 			"theme-toggle",
 		],
+		demo: true,
 		notes: [
 			{
 				title: "Projects as cards",
