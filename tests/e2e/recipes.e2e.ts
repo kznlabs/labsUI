@@ -152,6 +152,39 @@ test("the admin demo ships an order, undoes a delete and flags stock by the thre
 	await expect(page.getByText("Low", { exact: true })).toHaveCount(7);
 });
 
+test("the analytics demo regroups by month for a year, exports it and filters products", async ({
+	page,
+}) => {
+	const grain = (name: string) =>
+		page.getByRole("group", { name: "Group by" }).getByRole("button", { name });
+
+	await open(page, "recipes/analytics/demo");
+	await expect(grain("Month")).toBeDisabled();
+
+	await page.getByRole("button", { name: "Date range" }).click();
+	await page.getByRole("button", { name: "Last 12 months" }).click();
+	await expect(grain("Month")).toHaveAttribute("aria-pressed", "true");
+	await expect(grain("Day")).toBeDisabled();
+	await expect(page.getByText(/by month, the period before/)).toBeVisible();
+
+	const download = page.waitForEvent("download");
+
+	await page.getByRole("button", { name: "Export" }).click();
+	expect((await download).suggestedFilename()).toMatch(/^halden-month-.+\.csv$/);
+	await expect(page.getByText("Report exported")).toBeVisible();
+
+	await page.getByRole("button", { name: "Pause" }).click();
+	await expect(page.getByRole("button", { name: "Resume" })).toHaveAttribute(
+		"aria-pressed",
+		"true",
+	);
+
+	await page.getByRole("combobox", { name: "Category" }).click();
+	await page.getByRole("option", { name: "Gear" }).click();
+	await expect(page.getByText("Hand grinder")).toBeVisible();
+	await expect(page.getByText("Guji Natural")).toHaveCount(0);
+});
+
 test("the portfolio demo filters projects and answers a message in demo mode", async ({ page }) => {
 	await open(page, "recipes/portfolio/demo");
 	await page.getByRole("button", { name: /^Open source/ }).click();
