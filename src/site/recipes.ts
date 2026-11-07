@@ -218,6 +218,65 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		checked: { version: "0.2.1", model: "Claude Sonnet", date: "2026-11-07" },
 	},
 	{
+		id: "game-shop",
+		title: "Game item shop",
+		description:
+			"A game server's store in euros: ranks for 30 days, 90 days or forever, cosmetics by category, the nickname that receives the order, payment options, server status, a community goal and top buyers.",
+		prompt:
+			"Using labsUI, build an item shop for a game server, prices in EUR, all text in English: cosmetic items by category, ranks sold for 30 days, 90 days or forever, a field for the nickname that receives the purchase, payment options, server status, a community goal and top buyers. Use sample data, no real payments and no game logos.",
+		items: [
+			"pricing",
+			"product-card",
+			"field",
+			"input",
+			"radio-group",
+			"tabs",
+			"card",
+			"meter",
+			"progress",
+			"avatar",
+			"badge",
+			"alert",
+			"button",
+			"toast",
+			"theme-toggle",
+		],
+		demo: true,
+		notes: [
+			{
+				title: "Ranks are periods",
+				body: "Pricing takes any `periods`, so 30 days, 90 days and forever work like monthly and yearly. `cta` gets the picked period, so Buy adds the right price. Keep one rank per order: a new one replaces the old.",
+				code: `<Pricing
+  label="Rank duration"
+  currency="EUR"
+  locale="en-IE"
+  periods={[
+    { value: "30", label: "30 days", priceNote: "for 30 days" },
+    { value: "90", label: "90 days", note: "Save 15%", priceNote: "for 90 days" },
+    { value: "forever", label: "Forever", priceNote: "one payment" },
+  ]}
+  plans={ranks.map((rank) => ({
+    ...rank,
+    cta: (period) => <Button onClick={() => add(rank, period)}>Add {rank.name}</Button>,
+  }))}
+/>`,
+			},
+			{
+				title: "Previews without game art",
+				body: "Cosmetics have no photos you may use, so ProductCard's `media` takes a tinted tile with an icon instead of an `<img>`. Tint by rarity and the grid reads at a glance.",
+			},
+			{
+				title: "The nickname is the address",
+				body: 'Check it before payment: `pattern="[A-Za-z0-9_]{3,16}"` on the Input and an error on the Field when it fails. Look the name up on your server if you can, and warn (not block) when no one by that name has played.',
+			},
+			{
+				title: "Where payment plugs in",
+				body: "The order form's submit is the one place that talks to a payment provider. Recompute the total on the server from your own prices, and deliver the items from the provider's webhook, not from the browser.",
+			},
+		],
+		checked: { version: "0.2.1", model: "Claude Sonnet", date: "2026-11-07" },
+	},
+	{
 		id: "laptop-comparison",
 		title: "Product comparison",
 		description:

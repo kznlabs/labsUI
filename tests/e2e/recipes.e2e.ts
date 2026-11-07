@@ -80,6 +80,34 @@ test("the shop demo takes an order from size to confirmation", async ({ page }) 
 	await expect(page.getByText(/^Demo mode:/)).toBeVisible();
 });
 
+test("the game shop demo takes an order for a nickname and moves the goal", async ({ page }) => {
+	await open(page, "recipes/game-shop/demo");
+
+	const goal = page.getByRole("progressbar", { name: "Season goal funded" });
+
+	await expect(goal).toHaveAttribute("aria-valuenow", "68");
+
+	await page.getByRole("button", { name: "Add Knight" }).click();
+	await page.getByRole("button", { name: "Pets", exact: true }).click();
+	await page
+		.getByRole("listitem")
+		.filter({ hasText: "Ash Fox" })
+		.getByRole("button", { name: "Add to order" })
+		.click();
+
+	const order = page.locator("#order");
+
+	await order.getByRole("button", { name: /^Pay/ }).click();
+	await expect(order.getByText("Enter the nickname that receives the items.")).toBeVisible();
+
+	await order.getByLabel("Nickname that receives the purchase").fill("Ironroot");
+	await expect(order.getByText("Player found, online now.")).toBeVisible();
+	await order.getByRole("button", { name: /^Pay/ }).click();
+	await expect(order.getByText("Order placed", { exact: true })).toBeVisible();
+	await expect(page.getByText(/^Demo mode:/)).toBeVisible();
+	await expect(goal).toHaveAttribute("aria-valuenow", "69");
+});
+
 test("the portfolio demo filters projects and answers a message in demo mode", async ({ page }) => {
 	await open(page, "recipes/portfolio/demo");
 	await page.getByRole("button", { name: /^Open source/ }).click();
