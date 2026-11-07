@@ -86,6 +86,7 @@ export async function CodeBlock({ code, language }: { code: string; language: st
 			},
 		],
 		checked: { version: "0.2.1", model: "Claude Opus", date: "2026-11-07" },
+		demo: true,
 	},
 	{
 		id: "docs-site",

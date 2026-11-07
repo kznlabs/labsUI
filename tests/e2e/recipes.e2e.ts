@@ -38,6 +38,8 @@ for (const recipe of recipes) {
 
 // A demo's pages past its first, swept like it.
 const demoPages = [
+	"blog/demo/posts/typescript-narrowing",
+	"blog/demo/about",
 	"shop/demo/products/ridge-leather-boot",
 	"shop/demo/products/storm-rain-shell",
 	"shop/demo/checkout",
