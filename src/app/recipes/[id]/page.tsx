@@ -1,13 +1,15 @@
+import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Code, CopyButton } from "@/components/ui/code";
 import { Pager } from "@/components/ui/pager";
 import { inlineCode } from "@/components/ui/props-table";
-import { componentPath, recipePath, site, withBase } from "@/site/config";
+import { componentPath, demoPath, recipePath, site, withBase } from "@/site/config";
 import { tokensFor } from "@/site/prebuilt";
-import { pageOf, RecipeShot } from "@/site/recipe-parts";
+import { OpenDemo, pageOf, RecipeShot } from "@/site/recipe-parts";
 import { recipeInstall, recipes } from "@/site/recipes";
 import { registry } from "@/site/registry";
 import { ArticleStructuredData } from "@/site/seo/structured-data";
@@ -80,6 +82,22 @@ export default async function RecipePage({ params }: Props) {
 	const install = recipeInstall(recipe.items);
 	const path = recipePath(id);
 
+	const run = (
+		<figure className="flex flex-col gap-2">
+			<div className="aspect-[16/10] overflow-hidden rounded-xl border bg-muted">
+				<RecipeShot
+					name={recipe.id}
+					alt={`The ${recipe.title.toLowerCase()} the checked run built`}
+					eager={!recipe.demo}
+				/>
+			</div>
+
+			<figcaption className="text-muted-foreground text-sm">
+				What that run built, unedited. Your agent's result will differ in the details.
+			</figcaption>
+		</figure>
+	);
+
 	return (
 		<SiteShell current={withBase("/recipes")}>
 			<ArticleStructuredData
@@ -103,7 +121,36 @@ export default async function RecipePage({ params }: Props) {
 					</h1>
 
 					<p className={text}>{recipe.description}</p>
+
+					{recipe.demo && (
+						<a
+							href={withBase(demoPath(recipe.id))}
+							className={buttonVariants({ className: "self-start" })}
+						>
+							Open demo
+							<ArrowUpRight aria-hidden="true" />
+						</a>
+					)}
 				</header>
+
+				{recipe.demo && (
+					<figure className="flex flex-col gap-2">
+						<div className="group/shot relative aspect-[16/10] overflow-hidden rounded-xl border bg-muted">
+							<RecipeShot
+								name={`${recipe.id}-demo`}
+								alt={`The ${recipe.title.toLowerCase()} reference build`}
+								eager
+							/>
+
+							<OpenDemo id={recipe.id} group="shot" />
+						</div>
+
+						<figcaption className="text-muted-foreground text-sm">
+							A reference build: the checked run's code, polished by hand. An agent's result will
+							differ.
+						</figcaption>
+					</figure>
+				)}
 
 				<div className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-xs sm:p-5">
 					<div className="flex items-center justify-between gap-3">
@@ -121,19 +168,17 @@ export default async function RecipePage({ params }: Props) {
 					</p>
 				</div>
 
-				<figure className="flex flex-col gap-2">
-					<div className="aspect-[16/10] overflow-hidden rounded-xl border bg-muted">
-						<RecipeShot
-							id={recipe.id}
-							alt={`The ${recipe.title.toLowerCase()} the checked run built`}
-							eager
-						/>
-					</div>
+				{!recipe.demo && run}
 
-					<figcaption className="text-muted-foreground text-sm">
-						What that run built, unedited. Your agent's result will differ in the details.
-					</figcaption>
-				</figure>
+				{recipe.demo && (
+					<Section id="raw-run" heading="The raw run">
+						<p className={text}>
+							The checked run's own result, before any polish: what the prompt alone got.
+						</p>
+
+						{run}
+					</Section>
+				)}
 
 				<Section id="components" heading="Components it uses">
 					<ul className="flex flex-wrap gap-x-4 gap-y-2">

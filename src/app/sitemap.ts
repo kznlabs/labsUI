@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { componentPath, recipePath, site } from "@/site/config";
+import { componentPath, demoPath, recipePath, site } from "@/site/config";
 import { recipes } from "@/site/recipes";
 import { registry } from "@/site/registry";
 
@@ -19,6 +19,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			changeFrequency: "monthly" as const,
 			priority: 0.8,
 		})),
+		...recipes
+			.filter((recipe) => recipe.demo)
+			.map((recipe) => ({
+				url: `${site.url}${demoPath(recipe.id)}`,
+				lastModified,
+				changeFrequency: "monthly" as const,
+				priority: 0.6,
+			})),
 		...registry.map((entry) => ({
 			url: `${site.url}${componentPath(entry.id)}`,
 			lastModified,

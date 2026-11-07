@@ -19,6 +19,9 @@ export const componentPath = (id: string) => `/components/${id}`;
 /** Root-relative path of a recipe's page (before `withBase`). */
 export const recipePath = (id: string) => `/recipes/${id}`;
 
+/** Root-relative path of a recipe's live demo (before `withBase`). */
+export const demoPath = (id: string) => `/recipes/${id}/demo`;
+
 /** Root-relative link to a group in the homepage's component index (before `withBase`). */
 export const groupPath = (group: string) =>
 	`/#group-${group.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;

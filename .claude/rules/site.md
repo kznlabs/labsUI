@@ -28,6 +28,13 @@ paths:
   prompts). Add one only after its prompt passed a run on a fresh app (build,
   axe, console, no sideways scroll at 390 px; TODO "Test setups"), with the
   run's screenshots in `public/recipes/<id>-{light,dark}.webp`.
+- `/recipes/<id>/demo`: a recipe's live reference build (`demo: true` in
+  `recipes.ts`), a static route in `src/app/recipes/<id>/demo/` with its code
+  beside it. Its layout is `DemoShell` (`recipe-parts.tsx`), no site shell;
+  links go through `withBase()`, controls that can't run toast "Demo mode: …".
+  Its screenshots (1280×800, both themes) are `<id>-demo-{light,dark}.webp`
+  and lead the card and the recipe page; the run's own stay as "The raw run".
+  `tests/e2e/recipes.e2e.ts` sweeps every recipe and demo page.
 - `/llms.txt` is an index, a link per component's Markdown; `/llms-full.txt`
   holds usage and exact props for all of them (`src/site/llms.ts`).
 

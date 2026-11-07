@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PostCard } from "@/components/blocks/post-card";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { recipePath, site, withBase } from "@/site/config";
-import { RecipeShot } from "@/site/recipe-parts";
+import { OpenDemo, RecipeShot } from "@/site/recipe-parts";
 import { recipes } from "@/site/recipes";
 import { ArticleStructuredData } from "@/site/seo/structured-data";
 import { SiteShell } from "@/site/shell";
@@ -41,7 +41,8 @@ export default function RecipesPage() {
 						Each one ran in a coding agent with the labsUI MCP server on a fresh Next.js 16 app; it
 						is listed once the build passed and its pages had no accessibility violations from
 						labsUI. Copy a prompt into your agent, or ask it with{" "}
-						<code className={inline}>labsui view &lt;recipe&gt;</code>.
+						<code className={inline}>labsui view &lt;recipe&gt;</code>. A recipe with a live demo
+						shows a reference build, polished by hand from that run.
 					</p>
 				</header>
 
@@ -54,7 +55,17 @@ export default function RecipesPage() {
 								href={withBase(recipePath(recipe.id))}
 								excerpt={recipe.description}
 								ratio={16 / 10}
-								media={<RecipeShot id={recipe.id} alt="" eager={i < 3} />}
+								media={
+									<>
+										<RecipeShot
+											name={recipe.demo ? `${recipe.id}-demo` : recipe.id}
+											alt=""
+											eager={i < 3}
+										/>
+
+										{recipe.demo && <OpenDemo id={recipe.id} group="post" />}
+									</>
+								}
 								meta={`${recipe.items.length} components · labsUI ${recipe.checked.version}`}
 							/>
 						</li>

@@ -1,7 +1,7 @@
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import apiJson from "../src/site/api.generated.json";
-import { componentPath, recipePath, site } from "../src/site/config";
+import { componentPath, demoPath, recipePath, site } from "../src/site/config";
 import { recipes } from "../src/site/recipes";
 import { registry as showcase } from "../src/site/registry";
 import { snippets } from "../src/site/snippets";
@@ -254,6 +254,7 @@ for (const recipe of recipes) {
 const bundledRecipes = recipes.map((recipe) => ({
 	...recipe,
 	docs: `${site.url}${recipePath(recipe.id)}`,
+	demo: recipe.demo ? `${site.url}${demoPath(recipe.id)}` : undefined,
 }));
 
 // The CLI ships the whole registry, so `npx @kznlabs/labsui add` needs no server and each CLI version

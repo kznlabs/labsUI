@@ -112,6 +112,7 @@ export function recipeMarkdown(recipe: Recipe) {
 		`- Items: ${recipe.items.join(", ")}`,
 		`- Add them: \`npx @kznlabs/labsui add ${recipe.items.join(" ")}\``,
 		`- Docs: <${recipe.docs}>`,
+		...(recipe.demo ? [`- Live demo (a reference build, polished by hand): <${recipe.demo}>`] : []),
 		`- Checked: labsui ${recipe.checked.version}, ${recipe.checked.model}, ${recipe.checked.date}`,
 		"",
 	];

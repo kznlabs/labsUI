@@ -1,5 +1,8 @@
 import type { Recipe } from "../../packages/cli/src/types";
 
+/** A recipe as the site keeps it; `demo` means a reference build lives at `demoPath(id)`. */
+type SiteRecipe = Omit<Recipe, "docs" | "demo"> & { demo?: boolean };
+
 /** One command that adds every item a recipe uses. */
 export const recipeInstall = (items: string[]) => `npx @kznlabs/labsui add ${items.join(" ")}`;
 
@@ -10,7 +13,7 @@ export const recipeInstall = (items: string[]) => `npx @kznlabs/labsui add ${ite
  * read this list. `items` are what the checked run imported; `notes` cover what no single
  * item's docs say.
  */
-export const recipes: Omit<Recipe, "docs">[] = [
+export const recipes: SiteRecipe[] = [
 	{
 		id: "blog",
 		title: "Blog",
@@ -208,6 +211,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		prompt:
 			"Using labsUI, build a page comparing four laptops feature by feature, grouped by category, that also works on a phone and can show only the differences. Use sample data.",
 		items: ["comparison-table", "button"],
+		demo: true,
 		notes: [
 			{
 				title: "One block does it",

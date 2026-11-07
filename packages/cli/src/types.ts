@@ -64,6 +64,8 @@ export type Recipe = {
 	notes: { title: string; body: string; code?: string }[];
 	/** The recipe's page on the site. */
 	docs: string;
+	/** A live reference build of the recipe on the site, when there is one. */
+	demo?: string;
 	/** The run that passed: labsui version, model and date. */
 	checked: { version: string; model: string; date: string };
 };
