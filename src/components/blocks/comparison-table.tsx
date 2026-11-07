@@ -523,9 +523,24 @@ export function ComparisonTable({
 													id={rowId}
 													scope={undefined}
 													colSpan={picks.length}
-													className={cn(rowHead, "pb-0 text-muted-foreground text-xs")}
+													className={cn(rowHead, "relative pb-0 text-muted-foreground text-xs")}
 												>
-													{row.label}
+													{/* The name spans both columns, so the featured half is tinted under it. */}
+													{picks.map((id, slot) =>
+														itemById(id)?.featured ? (
+															<span
+																key={id}
+																aria-hidden="true"
+																className={cn("absolute inset-y-0", featuredTint)}
+																style={{
+																	left: `${(slot / picks.length) * 100}%`,
+																	width: `${100 / picks.length}%`,
+																}}
+															/>
+														) : null,
+													)}
+
+													<span className="relative">{row.label}</span>
 												</TableHead>
 											</TableRow>
 
