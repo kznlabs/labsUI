@@ -40,6 +40,9 @@ for (const recipe of recipes) {
 const demoPages = [
 	"blog/demo/posts/typescript-narrowing",
 	"blog/demo/about",
+	"docs-site/demo/create-client",
+	"docs-site/demo/interceptors",
+	"docs-site/demo/changelog",
 	"shop/demo/products/ridge-leather-boot",
 	"shop/demo/products/storm-rain-shell",
 	"shop/demo/checkout",

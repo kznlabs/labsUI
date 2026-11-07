@@ -143,6 +143,7 @@ export function DocsShell({ current, children }: { current: string; children: Re
 			},
 		],
 		checked: { version: "0.2.1", model: "Claude Opus", date: "2026-11-07" },
+		demo: true,
 	},
 	{
 		id: "shop",
