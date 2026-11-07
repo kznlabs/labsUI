@@ -12,7 +12,7 @@ export function InputGroup({ className, ...props }: ComponentProps<"div">) {
 		<div
 			data-slot="input-group"
 			className={cn(
-				"flex h-9 w-full min-w-0 items-center rounded-lg border border-input bg-field shadow-xs transition-[color,box-shadow,border-color] duration-200 focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 has-[[aria-invalid=true]]:border-destructive has-[[aria-invalid=true]]:ring-destructive/20 has-[:disabled]:opacity-50",
+				"flex h-9 w-full min-w-0 items-center rounded-lg border border-input bg-field shadow-xs transition-[color,box-shadow,border-color] duration-200 focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 has-[[aria-invalid=true]]:border-destructive has-[[aria-invalid=true]]:ring-destructive/20 has-[input:disabled]:opacity-50",
 				"[&_[data-slot=input]]:h-full [&_[data-slot=input]]:rounded-none [&_[data-slot=input]]:border-0 [&_[data-slot=input]]:bg-transparent [&_[data-slot=input]]:shadow-none [&_[data-slot=input]]:ring-0",
 				className,
 			)}

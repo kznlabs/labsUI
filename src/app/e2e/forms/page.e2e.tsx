@@ -177,6 +177,12 @@ export default function FormsProbe() {
 				<DatePicker name="date" defaultValue={new Date(2026, 9, 21)} disabled aria-label="Date" />
 			</Probe>
 
+			<Probe id="number-bounds">
+				<NumberInput name="at-min" defaultValue={1} min={1} aria-label="At its minimum" />
+
+				<NumberInput name="off" defaultValue={2} disabled aria-label="Disabled" />
+			</Probe>
+
 			<StepperProbe />
 
 			<ActionProbe />

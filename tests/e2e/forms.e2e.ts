@@ -166,6 +166,19 @@ test.describe("disabled pickers", () => {
 	});
 });
 
+test.describe("number input at a bound", () => {
+	only("number-input");
+	test("dims only when the field is disabled", async ({ page }) => {
+		const form = await probe(page, "number-bounds");
+		const group = (name: string) =>
+			form.getByRole("spinbutton", { name }).locator("xpath=ancestor::*[@data-slot='input-group']");
+
+		await expect(form.getByRole("button", { name: /decrease/i }).first()).toBeDisabled();
+		await expect(group("At its minimum")).toHaveCSS("opacity", "1");
+		await expect(group("Disabled")).toHaveCSS("opacity", "0.5");
+	});
+});
+
 test.describe("stepper form", () => {
 	only("stepper");
 	test("checks each step, then submits every step's values", async ({ page }) => {

@@ -73,11 +73,17 @@ export function OpenDemo({ id, group }: { id: string; group: "post" | "shot" }) 
 	);
 }
 
-/** A demo page's only chrome: back to the recipes, the recipe's name and the theme. */
+/**
+ * A demo page's only chrome: back to the recipes, the recipe's name and the theme. A `nav`, not a
+ * `header`, so a demo's own site header stays the page's one banner.
+ */
 export function DemoShell({ title, children }: { title: string; children: ReactNode }) {
 	return (
 		<>
-			<header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-xl backdrop-saturate-150">
+			<nav
+				aria-label="Demo"
+				className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-xl backdrop-saturate-150"
+			>
 				<div className="mx-auto flex h-12 max-w-7xl items-center gap-3 px-4 sm:px-6">
 					<a
 						href={withBase("/recipes")}
@@ -97,7 +103,7 @@ export function DemoShell({ title, children }: { title: string; children: ReactN
 
 					<ThemeToggle />
 				</div>
-			</header>
+			</nav>
 
 			{children}
 		</>

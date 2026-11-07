@@ -147,9 +147,9 @@ export function DocsShell({ current, children }: { current: string; children: Re
 		id: "shop",
 		title: "Shop",
 		description:
-			"A shop in PLN with a product grid, a product page with photos and sizes, a cart drawer and a checkout with shipping and payment options.",
+			"A shop in euros with a product grid, a product page with photos and sizes, a cart and a checkout with shipping and payment options.",
 		prompt:
-			"Using labsUI, build a shop selling in PLN: a product grid with one item on sale and one sold out, a product page with several photos and a size choice, a cart, and a checkout with shipping and payment options. Use sample data, no real payments.",
+			"Using labsUI, build a shop selling in EUR, all text in English: a product grid with one item on sale and one sold out, a product page with several realistic product photos (no brand logos) and a size choice, a cart, and a checkout with shipping and payment options. Use sample data, no real payments.",
 		items: [
 			"site-header",
 			"site-footer",
@@ -159,15 +159,18 @@ export function DocsShell({ current, children }: { current: string; children: Re
 			"radio-group",
 			"field",
 			"input",
-			"checkbox",
-			"drawer",
+			"native-select",
+			"alert",
+			"badge",
+			"breadcrumb",
 			"empty",
 			"rating",
-			"breadcrumb",
+			"separator",
+			"skeleton",
 			"toast",
-			"confirm",
 			"theme-toggle",
 		],
+		demo: true,
 		notes: [
 			{
 				title: "Cart state",
@@ -193,12 +196,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 }`,
 			},
 			{
+				title: "Card headings follow the page",
+				body: "ProductCard's name is an `h3` by default. Right under the page's `h1`, pass `as=\"h2\"` (or add an `h2` over the grid), or the outline skips a level.",
+				code: `<ProductCard as="h2" name={product.name} price={product.price} media={photos} />`,
+			},
+			{
+				title: "Photos",
+				body: "Realistic photos need network access: the agent asks for it, or you put the files in `public/` yourself. Keep each photo's licence and source next to it, and check for logos before it ships.",
+			},
+			{
 				title: "Where payment plugs in",
 				body: "The checkout form's submit is the one place that talks to a payment provider. Swap the sample's pretend wait for a Server Action that recomputes the total from your own prices (never the client's), creates the payment and redirects to it.",
 			},
 			{
-				title: "Prices in złoty",
-				body: 'Format with `Intl.NumberFormat("pl-PL", { style: "currency", currency: "PLN" })`; ProductCard and OrderSummary take the formatted strings.',
+				title: "Prices in euros",
+				body: 'Format with `Intl.NumberFormat("en-IE", { style: "currency", currency: "EUR" })`, or pass `currency="EUR"` and a `locale` to ProductCard, CartLine and OrderSummary.',
 			},
 		],
 		checked: { version: "0.2.1", model: "Claude Sonnet", date: "2026-11-07" },
