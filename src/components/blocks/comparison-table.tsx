@@ -184,7 +184,11 @@ function ItemHeading({ item, nameAbove }: { item: ComparisonItem; nameAbove?: bo
 			)}
 
 			<span
-				className={cn("flex flex-wrap items-center gap-1.5", quiet && !item.badge && "sr-only")}
+				// A badge's height, so every column's details start on one line, badge or not.
+				className={cn(
+					"flex min-h-5.5 flex-wrap items-center gap-1.5",
+					quiet && !item.badge && "sr-only",
+				)}
 			>
 				{item.href ? (
 					<a
