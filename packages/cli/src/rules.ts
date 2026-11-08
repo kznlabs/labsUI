@@ -5,6 +5,11 @@
 export const rules = (alias = "@/") => `# labsUI
 
 labsUI components live in this project as source: edit them like your own code.
+The copy here is the version that installed it (\`labsui.json\`), often older
+than this labsUI. Asked how an installed component behaves, or to change one,
+run \`labsui diff <name>\` (or the MCP \`diff\` tool) first, before you
+answer: say what the current version changes, and when it already does what
+is asked, offer \`labsui update <name>\` instead of editing by hand.
 
 ## Before writing UI
 
