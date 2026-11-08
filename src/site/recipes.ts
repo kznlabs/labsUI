@@ -446,4 +446,58 @@ toast.success("Orders deleted", {
 		],
 		checked: { version: "0.2.1", model: "Claude Sonnet", date: "2026-11-07" },
 	},
+	{
+		id: "saas-landing",
+		title: "SaaS landing",
+		description:
+			"A landing page for a software product in euros: hero, features, customer quotes, plans with monthly and yearly billing, an FAQ, a newsletter and a footer.",
+		prompt:
+			"Using labsUI, build a landing page for a SaaS product, prices in EUR, all text in English: a hero, a features section, customer testimonials, pricing plans with monthly and yearly billing, an FAQ, a newsletter signup and a footer. Use sample data, no real payments and no logos.",
+		items: [
+			"site-header",
+			"hero",
+			"card",
+			"testimonial",
+			"pricing",
+			"accordion",
+			"newsletter",
+			"site-footer",
+			"badge",
+			"button",
+			"toast",
+			"theme-toggle",
+		],
+		demo: true,
+		notes: [
+			{
+				title: "Hero brings its own room",
+				body: "Hero centers itself at `max-w-7xl` with its own padding, so a wrapper with more padding doubles the gap above the title (the checked run had about 160 px of empty space under the header). Pass `className` to Hero instead, and let `media` hold the product: a screenshot, or a live window that moves needs a pause (WCAG 2.2.2).",
+			},
+			{
+				title: "One period for every plan",
+				body: "Pricing keeps one period for all its plans and rolls each price when it changes. Keep `priceNote` to “/ month” in both periods (a free plan shares it, and “€0 billed yearly” reads oddly), let the period's `note` say what it gives in words that hold for every plan (“2 months free”), and show the yearly total beside the plans. `cta` can be a function of the period, so a trial button knows what was picked.",
+				code: `<Pricing
+  currency="EUR"
+  locale="en-IE"
+  periods={[
+    { value: "monthly", label: "Monthly", priceNote: "/ month" },
+    { value: "yearly", label: "Yearly", note: "2 months free", priceNote: "/ month" },
+  ]}
+  plans={plans.map((plan) => ({
+    ...plan,
+    cta: (period) => <Button onClick={() => startTrial(plan.id, period)}>Start 14-day trial</Button>,
+  }))}
+/>`,
+			},
+			{
+				title: "A plan that follows the visitor",
+				body: "`featured` and `badge` are plain props, so they can come from state: a Slider for how many seats or monitors someone needs can mark the smallest plan that fits as “Best fit”, and a ComparisonTable under a Collapsible holds every feature without making the page longer.",
+			},
+			{
+				title: "Signup and newsletter without a backend",
+				body: "A plan's button can open a Dialog with Field-wrapped email and name inputs; the sample answers with a toast. Newsletter's `onSubscribe` returns a promise: a rejection's message becomes the error toast, so a Server Action that throws “Already subscribed” needs no extra UI.",
+			},
+		],
+		checked: { version: "0.2.1", model: "Claude Sonnet", date: "2026-11-08" },
+	},
 ];

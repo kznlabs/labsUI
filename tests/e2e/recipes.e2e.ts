@@ -185,6 +185,36 @@ test("the analytics demo regroups by month for a year, exports it and filters pr
 	await expect(page.getByText("Guji Natural")).toHaveCount(0);
 });
 
+test("the saas demo finds a plan by monitors, starts a trial and compares plans", async ({
+	page,
+}) => {
+	await open(page, "recipes/saas-landing/demo");
+	await page.getByRole("button", { name: "Pause" }).click();
+	await expect(page.getByRole("button", { name: "Resume" })).toHaveAttribute(
+		"aria-pressed",
+		"true",
+	);
+
+	await page.getByRole("slider", { name: "How many monitors do you need?" }).fill("80");
+	await expect(page.getByText(/^Business fits 80 monitors: €792 a year/)).toBeVisible();
+
+	await page.getByRole("button", { name: "Monthly" }).click();
+	await expect(page.getByText(/^Business fits 80 monitors: €79 a month/)).toBeVisible();
+
+	await page.getByRole("button", { name: "Start 14-day trial" }).last().click();
+
+	const dialog = page.getByRole("dialog", { name: "Try Business for 14 days" });
+
+	await dialog.getByLabel("Work email").fill("maren@company.com");
+	await dialog.getByLabel("Workspace name").fill("Harbourline");
+	await dialog.getByRole("button", { name: "Start trial" }).click();
+	await expect(page.getByText("Demo mode: Harbourline wasn't created")).toBeVisible();
+	await expect(dialog).toHaveCount(0);
+
+	await page.getByRole("button", { name: "Compare every feature" }).click();
+	await expect(page.getByRole("table", { name: "Plans compared" })).toBeVisible();
+});
+
 test("the portfolio demo filters projects and answers a message in demo mode", async ({ page }) => {
 	await open(page, "recipes/portfolio/demo");
 	await page.getByRole("button", { name: /^Open source/ }).click();
