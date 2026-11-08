@@ -33,6 +33,8 @@
 	--popover-foreground: oklch(0.21 0.004 286);
 	--primary: oklch(var(--accent-l) var(--accent-chroma) var(--accent-hue));
 	--primary-foreground: var(--accent-contrast);
+	/* Hover fills step darker: a lighter one drops white text below 4.5:1 */
+	--primary-hover: oklch(calc(var(--accent-l) - 0.05) var(--accent-chroma) var(--accent-hue));
 	--primary-ink: oklch(var(--accent-ink-light) var(--accent-chroma) var(--accent-hue));
 	--secondary: oklch(0.945 0.002 286);
 	--secondary-foreground: oklch(0.21 0.004 286);
@@ -41,6 +43,7 @@
 	--accent: oklch(0 0 0 / 5%);
 	--accent-foreground: oklch(0.21 0.004 286);
 	--destructive: oklch(0.58 0.22 28);
+	--destructive-hover: oklch(0.53 0.22 28);
 	--success: oklch(0.68 0.17 150);
 	--success-foreground: oklch(0.2 0.05 150);
 	--warning: oklch(0.72 0.16 60);
@@ -84,6 +87,7 @@
 	--accent: oklch(1 0 0 / 8%);
 	--accent-foreground: oklch(0.96 0 0);
 	--destructive: oklch(0.58 0.2 25);
+	--destructive-hover: oklch(0.53 0.2 25);
 	--success: oklch(0.74 0.17 150);
 	--success-foreground: oklch(0.2 0.05 150);
 	--warning: oklch(0.78 0.15 65);
@@ -173,6 +177,7 @@
 	--color-popover-foreground: var(--popover-foreground);
 	--color-primary: var(--primary);
 	--color-primary-foreground: var(--primary-foreground);
+	--color-primary-hover: var(--primary-hover);
 	--color-secondary: var(--secondary);
 	--color-secondary-foreground: var(--secondary-foreground);
 	--color-muted: var(--muted);
@@ -181,6 +186,7 @@
 	--color-accent-foreground: var(--accent-foreground);
 	--color-primary-ink: var(--primary-ink);
 	--color-destructive: var(--destructive);
+	--color-destructive-hover: var(--destructive-hover);
 	--color-success: var(--success);
 	--color-success-foreground: var(--success-foreground);
 	--color-warning: var(--warning);

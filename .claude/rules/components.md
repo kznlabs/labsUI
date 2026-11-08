@@ -105,6 +105,9 @@ Controlled/uncontrolled props (`value`/`defaultValue`/`onValueChange`,
   pill), `track` (switch off).
 - Components carry no `dark:` overrides: a difference between themes is a token
   in `labsui.css`. `.dark` sits on `<html>`; `setTheme()` in `@/lib/theme`.
+- A hovered fill uses `bg-primary-hover` / `bg-destructive-hover` (one step
+  darker), never `bg-primary/90`: the see-through fill turns lighter on a
+  white card and drops white text below 4.5:1.
 - Text or icons on a `bg-success` fill use `text-success-foreground` (deep
   green: the fill is light in both themes).
 - **Contrast (AA 4.5:1):** `primary`/`destructive`/`success`/`warning` are

@@ -4,13 +4,13 @@ import { cn } from "@/lib/utils";
 
 const variants = {
 	default:
-		"bg-primary text-primary-foreground shadow-xs shadow-[inset_0_1px_0_rgb(255_255_255/0.18)] hover:bg-primary/90",
+		"bg-primary text-primary-foreground shadow-xs shadow-[inset_0_1px_0_rgb(255_255_255/0.18)] hover:bg-primary-hover",
 	secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
 	outline:
 		"border border-control-border bg-control shadow-xs hover:bg-accent hover:text-accent-foreground",
 	ghost: "hover:bg-accent hover:text-accent-foreground",
 	destructive:
-		"bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/30",
+		"bg-destructive text-white shadow-xs hover:bg-destructive-hover focus-visible:ring-destructive/30",
 } as const;
 
 const sizes = {
