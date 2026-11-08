@@ -164,6 +164,14 @@ test.describe("disabled pickers", () => {
 		await submit(form);
 		await expect(sent(form)).toHaveText("[]");
 	});
+
+	test("date picker name keeps the shown date", async ({ page }) => {
+		const form = await probe(page, "pickers-disabled");
+
+		await expect(
+			form.getByRole("button", { name: "Date, Oct 21, 2026", exact: true }),
+		).toBeVisible();
+	});
 });
 
 test.describe("number input at a bound", () => {

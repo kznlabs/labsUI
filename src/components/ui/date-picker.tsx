@@ -35,7 +35,7 @@ type Base = {
 	required?: boolean;
 	/** Error styling; Field sets it from `error`. */
 	"aria-invalid"?: boolean;
-	/** Accessible name when there is no visible label. */
+	/** Accessible name when there is no visible label; the shown date or placeholder follows it, so the name keeps the button's text. */
 	"aria-label"?: string;
 	/** Ids of hint or error text; Field fills it in. */
 	"aria-describedby"?: string;
@@ -85,6 +85,7 @@ export function DatePicker(allProps: DatePickerProps) {
 		name,
 		required,
 		className,
+		"aria-label": ariaLabel,
 		...trigger
 	} = useFieldControl(allProps);
 	const anchor = useRef<HTMLButtonElement>(null);
@@ -142,6 +143,8 @@ export function DatePicker(allProps: DatePickerProps) {
 						className,
 					)}
 					{...trigger}
+					// Speech input users say what they see (WCAG 2.5.3).
+					aria-label={ariaLabel && `${ariaLabel}, ${label ?? placeholder}`}
 					aria-invalid={trigger["aria-invalid"] || (invalid && !iso) || undefined}
 				>
 					<CalendarDays />
