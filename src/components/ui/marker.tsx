@@ -31,15 +31,16 @@ export function Marker({
 	...props
 }: MarkerProps) {
 	const reduce = useReducedMotion();
-	const sweep = draw && !reduce;
 
 	return (
 		<motion.mark
-			data-marker={sweep ? "" : undefined}
-			initial={sweep ? { backgroundSize: "0% 100%" } : false}
-			whileInView={sweep ? { backgroundSize: "100% 100%" } : undefined}
+			// The server can't know the motion setting, so the start state never depends on it:
+			// reduced motion only makes the sweep instant.
+			data-marker={draw ? "" : undefined}
+			initial={draw ? { backgroundSize: "0% 100%" } : false}
+			whileInView={draw ? { backgroundSize: "100% 100%" } : undefined}
 			viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-			transition={{ ...spring, delay }}
+			transition={reduce ? { duration: 0 } : { ...spring, delay }}
 			className={cn(
 				// Solid fill as a one-color linear-gradient, background-size is what animates.
 				"rounded-[0.25em] bg-[linear-gradient(var(--marker),var(--marker))] bg-transparent bg-no-repeat px-[0.15em] [background-size:100%_100%] text-inherit [box-decoration-break:clone]",
