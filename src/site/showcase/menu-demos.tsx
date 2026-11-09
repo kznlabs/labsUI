@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -278,6 +277,10 @@ export function SelectDemo() {
 				</Label>
 
 				<Select id="sel-zone" name="zone" options={zones} value={zone} onValueChange={setZone} />
+
+				<p className="text-muted-foreground text-xs">
+					Stored as <code className="font-mono">{zone}</code>
+				</p>
 			</div>
 
 			<div className="grid gap-2">
@@ -286,15 +289,7 @@ export function SelectDemo() {
 				<Select id="sel-role" name="role" options={roles} placeholder="Pick a role" required />
 			</div>
 
-			<div className="flex items-center justify-between">
-				<Badge variant="secondary" shape="pill">
-					{zone}
-				</Badge>
-
-				<Button type="submit" size="sm">
-					Save
-				</Button>
-			</div>
+			<Button type="submit">Save</Button>
 		</form>
 	);
 }

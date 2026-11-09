@@ -67,9 +67,7 @@ export function ComboboxDemo() {
 				/>
 			</Field>
 
-			<Button type="submit" className="justify-self-start">
-				Save
-			</Button>
+			<Button type="submit">Save</Button>
 		</form>
 	);
 }
@@ -287,9 +285,7 @@ export function DatePickerDemo() {
 				/>
 			</Field>
 
-			<Button type="submit" className="justify-self-start">
-				Submit
-			</Button>
+			<Button type="submit">Submit</Button>
 		</form>
 	);
 }
