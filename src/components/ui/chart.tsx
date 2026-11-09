@@ -450,7 +450,8 @@ export function Chart({
 					variant="ghost"
 					aria-pressed={view === "table"}
 					onClick={() => setView((value) => (value === "chart" ? "table" : "chart"))}
-					className="h-7 px-2 text-muted-foreground text-xs"
+					// Stays right when a long legend pushes it onto its own line.
+					className="ml-auto h-7 px-2 text-muted-foreground text-xs"
 				>
 					<Table2 />
 					Table
