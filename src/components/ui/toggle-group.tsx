@@ -160,7 +160,8 @@ export function ToggleGroupItem({
 			}}
 			className={cn(
 				"inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
-				ctx.size === "sm" ? "h-6 px-2 text-xs" : "h-7 px-2.5 text-sm",
+				// At least square, so a one-character item stays a 24px target.
+				ctx.size === "sm" ? "h-6 min-w-6 px-2 text-xs" : "h-7 min-w-7 px-2.5 text-sm",
 				on ? "text-foreground" : "text-muted-foreground hover:text-foreground",
 				on && ctx.multiple && "bg-raised shadow-sm ring-[0.5px] ring-raised-ring",
 				className,
