@@ -6,7 +6,7 @@ import { useState } from "react";
 import { ProductCard } from "@/components/blocks/product-card";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { Select } from "@/components/ui/select";
 import { toast } from "@/components/ui/toast";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { spring } from "@/lib/utils";
@@ -35,6 +35,11 @@ const sorts = {
 };
 
 type Sort = keyof typeof sorts;
+
+const sortOptions = Object.entries(sorts).map(([value, option]) => ({
+	value,
+	label: option.label,
+}));
 
 export function ProductBrowser() {
 	const router = useRouter();
@@ -72,18 +77,13 @@ export function ProductBrowser() {
 						{shown.length} {shown.length === 1 ? "product" : "products"}
 					</p>
 
-					<NativeSelect
+					<Select
 						aria-label="Sort by"
+						options={sortOptions}
 						value={sort}
-						onChange={(event) => setSort(event.target.value as Sort)}
-						className="w-auto"
-					>
-						{Object.entries(sorts).map(([value, option]) => (
-							<NativeSelectOption key={value} value={value}>
-								{option.label}
-							</NativeSelectOption>
-						))}
-					</NativeSelect>
+						onValueChange={(value) => setSort(value as Sort)}
+						className="w-44"
+					/>
 				</div>
 			</div>
 

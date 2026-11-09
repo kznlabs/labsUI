@@ -5,11 +5,18 @@ import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import { site } from "./projects";
+
+const topics = [
+	{ value: "build", label: "A new product or feature" },
+	{ value: "audit", label: "An accessibility audit" },
+	{ value: "system", label: "A design system" },
+	{ value: "role", label: "A full-time role" },
+];
 
 const budgets = [
 	{ value: "small", label: "Under €10k", description: "An audit or a focused fix" },
@@ -55,15 +62,7 @@ export function ContactForm() {
 				</Field>
 
 				<Field label="What do you need?">
-					<NativeSelect name="topic" defaultValue="build">
-						<NativeSelectOption value="build">A new product or feature</NativeSelectOption>
-
-						<NativeSelectOption value="audit">An accessibility audit</NativeSelectOption>
-
-						<NativeSelectOption value="system">A design system</NativeSelectOption>
-
-						<NativeSelectOption value="role">A full-time role</NativeSelectOption>
-					</NativeSelect>
+					<Select name="topic" options={topics} defaultValue="build" />
 				</Field>
 			</div>
 
