@@ -23,6 +23,18 @@ is asked, offer \`labsui update <name>\` instead of editing by hand.
   and the patterns it needed.
 - After changing the setup, run \`labsui doctor\`.
 
+## Look and layout
+
+- Before the first page, pick a direction from the product: who it is for
+  and how it should feel. Set it once with tokens, not per element: an accent
+  preset (\`setAccent()\` from \`${alias}lib/theme\`, or \`data-accent\` on
+  \`<html>\`), \`--radius\` in your CSS (0 for sharp, larger for soft), a
+  display font from \`next/font\` for headings, light or dark first.
+- Lead with the product's own content (items, prices, data, a working demo)
+  and give one thing the most weight. Avoid the template look: a small label
+  above every heading, a centered hero with two equal buttons, rows of three
+  identical cards, round numbers like 10,000+.
+
 ## Writing code
 
 - Import primitives from \`${alias}components/ui/<file>\`, blocks from
