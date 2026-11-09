@@ -62,10 +62,10 @@ const color = (slot: number) => `var(--chart-${slot})`;
 const num = (value: string | number | undefined) =>
 	typeof value === "number" ? value : Number(value) || 0;
 
-function niceTicks(min: number, max: number) {
+function niceTicks(min: number, max: number, intervals: number) {
 	if (min === max) max = min + 1;
 
-	const raw = (max - min) / 4;
+	const raw = (max - min) / intervals;
 	const mag = 10 ** Math.floor(Math.log10(raw));
 	const step = ([1, 2, 2.5, 5, 10].find((step) => step * mag >= raw) ?? 10) * mag;
 	const lo = Math.floor(min / step) * step;
@@ -198,7 +198,12 @@ export function Chart({
 			values.filter((value) => value < 0).reduce((a, b) => a + b, 0),
 		];
 	});
-	const ticks = niceTicks(Math.min(0, ...extents), Math.max(0, ...extents));
+	// A short plot gets fewer ticks so their labels never overlap: 28px each, at most four.
+	const ticks = niceTicks(
+		Math.min(0, ...extents),
+		Math.max(0, ...extents),
+		clamp(Math.floor((height - 40) / 28), 1, 4),
+	);
 	const lo = ticks[0];
 	const hi = ticks[ticks.length - 1];
 	// Fewest decimals that don't round a tick: 0.25% can't read "0.3%", $20K stays "$20K".
