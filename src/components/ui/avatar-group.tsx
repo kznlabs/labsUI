@@ -23,11 +23,26 @@ type AvatarGroupProps = {
 	className?: string;
 };
 
-/** Overlap grows with size so the stack reads as one shape. */
+/**
+ * Overlap grows with size so the stack reads as one shape. A covered avatar shows only a crescent,
+ * so its initials move left by half the overlap plus the ring, to the middle of what stays visible.
+ */
 const sizes = {
-	sm: { chip: "size-8 text-xs", overlap: "-space-x-1.5" },
-	default: { chip: "size-10 text-sm", overlap: "-space-x-2" },
-	lg: { chip: "size-14 text-base", overlap: "-space-x-3" },
+	sm: {
+		chip: "size-8 text-xs",
+		overlap: "-space-x-1.5",
+		covered: "[&_[role=img]>[aria-hidden]]:-translate-x-1",
+	},
+	default: {
+		chip: "size-10 text-sm",
+		overlap: "-space-x-2",
+		covered: "[&_[role=img]>[aria-hidden]]:-translate-x-1.25",
+	},
+	lg: {
+		chip: "size-14 text-base",
+		overlap: "-space-x-3",
+		covered: "[&_[role=img]>[aria-hidden]]:-translate-x-1.75",
+	},
 } as const;
 
 /** Cut-out in the color of the card they usually sit on. */
@@ -54,7 +69,13 @@ export function AvatarGroup({ users, max = 4, size = "default", className }: Ava
 						scale: hovered === i ? 1.1 : hovered !== null && Math.abs(hovered - i) === 1 ? 1.04 : 1,
 					}}
 					transition={spring}
-					className={cn("relative rounded-full", cutout, hovered === i && "z-10")}
+					className={cn(
+						"relative rounded-full",
+						cutout,
+						// Hovered, it rises above its neighbour and shows whole.
+						hovered !== i && (i < visible.length - 1 || overflow > 0) && sizes[size].covered,
+						hovered === i && "z-10",
+					)}
 				>
 					<Avatar src={user.src} alt={user.alt} size={size} />
 				</motion.li>
