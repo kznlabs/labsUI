@@ -18,6 +18,7 @@ import {
 	NavigationMenuList,
 	NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { AppLink } from "@/lib/link";
 import { useDisclosure } from "@/lib/use-disclosure";
 import { cn } from "@/lib/utils";
 
@@ -230,7 +231,7 @@ function MobileLink({
 	children: ReactNode;
 }) {
 	return (
-		<a
+		<AppLink
 			href={href}
 			aria-current={active ? "page" : undefined}
 			onClick={onClick}
@@ -239,6 +240,6 @@ function MobileLink({
 			{icon && <span aria-hidden="true">{icon}</span>}
 
 			{children}
-		</a>
+		</AppLink>
 	);
 }

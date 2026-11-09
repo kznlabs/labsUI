@@ -21,7 +21,7 @@ import {
 	Waypoints,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { type MouseEvent, type ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -37,21 +37,9 @@ import { KbdGroup } from "@/components/ui/kbd";
 import { Pager } from "@/components/ui/pager";
 import { Sidebar, SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
 import { toast } from "@/components/ui/toast";
+import { AppLink } from "@/lib/link";
 import { useIsMac } from "@/lib/platform";
-import { withBase } from "@/site/config";
 import { docsHref, docsPath, groups, pageBySlug, product } from "./docs";
-
-/** Client routing for a demo link: hrefs carry the base path, the router adds its own. */
-function useNavigate() {
-	const router = useRouter();
-
-	return (href: string, event: MouseEvent<HTMLElement>) => {
-		if (event.metaKey || event.ctrlKey || event.shiftKey) return;
-
-		event.preventDefault();
-		router.push(href.slice(withBase("").length) || "/");
-	};
-}
 
 const icons: Record<string, ReactNode> = {
 	introduction: <BookOpen />,
@@ -145,7 +133,6 @@ function SearchDocs() {
 }
 
 export function DocsShell({ children }: { children: ReactNode }) {
-	const navigate = useNavigate();
 	const slug = useSlug();
 	const found = pageBySlug(slug);
 
@@ -155,9 +142,8 @@ export function DocsShell({ children }: { children: ReactNode }) {
 				label="Documentation"
 				className="md:sticky md:top-12 md:h-[calc(100dvh-3rem)] md:self-start"
 				header={
-					<a
+					<AppLink
 						href={docsHref()}
-						onClick={(event) => navigate(docsHref(), event)}
 						className="flex h-8 items-center gap-2 rounded-lg px-2 font-semibold tracking-tight outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 					>
 						<span
@@ -170,11 +156,10 @@ export function DocsShell({ children }: { children: ReactNode }) {
 						{product.name}
 
 						<span className="font-normal text-muted-foreground text-xs">v{product.version}</span>
-					</a>
+					</AppLink>
 				}
 				groups={sidebarGroups}
 				current={found ? docsHref(slug) : undefined}
-				onSelect={navigate}
 			/>
 
 			<div className="min-w-0 flex-1">
@@ -188,7 +173,6 @@ export function DocsShell({ children }: { children: ReactNode }) {
 							{
 								label: "Docs",
 								href: docsHref(),
-								onClick: (event) => navigate(docsHref(), event),
 							},
 							...(found ? [{ label: found.group?.label }, { label: found.page.title }] : []),
 						]}
@@ -204,12 +188,11 @@ export function DocsShell({ children }: { children: ReactNode }) {
 }
 
 export function DocsPager({ slug }: { slug: string }) {
-	const navigate = useNavigate();
 	const found = pageBySlug(slug);
 	const link = (page?: { title: string; slug: string }) =>
 		page && { title: page.title, href: docsHref(page.slug) };
 
-	return <Pager previous={link(found?.previous)} next={link(found?.next)} onNavigate={navigate} />;
+	return <Pager previous={link(found?.previous)} next={link(found?.next)} />;
 }
 
 /** A link inside the docs that routes on the client. */
@@ -222,16 +205,10 @@ export function DocsLink({
 	className?: string;
 	children: ReactNode;
 }) {
-	const navigate = useNavigate();
-
 	return (
-		<a
-			href={docsHref(slug)}
-			onClick={(event) => navigate(docsHref(slug), event)}
-			className={className}
-		>
+		<AppLink href={docsHref(slug)} className={className}>
 			{children}
-		</a>
+		</AppLink>
 	);
 }
 

@@ -1,4 +1,5 @@
 import type { ComponentProps, MouseEvent, ReactNode } from "react";
+import { AppLink } from "@/lib/link";
 import { cn } from "@/lib/utils";
 
 /* Server-safe; onNavigate only comes from client parents. */
@@ -84,7 +85,7 @@ export function SiteFooter({
 										<ul className="flex flex-col gap-1">
 											{column.links.map((link) => (
 												<li key={link.href}>
-													<a
+													<AppLink
 														href={link.href}
 														onClick={
 															onNavigate ? (event) => onNavigate(link.href, event) : undefined
@@ -92,7 +93,7 @@ export function SiteFooter({
 														className="inline-flex min-h-6 items-center rounded-sm text-muted-foreground text-sm underline-offset-4 outline-none transition-colors hover:text-foreground hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
 													>
 														{link.label}
-													</a>
+													</AppLink>
 												</li>
 											))}
 										</ul>

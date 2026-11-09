@@ -48,8 +48,9 @@ is asked, offer \`labsui update <name>\` instead of editing by hand.
   \`<Confirmer />\` are mounted once in the root layout.
 - Server components pass only serializable props to client components: icons
   as elements (\`icon={<Mail />}\`).
-- Links in blocks are plain \`<a>\`, so a click reloads the page. For client
-  routing, pass \`onNavigate\` (or Sidebar's \`onSelect\`) from a client
-  component: \`event.preventDefault()\`, then your router's push.
+- Links in components render \`<a>\` until the app sets its router's link
+  once: wrap the root layout's body in \`<LinkProvider component={Link}>\`
+  (\`${alias}lib/link\`, \`Link\` from \`next/link\`). Then nav, footer,
+  pager, sidebar and card links route on the client; no \`onNavigate\` needed.
 - Pointer targets are at least 24×24 px. Prefer native validation
   (\`required\`, \`type\`, \`pattern\`).`;

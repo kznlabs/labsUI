@@ -6,6 +6,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { NumberInput } from "@/components/ui/number-input";
 import { tabbables } from "@/lib/focus";
+import { AppLink } from "@/lib/link";
 import { cn, formatMoney } from "@/lib/utils";
 
 /** The list of CartLines. */
@@ -98,9 +99,12 @@ export function CartLine({
 					<div className="grid min-w-0 gap-0.5">
 						<p className="font-medium text-sm">
 							{href ? (
-								<a href={href} className="outline-none hover:underline focus-visible:underline">
+								<AppLink
+									href={href}
+									className="outline-none hover:underline focus-visible:underline"
+								>
 									{name}
-								</a>
+								</AppLink>
 							) : (
 								name
 							)}

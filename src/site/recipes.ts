@@ -38,28 +38,24 @@ export const recipes: SiteRecipe[] = [
 		notes: [
 			{
 				title: "Mark the current page in the header",
-				body: "SiteHeader takes `current`; read it with `usePathname()` in a small client component in the root layout, and route its plain links with `onNavigate`. On a dynamic route, list every slug in `generateStaticParams` and set `dynamicParams = false`: with Cache Components, Next 16.4 otherwise reports `usePathname()` outside `<Suspense>` for the unknown-slug shell, even with a boundary around the header.",
+				body: "SiteHeader takes `current`; read it with `usePathname()` in a small client component in the root layout. Its links, like every block's, route on the client once the root layout wraps the app in `<LinkProvider component={Link}>`. On a dynamic route, list every slug in `generateStaticParams` and set `dynamicParams = false`: with Cache Components, Next 16.4 otherwise reports `usePathname()` outside `<Suspense>` for the unknown-slug shell, even with a boundary around the header.",
 				code: `"use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { SiteHeader } from "@/components/blocks/site-header";
 
 export function Header() {
   const pathname = usePathname();
-  const router = useRouter();
 
   return (
     <SiteHeader
-      brand={<a href="/">Field Notes</a>}
+      brand={<Link href="/">Field Notes</Link>}
       nav={[
         { label: "Posts", href: "/" },
         { label: "About", href: "/about" },
       ]}
       current={pathname.startsWith("/posts") ? "/" : pathname}
-      onNavigate={(href, event) => {
-        event.preventDefault();
-        router.push(href);
-      }}
     />
   );
 }
@@ -108,25 +104,15 @@ export async function CodeBlock({ code, language }: { code: string; language: st
 		notes: [
 			{
 				title: "Current page from the route, not the URL",
-				body: "Each page knows its own slug, so pass it to Sidebar's `current` from the server and skip `usePathname()`. Sidebar's links are plain; `onSelect` gets a link's href as its id and hands it to the router.",
+				body: "Each page knows its own slug, so pass it to Sidebar's `current` from the server and skip `usePathname()`. Sidebar's links route on the client through the root's `LinkProvider`, so it needs no `onSelect`.",
 				code: `"use client";
 
-import { useRouter } from "next/navigation";
 import { Sidebar, SidebarLayout } from "@/components/ui/sidebar";
 
 export function DocsShell({ current, children }: { current: string; children: React.ReactNode }) {
-  const router = useRouter();
-
   return (
     <SidebarLayout>
-      <Sidebar
-        groups={groups}
-        current={current}
-        onSelect={(id, event) => {
-          event.preventDefault();
-          router.push(id);
-        }}
-      />
+      <Sidebar groups={groups} current={current} />
       <main>{children}</main>
     </SidebarLayout>
   );

@@ -15,6 +15,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { KbdGroup } from "@/components/ui/kbd";
 import { Tooltip } from "@/components/ui/tooltip";
+import { AppLink } from "@/lib/link";
 import { useIsMac, useMediaQuery } from "@/lib/platform";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { useHotkey } from "@/lib/use-hotkey";
@@ -264,7 +265,7 @@ function Entry({
 	const pick = (event: MouseEvent<HTMLElement>) => onSelect(itemId(item), event);
 
 	return item.href ? (
-		<a
+		<AppLink
 			href={item.href}
 			aria-current={active ? "page" : undefined}
 			title={title}
@@ -272,7 +273,7 @@ function Entry({
 			className={cls}
 		>
 			{body}
-		</a>
+		</AppLink>
 	) : (
 		<button type="button" aria-pressed={active} title={title} onClick={pick} className={cls}>
 			{body}

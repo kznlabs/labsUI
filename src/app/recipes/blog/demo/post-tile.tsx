@@ -2,7 +2,6 @@
 
 import { PostCard } from "@/components/blocks/post-card";
 import { Pager } from "@/components/ui/pager";
-import { useNavigate } from "./blog-chrome";
 import { blogHref, coverOf, formatDate, type Post } from "./posts";
 
 type PostTileProps = {
@@ -13,7 +12,6 @@ type PostTileProps = {
 };
 
 export function PostTile({ post, as = "h3", eager, className }: PostTileProps) {
-	const navigate = useNavigate();
 	const cover = coverOf(post.slug);
 
 	return (
@@ -33,7 +31,6 @@ export function PostTile({ post, as = "h3", eager, className }: PostTileProps) {
 					<img src={cover.src} alt="" width={960} height={540} loading={eager ? "eager" : "lazy"} />
 				)
 			}
-			onNavigate={navigate}
 		/>
 	);
 }
@@ -41,7 +38,6 @@ export function PostTile({ post, as = "h3", eager, className }: PostTileProps) {
 type Link = { title: string; slug: string };
 
 export function PostPager({ newer, older }: { newer?: Link; older?: Link }) {
-	const navigate = useNavigate();
 	const link = (post?: Link) =>
 		post && { title: post.title, href: blogHref(`/posts/${post.slug}`) };
 
@@ -52,7 +48,6 @@ export function PostPager({ newer, older }: { newer?: Link; older?: Link }) {
 			nextLabel="Older"
 			previous={link(newer)}
 			next={link(older)}
-			onNavigate={navigate}
 		/>
 	);
 }

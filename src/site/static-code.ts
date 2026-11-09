@@ -19,8 +19,10 @@ export const installCommand = (file: string) =>
 export const guide = {
 	init: "npx @kznlabs/labsui init",
 	add: "npx @kznlabs/labsui add button data-table",
-	layout: `import type { ReactNode } from "react";
+	layout: `import Link from "next/link";
+import type { ReactNode } from "react";
 import { MotionProvider } from "@/components/motion-provider";
+import { LinkProvider } from "@/lib/link";
 import { themeScript } from "@/lib/theme";
 import "./globals.css";
 
@@ -32,7 +34,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          {/* Component links route on the client. */}
+          <LinkProvider component={Link}>{children}</LinkProvider>
+        </MotionProvider>
       </body>
     </html>
   );

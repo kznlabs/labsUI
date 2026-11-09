@@ -6,6 +6,7 @@ import {
 	PaginationMotion,
 	PaginationNumber,
 } from "@/components/ui/pagination-motion";
+import { AppLink } from "@/lib/link";
 import { clamp, cn } from "@/lib/utils";
 
 // Server-safe: as links the bar works without JS. Motion lives in pagination-motion.tsx.
@@ -73,7 +74,7 @@ function Control({
 
 	// First/last page link loses its href so neither mouse nor keyboard can follow it.
 	return (
-		<a
+		<AppLink
 			href={disabled ? undefined : href?.(to)}
 			role={disabled ? "link" : undefined}
 			aria-disabled={disabled || undefined}
@@ -82,7 +83,7 @@ function Control({
 			className={cn(classes, disabled && "pointer-events-none opacity-50")}
 		>
 			{content}
-		</a>
+		</AppLink>
 	);
 }
 

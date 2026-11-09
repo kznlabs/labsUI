@@ -1,28 +1,16 @@
 "use client";
 
 import { ShoppingBag } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import type { MouseEvent } from "react";
+import { usePathname } from "next/navigation";
 import { SiteFooter } from "@/components/blocks/site-footer";
 import { SiteHeader } from "@/components/blocks/site-header";
 import { Button } from "@/components/ui/button";
-import { withBase } from "@/site/config";
+import { AppLink } from "@/lib/link";
 import { useCart } from "./cart";
 import { credits, shopHref } from "./catalog";
 
-/** Client routing for a demo link: hrefs carry the base path, the router adds its own. */
-function useNavigate() {
-	const router = useRouter();
-
-	return (href: string, event: MouseEvent<HTMLAnchorElement>) => {
-		event.preventDefault();
-		router.push(href.slice(withBase("").length) || "/");
-	};
-}
-
 export function ShopHeader() {
 	const pathname = usePathname();
-	const navigate = useNavigate();
 	const cart = useCart();
 
 	return (
@@ -30,13 +18,9 @@ export function ShopHeader() {
 			className="top-12"
 			label="Shop"
 			brand={
-				<a
-					href={shopHref()}
-					onClick={(event) => navigate(shopHref(), event)}
-					className="font-semibold tracking-tight"
-				>
+				<AppLink href={shopHref()} className="font-semibold tracking-tight">
 					Fieldwork
-				</a>
+				</AppLink>
 			}
 			nav={[
 				{ label: "Shop all", href: shopHref() },
@@ -47,7 +31,6 @@ export function ShopHeader() {
 					? shopHref("/checkout")
 					: shopHref()
 			}
-			onNavigate={navigate}
 			actions={
 				<Button variant="outline" size="sm" onClick={cart.open}>
 					<ShoppingBag aria-hidden="true" />
@@ -63,20 +46,15 @@ export function ShopHeader() {
 }
 
 export function ShopFooter() {
-	const navigate = useNavigate();
 	const creators = [...new Set(credits.map((credit) => credit.creator))];
 
 	return (
 		<SiteFooter
 			className="mt-16"
 			brand={
-				<a
-					href={shopHref()}
-					onClick={(event) => navigate(shopHref(), event)}
-					className="font-semibold"
-				>
+				<AppLink href={shopHref()} className="font-semibold">
 					Fieldwork
-				</a>
+				</AppLink>
 			}
 			description="Boots, knits and bags made to be worn for years. A demo shop: sample data, no real payments."
 			columns={[
@@ -91,7 +69,6 @@ export function ShopFooter() {
 				},
 			]}
 			legal={`Prices in EUR, including VAT. Photos CC0 from StockSnap by ${creators.join(", ")}.`}
-			onNavigate={navigate}
 		/>
 	);
 }

@@ -4,6 +4,7 @@ import { buttonVariants } from "@/components/ui/button-variants";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 import { demoPath, withBase } from "@/site/config";
+import { DemoLinks } from "@/site/demo-links";
 
 /** The docs page an item is on: `forms` for `input`, the item's own name for most. */
 export function pageOf(item: string, entries: { id: string; file: string }[]) {
@@ -105,7 +106,7 @@ export function DemoShell({ title, children }: { title: string; children: ReactN
 				</div>
 			</nav>
 
-			{children}
+			<DemoLinks>{children}</DemoLinks>
 		</>
 	);
 }

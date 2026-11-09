@@ -249,3 +249,18 @@ test("a demo's buttons answer in demo mode", async ({ page }) => {
 	await page.getByRole("button", { name: "Add to cart" }).first().click();
 	await expect(page.getByText(/^Demo mode:/)).toBeVisible();
 });
+
+test("a demo's block links route on the client, without a page load", async ({ page }) => {
+	await open(page, "recipes/blog/demo");
+	await page.evaluate(() => Object.assign(window, { stayed: true }));
+
+	await page.locator("[data-post-link]").first().click();
+	await expect(page).toHaveURL(/\/blog\/demo\/posts\/[^/]+\/?$/);
+
+	await page.getByRole("navigation", { name: "More posts" }).getByRole("link").first().click();
+	await expect(page).toHaveURL(/\/blog\/demo\/posts\/[^/]+\/?$/);
+
+	await page.getByRole("contentinfo").getByRole("link", { name: "About" }).click();
+	await expect(page).toHaveURL(/\/blog\/demo\/about\/?$/);
+	expect(await page.evaluate(() => "stayed" in window)).toBe(true);
+});

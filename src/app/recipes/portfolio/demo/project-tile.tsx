@@ -2,7 +2,6 @@
 
 import { PostCard } from "@/components/blocks/post-card";
 import { Pager } from "@/components/ui/pager";
-import { useNavigate } from "./portfolio-chrome";
 import { coverOf, type ProjectSummary, portfolioHref } from "./projects";
 
 type ProjectTileProps = {
@@ -12,7 +11,6 @@ type ProjectTileProps = {
 };
 
 export function ProjectTile({ project, eager, className }: ProjectTileProps) {
-	const navigate = useNavigate();
 	const cover = coverOf(project.slug);
 
 	return (
@@ -31,7 +29,6 @@ export function ProjectTile({ project, eager, className }: ProjectTileProps) {
 					<img src={cover.src} alt="" width={960} height={540} loading={eager ? "eager" : "lazy"} />
 				)
 			}
-			onNavigate={navigate}
 		/>
 	);
 }
@@ -41,7 +38,6 @@ type Link = { title: string; slug: string };
 type ProjectPagerProps = { previous?: Link; next?: Link; className?: string };
 
 export function ProjectPager({ previous, next, className }: ProjectPagerProps) {
-	const navigate = useNavigate();
 	const link = (project?: Link) =>
 		project && { title: project.title, href: portfolioHref(`/work/${project.slug}`) };
 
@@ -53,7 +49,6 @@ export function ProjectPager({ previous, next, className }: ProjectPagerProps) {
 			nextLabel="Next project"
 			previous={link(previous)}
 			next={link(next)}
-			onNavigate={navigate}
 		/>
 	);
 }

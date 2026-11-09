@@ -52,6 +52,10 @@ docs page `id`; exact props, types and examples are in
 
 ## Navigation
 
+- Links: every component link renders `AppLink` from `@/lib/link`, a plain
+  `<a>` until the root wraps the app in `<LinkProvider component={Link}>`.
+  `#hash` links, downloads and links without `href` stay plain. Recipe demos
+  get it from `DemoShell` (`src/site/demo-links.tsx`, strips the base path).
 - `menubar`: Menubar, MenubarMenu, MenubarTrigger, MenubarContent. Same items as
   DropdownMenu as `Menubar*` aliases; one open at a time, hover switches, ← →
   walk the bar.

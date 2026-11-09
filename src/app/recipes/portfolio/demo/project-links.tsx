@@ -2,12 +2,12 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button-variants";
-import { demoLink, useNavigate } from "./portfolio-chrome";
+import { AppLink } from "@/lib/link";
+import { demoLink } from "./portfolio-chrome";
 import { portfolioHref } from "./projects";
 
 /** A project's way out: its live site (none here, so demo mode) and the contact form. */
 export function ProjectLinks({ title }: { title: string }) {
-	const navigate = useNavigate();
 	const contact = portfolioHref("#contact");
 
 	return (
@@ -21,13 +21,9 @@ export function ProjectLinks({ title }: { title: string }) {
 				<ArrowUpRight aria-hidden="true" />
 			</a>
 
-			<a
-				href={contact}
-				onClick={(event) => navigate(contact, event)}
-				className={buttonVariants({ variant: "ghost", size: "sm" })}
-			>
+			<AppLink href={contact} className={buttonVariants({ variant: "ghost", size: "sm" })}>
 				Start a similar project
-			</a>
+			</AppLink>
 		</div>
 	);
 }

@@ -27,6 +27,9 @@ paths:
   (`site.md`, API docs).
 - `<Toaster />`, `<Confirmer />` + `<MotionProvider>` are already mounted in
   `src/app/layout.tsx`.
+- A link that goes to a page renders `AppLink` from `@/lib/link`, never `<a>`,
+  so the app's `LinkProvider` routes it. `#hash` links and downloads may stay
+  `<a>`.
 
 ## Floating panels
 

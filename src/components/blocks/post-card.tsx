@@ -1,6 +1,7 @@
 import type { ComponentProps, MouseEvent, ReactNode } from "react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
+import { AppLink } from "@/lib/link";
 import { cn } from "@/lib/utils";
 
 /* Server-safe; onNavigate only comes from client parents. */
@@ -76,14 +77,14 @@ export function PostCard({
 
 				<Heading className="font-medium text-base wrap-break-word">
 					{href ? (
-						<a
+						<AppLink
 							data-post-link
 							href={href}
 							onClick={onNavigate ? (event) => onNavigate(href, event) : undefined}
 							className="outline-none group-hover/post:underline after:absolute after:inset-0"
 						>
 							{title}
-						</a>
+						</AppLink>
 					) : (
 						title
 					)}

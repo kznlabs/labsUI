@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { ComponentProps, MouseEvent, ReactNode } from "react";
+import { AppLink } from "@/lib/link";
 import { cn } from "@/lib/utils";
 
 /* Server-safe; onNavigate only comes from client parents. */
@@ -48,7 +49,7 @@ export function Pager({
 		<nav aria-label={label} className={cn("@container", className)} {...props}>
 			<div className="grid gap-3 @md:grid-cols-2">
 				{previous && (
-					<a
+					<AppLink
 						href={previous.href}
 						rel="prev"
 						onClick={onNavigate ? (event) => onNavigate(previous.href, event) : undefined}
@@ -61,11 +62,11 @@ export function Pager({
 						</span>
 
 						<span className="font-medium">{previous.title}</span>
-					</a>
+					</AppLink>
 				)}
 
 				{next && (
-					<a
+					<AppLink
 						href={next.href}
 						rel="next"
 						onClick={onNavigate ? (event) => onNavigate(next.href, event) : undefined}
@@ -78,7 +79,7 @@ export function Pager({
 						</span>
 
 						<span className="max-w-full font-medium">{next.title}</span>
-					</a>
+					</AppLink>
 				)}
 			</div>
 		</nav>

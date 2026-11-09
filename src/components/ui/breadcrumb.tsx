@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import type { ComponentProps, MouseEventHandler, ReactNode } from "react";
+import { AppLink } from "@/lib/link";
 
 export type BreadcrumbItem = {
 	/** What the step reads as. */
@@ -42,13 +43,13 @@ export function Breadcrumb({
 								{item.label}
 							</span>
 						) : item.href ? (
-							<a
+							<AppLink
 								href={item.href}
 								onClick={item.onClick}
 								className="rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 							>
 								{item.label}
-							</a>
+							</AppLink>
 						) : (
 							<span>{item.label}</span>
 						)}

@@ -26,6 +26,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { tabbables } from "@/lib/focus";
+import { AppLink } from "@/lib/link";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { useDismiss } from "@/lib/use-dismiss";
 import { useIndicator } from "@/lib/use-indicator";
@@ -599,7 +600,7 @@ export function NavigationMenuLink({
 
 	if (!inPanel) {
 		return (
-			<a
+			<AppLink
 				{...bar}
 				href={href}
 				aria-current={active ? "page" : undefined}
@@ -613,12 +614,12 @@ export function NavigationMenuLink({
 				{...props}
 			>
 				{children}
-			</a>
+			</AppLink>
 		);
 	}
 
 	return (
-		<a
+		<AppLink
 			href={href}
 			aria-current={active ? "page" : undefined}
 			onClick={(event) => {
@@ -653,6 +654,6 @@ export function NavigationMenuLink({
 					</span>
 				</>
 			)}
-		</a>
+		</AppLink>
 	);
 }

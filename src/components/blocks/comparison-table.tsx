@@ -24,6 +24,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { AppLink } from "@/lib/link";
 import { useControllableState } from "@/lib/use-controllable-state";
 import { cn } from "@/lib/utils";
 
@@ -191,12 +192,12 @@ function ItemHeading({ item, nameAbove }: { item: ComparisonItem; nameAbove?: bo
 				)}
 			>
 				{item.href ? (
-					<a
+					<AppLink
 						href={item.href}
 						className="rounded-sm underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
 					>
 						{item.name}
-					</a>
+					</AppLink>
 				) : (
 					<span className={cn(quiet && "sr-only")}>{item.name}</span>
 				)}

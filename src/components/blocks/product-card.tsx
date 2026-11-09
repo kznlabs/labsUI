@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselDots, CarouselItem } from "@/components/ui/carousel";
 import { Rating } from "@/components/ui/rating";
+import { AppLink } from "@/lib/link";
 import { cn, formatMoney } from "@/lib/utils";
 
 type ProductCardProps = {
@@ -122,9 +123,12 @@ export function ProductCard({
 					<div className="flex items-baseline justify-between gap-2">
 						<Heading className="min-w-0 truncate font-medium text-sm">
 							{href ? (
-								<a href={href} className="outline-none hover:underline focus-visible:underline">
+								<AppLink
+									href={href}
+									className="outline-none hover:underline focus-visible:underline"
+								>
 									{name}
-								</a>
+								</AppLink>
 							) : (
 								name
 							)}
