@@ -55,8 +55,8 @@ describe("recipes", () => {
 		const markdown = viewMarkdown(await describeAny(undefined, "blog"));
 
 		expect(markdown).toContain("(`blog`, recipe)");
-		expect(markdown).toContain("Using labsUI, build a blog");
-		expect(markdown).toContain("npx @kznlabs/labsui add site-header");
+		expect(markdown).toContain("Using labsUI, build a security and engineering publication");
+		expect(markdown).toContain("npx @kznlabs/labsui add alert avatar");
 		expect(markdown).toContain("### Highlight code on the server");
 	});
 
@@ -309,7 +309,7 @@ describe("mcp", () => {
 		};
 
 		expect(got.result.messages[0]?.role).toBe("user");
-		expect(got.result.messages[0]?.content.text).toStartWith("Using labsUI, build a shop");
+		expect(got.result.messages[0]?.content.text).toStartWith("Using labsUI, build a fashion store");
 		expect(await call("prompts/get", { name: "nope" })).toMatchObject({ error: { code: -32602 } });
 	});
 

@@ -245,7 +245,7 @@ test("a card's Open demo opens the demo", async ({ page }) => {
 });
 
 test("a demo's buttons answer in demo mode", async ({ page }) => {
-	await open(page, demoPath("laptop-comparison").slice(1));
+	await open(page, demoPath("shop").slice(1));
 	await page.getByRole("button", { name: "Add to cart" }).first().click();
 	await expect(page.getByText(/^Demo mode:/)).toBeVisible();
 });
