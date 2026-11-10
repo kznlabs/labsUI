@@ -46,6 +46,11 @@ const demoPages = [
 	"shop/demo/products/ridge-leather-boot",
 	"shop/demo/products/storm-rain-shell",
 	"shop/demo/checkout",
+	"electronics/demo/c/laptops",
+	"electronics/demo/p/aero-14",
+	"electronics/demo/configure/aero-14",
+	"electronics/demo/cart",
+	"electronics/demo/prices",
 	"portfolio/demo/work/harbor-booking",
 	"portfolio/demo/work/grain",
 	"admin-panel/demo#orders",
@@ -245,8 +250,10 @@ test("a card's Open demo opens the demo", async ({ page }) => {
 });
 
 test("a demo's buttons answer in demo mode", async ({ page }) => {
-	await open(page, demoPath("shop").slice(1));
+	await open(page, `${demoPath("electronics").slice(1)}/p/aero-14`);
 	await page.getByRole("button", { name: "Add to cart" }).first().click();
+	await page.getByRole("link", { name: /^Cart/ }).click();
+	await page.getByRole("button", { name: "Place sample order" }).click();
 	await expect(page.getByText(/^Demo mode:/)).toBeVisible();
 });
 

@@ -320,6 +320,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 			"table",
 			"toast",
 		],
+		demo: true,
 		notes: [
 			{
 				title: "Compare in a drawer",
