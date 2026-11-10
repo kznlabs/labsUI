@@ -29,7 +29,7 @@ export function SiteShell({ current, children }: { current?: string; children: R
 					<>
 						{brand}
 
-						<Badge variant="secondary" shape="pill" className="hidden sm:inline-flex">
+						<Badge variant="secondary" shape="pill" className="hidden lg:inline-flex">
 							v{version}
 						</Badge>
 					</>
