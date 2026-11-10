@@ -1,0 +1,66 @@
+/*
+ * A printed-page look for the shop demo: white paper, square corners, no shadows, light only.
+ * `PrintTheme` puts the class on <html> so drawers and popovers, which render outside the page,
+ * take it too. The dark rules repeat the light values to win over `.dark`.
+ */
+html.shop-print,
+html.shop-print.dark {
+	--radius: 0;
+	--radius-sm: 0;
+	--radius-md: 0;
+	--radius-lg: 0;
+	--radius-xl: 0;
+	--radius-2xl: 0;
+	--shadow-xs: none;
+	--shadow-sm: none;
+	--shadow-md: none;
+	--shadow-lg: none;
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.2 0.004 286);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.21 0.004 286);
+	--popover: oklch(0.995 0 0);
+	--popover-foreground: oklch(0.21 0.004 286);
+	--primary-ink: oklch(var(--accent-ink-light) var(--accent-chroma) var(--accent-hue));
+	--secondary: oklch(0.945 0.002 286);
+	--secondary-foreground: oklch(0.21 0.004 286);
+	--muted: oklch(0.955 0.002 286);
+	--muted-foreground: oklch(0.45 0.004 286);
+	--accent: oklch(0 0 0 / 5%);
+	--accent-foreground: oklch(0.21 0.004 286);
+	--destructive: oklch(0.58 0.22 28);
+	--destructive-hover: oklch(0.53 0.22 28);
+	--success: oklch(0.68 0.17 150);
+	--success-foreground: oklch(0.2 0.05 150);
+	--warning: oklch(0.72 0.16 60);
+	--destructive-ink: oklch(0.51 0.2 28);
+	--success-ink: oklch(0.47 0.14 150);
+	--warning-ink: oklch(0.54 0.16 60);
+	--border: oklch(0 0 0 / 10%);
+	--input: oklch(0 0 0 / 14%);
+	--field: transparent;
+	--control: var(--card);
+	--control-border: var(--border);
+	--raised: var(--card);
+	--raised-ring: oklch(0 0 0 / 5%);
+	--track: var(--input);
+	color-scheme: light;
+}
+
+html.shop-print {
+	scroll-behavior: smooth;
+}
+
+.shop-display {
+	font-family: var(--font-display), Georgia, serif;
+	font-weight: 400;
+	letter-spacing: -0.01em;
+}
+
+/* Small uppercase navigation and filter text. */
+.shop-caps {
+	font-size: 0.6875rem;
+	line-height: 1;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}

@@ -1,36 +1,65 @@
 import type { Metadata } from "next";
-import { demoPath, site } from "@/site/config";
-import { euro, freeShippingFrom } from "./catalog";
-import { ProductBrowser } from "./product-browser";
+import { Suspense } from "react";
+import { demoPath, site, withBase } from "@/site/config";
+import { products } from "./catalog";
+import { CollectionFromUrl } from "./collection";
+import { Footer } from "./footer";
+import { Header } from "./header";
 
 const description =
-	"A reference build of the shop recipe: a product grid with filters, product pages, a cart drawer and a checkout.";
+	"A reference build of the fashion recipe: a lookbook with a transparent header, filters, product pages, a bag and a checkout.";
 const url = `${site.url}${demoPath("shop")}`;
 
 export const metadata: Metadata = {
-	title: "Shop demo",
+	title: "Fashion store demo",
 	description,
 	alternates: { canonical: url },
-	openGraph: { url, title: `Shop demo · ${site.name}`, description },
+	openGraph: { url, title: `Fashion store demo · ${site.name}`, description },
 };
 
-export default function ShopDemo() {
+export default function Home() {
 	return (
-		<>
-			<header className="mb-8 max-w-2xl">
-				<p className="font-medium text-muted-foreground text-sm">Autumn and winter</p>
+		<main>
+			<Header overHero />
 
-				<h1 className="mt-2 text-balance font-semibold text-3xl tracking-tight sm:text-4xl">
-					Boots, knits and bags for the cold months
-				</h1>
+			<section className="relative h-[calc(100svh-3rem)] min-h-[560px] overflow-hidden bg-muted">
+				{/* biome-ignore lint/performance/noImgElement: the static export has no image optimizer */}
+				<img
+					src={withBase("/recipes/media/shop-1cxi0cspe5.webp")}
+					alt="A woman in a long green printed dress lifts the skirt between two sand-coloured walls."
+					className="absolute inset-0 size-full object-cover object-[50%_40%]"
+					fetchPriority="high"
+				/>
 
-				<p className="mt-3 text-muted-foreground leading-relaxed">
-					Made to be worn for years and mended when they need it. Free standard delivery over{" "}
-					{euro.format(freeShippingFrom)}, 30-day returns.
+				<div className="absolute inset-x-0 bottom-0 px-4 pb-8 sm:px-6 sm:pb-12">
+					<h1 className="shop-display max-w-[11ch] text-6xl leading-[0.95] sm:text-8xl lg:text-9xl">
+						Winter, in green
+					</h1>
+
+					<a
+						href="#collection"
+						className="shop-caps mt-6 inline-block py-2 underline underline-offset-8"
+					>
+						Twelve pieces, below
+					</a>
+				</div>
+			</section>
+
+			<section className="grid gap-10 px-4 py-28 sm:px-6 md:grid-cols-12 md:py-40">
+				<p className="shop-display text-3xl leading-snug md:col-span-6 md:col-start-5 md:text-4xl">
+					Suede that softens, knits that hold their shape, linen that is meant to crease. We chose
+					the cold months for what they ask of clothes: to be worn every day, and to look better for
+					it.
 				</p>
-			</header>
+			</section>
 
-			<ProductBrowser />
-		</>
+			<section id="collection" className="scroll-mt-26">
+				<Suspense fallback={<div className="h-[100svh]" />}>
+					<CollectionFromUrl products={products} />
+				</Suspense>
+			</section>
+
+			<Footer />
+		</main>
 	);
 }

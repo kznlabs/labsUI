@@ -1,272 +1,258 @@
 "use client";
 
-import { CircleCheck, ShoppingBag } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
-import { OrderSummary } from "@/components/blocks/cart";
+import { useState } from "react";
+import { CartLine, CartList, OrderSummary } from "@/components/blocks/cart";
 import { Button } from "@/components/ui/button";
-import { Empty } from "@/components/ui/empty";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/toast";
-import { CartLines, FreeShipping, useCart } from "./cart";
-import {
-	currency,
-	euro,
-	locale,
-	type ShippingId,
-	shipping,
-	shippingPrice,
-	shopPath,
-} from "./catalog";
+import { AppLink } from "@/lib/link";
+import { useCart } from "./cart";
+import { bySlug, eur, FREE_SHIPPING_FROM, SHIPPING, storeHref } from "./catalog";
+import { Header } from "./header";
+import { Photo } from "./photo";
 
-const countries = [
-	"Austria",
-	"Belgium",
-	"France",
-	"Germany",
-	"Ireland",
-	"Italy",
-	"Netherlands",
-	"Poland",
-	"Spain",
-];
-
-const payments = [
-	{
-		id: "card",
-		name: "Card",
-		description: "You enter card details with the payment provider on the next step.",
-	},
-	{
-		id: "transfer",
-		name: "Bank transfer",
-		description: "SEPA transfer; we ship once the money arrives.",
-	},
-	{
-		id: "delivery",
-		name: "Pay on delivery",
-		description: "Pay the courier by card or cash.",
-		fee: 2,
-	},
-];
-
-function Section({
-	id,
-	title,
-	children,
-}: {
-	id: string;
-	title: string;
-	children: React.ReactNode;
-}) {
-	return (
-		<section aria-labelledby={id} className="flex flex-col gap-4">
-			<h2 id={id} className="font-semibold text-lg">
-				{title}
-			</h2>
-
-			{children}
-		</section>
-	);
-}
+const heading = "shop-display text-2xl sm:text-3xl";
 
 export function CheckoutForm() {
-	const router = useRouter();
 	const cart = useCart();
-	const [method, setMethod] = useState<ShippingId>("standard");
+	const [shipping, setShipping] = useState("standard");
 	const [payment, setPayment] = useState("card");
-	const [placing, setPlacing] = useState(false);
-	const [order, setOrder] = useState<{ id: string; total: number } | null>(null);
-	const shippingCost = shippingPrice(method, cart.subtotal);
-	const fee = payments.find((option) => option.id === payment)?.fee ?? 0;
-	const total = cart.subtotal + shippingCost + fee;
+	const [busy, setBusy] = useState(false);
+	const [order, setOrder] = useState<string>();
 
-	if (order)
-		return (
-			<Empty
-				icon={<CircleCheck />}
-				title="Order placed"
-				description={`Order ${order.id}, ${euro.format(order.total)}. In this demo nothing was charged and no email is sent.`}
-			>
-				<Button onClick={() => router.push(shopPath())}>Keep shopping</Button>
-			</Empty>
-		);
+	const free = cart.subtotal >= FREE_SHIPPING_FROM;
+	const method = SHIPPING.find((option) => option.id === shipping) ?? SHIPPING[0];
+	const shippingCost = free ? 0 : method.price;
+	const total = cart.subtotal + shippingCost;
 
-	if (!cart.ready) return <Skeleton className="h-96 w-full" />;
-
-	if (cart.items.length === 0)
-		return (
-			<Empty
-				icon={<ShoppingBag />}
-				title="Your cart is empty"
-				description="Add something from the shop, or fill the cart with two sample items to try the checkout."
-			>
-				<div className="flex flex-wrap justify-center gap-2">
-					<Button
-						onClick={() => {
-							cart.add("ridge-leather-boot", "42");
-							cart.add("merino-rib-beanie", "S/M");
-						}}
-					>
-						Add sample items
-					</Button>
-
-					<Button variant="outline" onClick={() => router.push(shopPath())}>
-						Browse the shop
-					</Button>
-				</div>
-			</Empty>
-		);
-
-	function place(event: FormEvent<HTMLFormElement>) {
+	async function place(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		setPlacing(true);
+		setBusy(true);
+		// Sample store: a pretend wait stands in for the payment provider. Nothing is charged or sent.
+		await new Promise((resolve) => setTimeout(resolve, 900));
+		setOrder(`AN-${Math.floor(Math.random() * 90000 + 10000)}`);
+		cart.clear();
+		setBusy(false);
+		toast.success("Demo mode: order placed, no payment taken");
+	}
 
-		// Where a real shop creates the payment, from its own prices, and redirects to it.
-		setTimeout(() => {
-			setOrder({ id: `FW-${Math.floor(100000 + Math.random() * 900000)}`, total });
-			cart.clear();
-			setPlacing(false);
-			toast.success("Demo mode: order placed, no payment taken");
-			window.scrollTo({ top: 0 });
-		}, 1200);
+	if (order) {
+		return (
+			<main className="px-4 pt-44 pb-24 sm:px-6">
+				<Header />
+
+				<div className="mx-auto max-w-xl">
+					<h1 className={heading}>Thank you.</h1>
+
+					<p className="mt-4 text-sm text-muted-foreground">
+						Order {order} is a sample: nothing was charged and nothing will arrive.
+					</p>
+
+					<AppLink
+						href={storeHref("#collection")}
+						className="shop-caps mt-8 inline-block underline underline-offset-8"
+					>
+						Back to the collection
+					</AppLink>
+				</div>
+			</main>
+		);
+	}
+
+	if (cart.lines.length === 0) {
+		return (
+			<main className="px-4 pt-44 pb-24 sm:px-6">
+				<Header />
+
+				<div className="mx-auto max-w-xl">
+					<h1 className={heading}>Your bag is empty.</h1>
+
+					<AppLink
+						href={storeHref("#collection")}
+						className="shop-caps mt-8 inline-block underline underline-offset-8"
+					>
+						See the collection
+					</AppLink>
+				</div>
+			</main>
+		);
 	}
 
 	return (
-		<form onSubmit={place} className="grid items-start gap-10 lg:grid-cols-[1fr_24rem]">
-			<div className="flex flex-col gap-10">
-				<Section id="contact" title="Contact">
+		<main className="px-4 pt-40 pb-24 sm:px-6">
+			<Header />
+
+			<form onSubmit={place} className="mx-auto flex max-w-xl flex-col gap-14">
+				<h1 className="shop-display text-5xl">Checkout</h1>
+
+				<section aria-label="Bag">
+					<CartList>
+						{cart.lines.map((line) => {
+							const product = bySlug(line.slug);
+
+							if (!product) return null;
+
+							return (
+								<CartLine
+									key={line.slug + line.size}
+									name={product.name}
+									price={product.price}
+									currency="EUR"
+									locale="en-IE"
+									details={`Size ${line.size}`}
+									quantity={line.quantity}
+									media={<Photo photo={product.photos[0]} alt="" />}
+								/>
+							);
+						})}
+					</CartList>
+				</section>
+
+				<section className="flex flex-col gap-5">
+					<h2 className={heading}>Delivery</h2>
+
 					<Field label="Email" required>
-						<Input name="email" type="email" autoComplete="email" placeholder="you@example.com" />
-					</Field>
-				</Section>
-
-				<Section id="address" title="Delivery address">
-					<div className="grid gap-4 sm:grid-cols-2">
-						<Field label="First name" required>
-							<Input name="given-name" autoComplete="given-name" />
-						</Field>
-
-						<Field label="Last name" required>
-							<Input name="family-name" autoComplete="family-name" />
-						</Field>
-					</div>
-
-					<Field label="Street and number" required>
-						<Input name="address" autoComplete="address-line1" />
+						<Input type="email" name="email" autoComplete="email" required />
 					</Field>
 
-					<div className="grid gap-4 sm:grid-cols-[1fr_2fr]">
-						<Field label="Postal code" required>
-							<Input name="postal-code" autoComplete="postal-code" />
+					<Field label="Full name" required>
+						<Input name="name" autoComplete="name" required />
+					</Field>
+
+					<Field label="Address" required>
+						<Input name="address" autoComplete="street-address" required />
+					</Field>
+
+					<div className="grid grid-cols-[8rem_1fr] gap-4">
+						<Field label="Postcode" required>
+							<Input name="postcode" autoComplete="postal-code" required />
 						</Field>
 
 						<Field label="City" required>
-							<Input name="city" autoComplete="address-level2" />
+							<Input name="city" autoComplete="address-level2" required />
 						</Field>
 					</div>
 
 					<Field label="Country" required>
 						<NativeSelect name="country" defaultValue="Ireland" autoComplete="country-name">
-							{countries.map((country) => (
-								<NativeSelectOption key={country} value={country}>
-									{country}
-								</NativeSelectOption>
-							))}
+							{["Austria", "France", "Germany", "Ireland", "Netherlands", "Poland", "Sweden"].map(
+								(country) => (
+									<NativeSelectOption key={country}>{country}</NativeSelectOption>
+								),
+							)}
 						</NativeSelect>
 					</Field>
-				</Section>
+				</section>
 
-				<Section id="delivery" title="Delivery">
+				<section>
+					<h2 className={heading}>Shipping</h2>
+
 					<RadioGroup
-						legend={<span className="sr-only">Delivery</span>}
-						name="shipping"
+						aria-label="Shipping method"
 						variant="card"
-						value={method}
-						onValueChange={(value) => setMethod(value as ShippingId)}
+						value={shipping}
+						onValueChange={setShipping}
+						className="mt-5"
 					>
-						{shipping.map((option) => {
-							const price = shippingPrice(option.id, cart.subtotal);
-
-							return (
-								<RadioGroupItem
-									key={option.id}
-									value={option.id}
-									description={option.description}
-									end={price === 0 ? "Free" : euro.format(price)}
-								>
-									{option.name}
-								</RadioGroupItem>
-							);
-						})}
-					</RadioGroup>
-				</Section>
-
-				<Section id="payment" title="Payment">
-					<RadioGroup
-						legend={<span className="sr-only">Payment</span>}
-						name="payment"
-						variant="card"
-						value={payment}
-						onValueChange={setPayment}
-					>
-						{payments.map((option) => (
+						{SHIPPING.map((option) => (
 							<RadioGroupItem
 								key={option.id}
 								value={option.id}
-								description={option.description}
-								end={option.fee ? `+${euro.format(option.fee)}` : undefined}
+								description={option.note}
+								end={free ? "Free" : eur(option.price)}
 							>
-								{option.name}
+								{option.label}
 							</RadioGroupItem>
 						))}
 					</RadioGroup>
-				</Section>
-			</div>
 
-			<aside
-				aria-labelledby="summary"
-				className="flex flex-col gap-5 rounded-xl border bg-card p-5 shadow-xs lg:sticky lg:top-32"
-			>
-				<h2 id="summary" className="font-semibold text-lg">
-					Order summary
-				</h2>
+					<p className="mt-3 text-sm text-muted-foreground">
+						{free
+							? "Shipping is free on this order."
+							: `Free shipping from ${eur(FREE_SHIPPING_FROM)}.`}
+					</p>
+				</section>
 
-				<FreeShipping subtotal={cart.subtotal} />
+				<section>
+					<h2 className={heading}>Payment</h2>
 
-				<CartLines />
+					<RadioGroup
+						aria-label="Payment method"
+						variant="card"
+						value={payment}
+						onValueChange={setPayment}
+						className="mt-5"
+					>
+						<RadioGroupItem value="card" description="Debit or credit card">
+							Card
+						</RadioGroupItem>
 
-				<OrderSummary
-					currency={currency}
-					locale={locale}
-					lines={[
-						{ label: "Subtotal", amount: cart.subtotal },
-						{ label: "Delivery", amount: shippingCost === 0 ? "Free" : shippingCost },
-						...(fee ? [{ label: "Pay on delivery", amount: fee }] : []),
-					]}
-					total={total}
-					note="Including VAT."
-					action={
-						<Button
-							type="submit"
-							size="lg"
-							className="w-full"
-							status={placing ? "loading" : "idle"}
-							loadingLabel="Placing order…"
-						>
-							Place order
-						</Button>
-					}
-				/>
+						<RadioGroupItem value="sepa" description="Pay by SEPA transfer within 7 days">
+							Bank transfer
+						</RadioGroupItem>
 
-				<p className="text-muted-foreground text-xs">
-					Demo shop: any details work, nothing is charged or sent.
-				</p>
-			</aside>
-		</form>
+						<RadioGroupItem value="invoice" description="Pay 14 days after delivery">
+							Invoice
+						</RadioGroupItem>
+					</RadioGroup>
+
+					{payment === "card" && (
+						<div className="mt-5 flex flex-col gap-5">
+							<Field label="Card number">
+								<Input
+									inputMode="numeric"
+									autoComplete="cc-number"
+									placeholder="0000 0000 0000 0000"
+								/>
+							</Field>
+
+							<div className="grid grid-cols-2 gap-4">
+								<Field label="Expiry">
+									<Input autoComplete="cc-exp" placeholder="MM / YY" />
+								</Field>
+
+								<Field label="Security code">
+									<Input inputMode="numeric" autoComplete="cc-csc" placeholder="123" />
+								</Field>
+							</div>
+
+							<p className="text-xs text-muted-foreground">
+								Sample form: these fields are never read or sent.
+							</p>
+						</div>
+					)}
+				</section>
+
+				<section>
+					<OrderSummary
+						currency="EUR"
+						locale="en-IE"
+						lines={[
+							{ label: "Subtotal", amount: cart.subtotal },
+							{
+								label: `Shipping, ${method.label.toLowerCase()}`,
+								amount: shippingCost === 0 ? "Free" : shippingCost,
+							},
+						]}
+						total={total}
+						note="Returns are free for 30 days. Prices include VAT."
+						action={
+							<Button
+								type="submit"
+								size="lg"
+								className="w-full"
+								loading={busy}
+								loadingLabel="Placing order"
+							>
+								Place order · {eur(total)}
+							</Button>
+						}
+					/>
+				</section>
+			</form>
+		</main>
 	);
 }

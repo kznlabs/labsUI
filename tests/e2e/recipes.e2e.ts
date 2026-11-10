@@ -43,8 +43,8 @@ const demoPages = [
 	"docs-site/demo/create-client",
 	"docs-site/demo/interceptors",
 	"docs-site/demo/changelog",
-	"shop/demo/products/ridge-leather-boot",
-	"shop/demo/products/storm-rain-shell",
+	"shop/demo/products/oat-cable-knit",
+	"shop/demo/products/oxford-shoes",
 	"shop/demo/checkout",
 	"electronics/demo/c/laptops",
 	"electronics/demo/p/aero-14",
@@ -65,27 +65,29 @@ for (const path of demoPages)
 	});
 
 test("the shop demo takes an order from size to confirmation", async ({ page }) => {
-	await open(page, "recipes/shop/demo/products/ridge-leather-boot");
-	await page.getByRole("button", { name: "Add to cart" }).click();
+	await open(page, "recipes/shop/demo/products/oat-cable-knit");
+
+	const add = page.getByRole("button", { name: /^Add to bag/ }).and(page.locator(":visible"));
+
+	await add.click();
 	await expect(page.getByText("Choose a size first.")).toBeVisible();
 
-	await page.getByText("42", { exact: true }).click();
-	await page.getByRole("button", { name: "Add to cart" }).click();
+	await page.getByRole("button", { name: "M", exact: true }).click();
+	await add.click();
 
-	const drawer = page.getByRole("dialog", { name: /Your cart/ });
+	const bag = page.getByRole("dialog", { name: /Your bag/ });
 
-	await expect(drawer.getByText("Ridge Leather Boot")).toBeVisible();
-	await drawer.getByRole("button", { name: "Go to checkout" }).click();
+	await expect(bag.getByText("Oat cable knit")).toBeVisible();
+	await bag.getByRole("link", { name: "Checkout" }).click();
 	await expect(page).toHaveURL(/\/checkout\/?$/);
 
 	await page.getByLabel("Email").fill("ada@example.com");
-	await page.getByLabel("First name").fill("Ada");
-	await page.getByLabel("Last name").fill("Byrne");
-	await page.getByLabel("Street and number").fill("12 Harbour Road");
-	await page.getByLabel("Postal code").fill("D02 X285");
+	await page.getByLabel("Full name").fill("Ada Byrne");
+	await page.getByLabel("Address").fill("12 Harbour Road");
+	await page.getByLabel("Postcode").fill("D02 X285");
 	await page.getByLabel("City").fill("Dublin");
-	await page.getByRole("button", { name: "Place order" }).click();
-	await expect(page.getByText("Order placed", { exact: true })).toBeVisible();
+	await page.getByRole("button", { name: /^Place order/ }).click();
+	await expect(page.getByText("Thank you.")).toBeVisible();
 	await expect(page.getByText(/^Demo mode:/)).toBeVisible();
 });
 
